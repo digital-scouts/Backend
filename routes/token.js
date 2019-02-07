@@ -11,7 +11,6 @@ const jwt = require('jsonwebtoken'),
 function verifyToken(request, response, next) {
     // Extract token from header / url parameters / post parameters
     let token = request.body.token || request.query.token || request.headers['x-access-token'];
-
     if (token) {
         /* TODO Decoded what...? */
         let functionProcessDecoded = function(error, decoded) {
@@ -19,19 +18,17 @@ function verifyToken(request, response, next) {
             if (error) {
                 return next(new ErrorREST(Errors.Unauthorized));
             }
-
             // Save to request for use in other routes
             request.decoded = decoded;
             next();
         };
-
         jwt.verify(
             token, app.get('salt'),
             functionProcessDecoded
         );
     } else {
         //return next(new ErrorREST(Errors.BadRequest, "Token required."));
-        response.status(200).json({message: "Not logged in"});
+        return next(new ErrorREST(Errors.Unauthorized));
     }
 }
 

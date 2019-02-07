@@ -1,16 +1,15 @@
-const config = require('./config'),
-    indexRouter = require('./routes/index'),
-    usersRouter = require('./routes/api/users'),
+const express = require('express'),
     mongoose = require('mongoose'),
-    express = require('express'),
-    path = require('path'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
-    createError = require('http-errors'),
-    cookieParser = require('cookie-parser'),
-    logger = require('morgan'),
-    app = express();
+    path = require('path'),
+    config = require('./config'),
+    ErrorREST = require('./errors').ErrorREST,
+    Errors = require('./errors').Errors;
 
+// Routes directory
+const indexRouter = require('./routes/index'),
+    usersRouter = require('./routes/api/users');
 
 configureExpress();
 configureDatabase();
@@ -20,37 +19,10 @@ module.exports = app;
 console.log('Node.js setup finished');
 
 function configureExpress() {
-    // view engine setup
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('view engine', 'jade');
-
-    app.use(logger('dev'));
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: false }));
-    app.use(cookieParser());
-    app.use(express.static(path.join(__dirname, 'public')));
-
-    app.use('/', indexRouter);
-    app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-    app.use(function(req, res, next) {
-        next(createError(404));
-    });
-
-    // error handler
-    app.use(function(err, req, res, next) {
-        // set locals, only providing error in development
-        res.locals.message = err.message;
-        res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-        // render the error page
-        res.status(err.status || 500);
-        res.render('error');
-    });
-
-
+    app = express();
     app.use(express.json({limit: "8mb"}));
+    app.use(express.urlencoded({ extended: false }));
+    app.use(express.static(path.join(__dirname, 'public')));
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -65,11 +37,51 @@ function configureExpress() {
     // Use morgan to log requests to the console.
     app.use(morgan('dev'));
 
+    // Use REST routes
+    app.use('/', indexRouter);
+
+    /* TODO [Low priority] Is it possible to map those automatically? */
+    app.use('/api/users', usersRouter);
+
+    // Error handler
+    app.use(function(error, request, response, next) {
+        /* TODO Write a log file. */
+
+        let validRESTError = error instanceof ErrorREST;
+        if(validRESTError) {
+            logRequest(console.log, request);
+            console.log("ERROR OCCURRED:");
+            console.log(error);
+        } else {
+            logRequest(console.error, request);
+            console.error("ERROR OCCURRED:");
+            console.error(error);
+
+            // Replace the error with a suitable one for the end user
+            error = new ErrorREST(Errors.InternalServerError);
+        }
+
+        response.status(error.response.status).send(error.response);
+
+        function logRequest(logger, request) {
+            logger("REQUEST:");
+            logger(request.method + " " + request.url);
+            logger("HEADERS:");
+            logger(request.headers);
+            logger("FORM:");
+            logger(request.form);
+            logger("QUERY:");
+            logger(request.query);
+            logger("BODY:");
+            logger(request.body);
+        }
+    });
+
     // Set global constants
     app.set('salt', config.salt);
-    // app.set('map_api', config.map_api);
-    // app.set('DEBUG', config.DEBUG);
-    // app.set('configForUser', config.configForUser);
+    app.set('map_api', config.map_api);
+    app.set('DEBUG', config.DEBUG);
+    app.set('configForUser', config.configForUser);
 }
 
 
