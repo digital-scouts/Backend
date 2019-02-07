@@ -38,14 +38,15 @@ async function authenticate(request, response, next) {
                     email: user.email,
                     role: user.role,
                     userID: user._id,
-                    userNameFirst: user.name_first
+                    userNameFirst: user.name_first,
+                    userNameLast:user.name_last
                 };
 
                 response.status(200).json(
                     {
                         status: 200,
                         message: "Request successful.",
-                        token: jwt.sign(payload, app.get('salt'), { expiresIn: 604800 })
+                        token: jwt.sign(payload, app.get('salt'), { expiresIn: 604800 })//one week
                     }
                 );
             }
