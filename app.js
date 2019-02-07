@@ -6,8 +6,6 @@ const express = require('express'),
     config = require('./config'),
     ErrorREST = require('./errors').ErrorREST,
     Errors = require('./errors').Errors,
-    MongoClient = require('mongodb').MongoClient,
-    Promise = require('promise'),
     db_url = config.database;
 
 // Routes directory
@@ -16,13 +14,9 @@ const indexRouter = require('./routes/index'),
     authRouter = require('./routes/api/auth');
 
 configureExpress();
-connect(db_url).then(function (db) {
+configureDatabase(),
 
-}, function (err) {
-    console.error(err);
-});
-
-module.exports = app;
+    module.exports = app;
 
 console.log('Node.js setup finished');
 
@@ -102,20 +96,5 @@ function configureDatabase() {
     db.once('open', function () {
         // connected
         console.log('MongoDB connected..');
-    });
-}
-
-
-function connect(url) {
-    return new Promise(function (resolve, reject) {
-        MongoClient.connect(url, function (err, db) {
-            if (err) {
-                console.error('mongo connection error: ', err.message);
-                reject(err);
-            } else {
-                console.info("connected to mongodb");
-                resolve(db);
-            }
-        });
     });
 }
