@@ -3,19 +3,19 @@ var router = require('express').Router(),
     token = require('./token').verifyToken;
 
 router.route('/')
-    .get(function(req, res, next) {
+    .get(function(req, res, next) {//test the RESTful API
         res.status(200).json(
             {
                 status: 200,
-                message: "Request successful.",
+                message: "RESTful API works.",
             }
         );
     })
-    .post(token, function (req, res, next) {
+    .post(token, function (req, res, next) {//test if the token is valid
         res.status(200).json(
             {
                 status: 200,
-                message: "Request successful.",
+                message: "Token is correct.",
             }
         );
     });
