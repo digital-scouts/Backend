@@ -1,4 +1,4 @@
-const modelUser = require('../models/userModel').user_woe,
+const modelUser = require('../models/userModel').demoUser,
     ErrorREST = require('../errors').ErrorREST,
     Errors = require('../errors').Errors;
 

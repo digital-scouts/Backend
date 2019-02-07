@@ -1,22 +1,23 @@
-var router = require('express').Router();
-var jwt = require('jsonwebtoken');
+var router = require('express').Router(),
+    jwt = require('jsonwebtoken'),
+    token = require('./token').verifyToken;
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    const payload = {
-        email: 'mail',
-        role: 'user',
-        userID: '1234',
-        userNameFirst: 'bob'
-    };
-
-    res.status(200).json(
-        {
-            status: 200,
-            message: "Request successful.",
-            token: jwt.sign(payload, app.get('salt'))
-        }
-    );
-});
+router.route('/')
+    .get(function(req, res, next) {
+        res.status(200).json(
+            {
+                status: 200,
+                message: "Request successful.",
+            }
+        );
+    })
+    .post(token, function (req, res, next) {
+        res.status(200).json(
+            {
+                status: 200,
+                message: "Request successful.",
+            }
+        );
+    });
 
 module.exports = router;

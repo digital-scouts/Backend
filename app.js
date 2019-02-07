@@ -10,6 +10,7 @@ const express = require('express'),
 // Routes directory
 const indexRouter = require('./routes/index'),
     usersRouter = require('./routes/api/users');
+    authRouter = require('./routes/api/auth');
 
 configureExpress();
 configureDatabase();
@@ -42,6 +43,7 @@ function configureExpress() {
 
     /* TODO [Low priority] Is it possible to map those automatically? */
     app.use('/api/users', usersRouter);
+    app.use('/api/auth', authRouter);
 
     // Error handler
     app.use(function(error, request, response, next) {
@@ -79,9 +81,7 @@ function configureExpress() {
 
     // Set global constants
     app.set('salt', config.salt);
-    app.set('map_api', config.map_api);
     app.set('DEBUG', config.DEBUG);
-    app.set('configForUser', config.configForUser);
 }
 
 

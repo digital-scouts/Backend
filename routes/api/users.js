@@ -3,7 +3,7 @@ const router = require('express').Router(),
     token = require('../token').verifyToken;
 
 router.route('/')
-    .get(token, users.getAll)
+    .get(users.getAll)
     .post(users.addUser)
     .delete(users.deleteAll);
 

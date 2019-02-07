@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken'),
  */
 function verifyToken(request, response, next) {
     // Extract token from header / url parameters / post parameters
-    let token = request.body.token || request.query.token || request.headers['x-access-token'];
+    let token = request.body.token;
     if (token) {
         /* TODO Decoded what...? */
         let functionProcessDecoded = function(error, decoded) {
