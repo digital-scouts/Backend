@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app-test');
+var app = require('../app_test');
 var debug = require('debug')('digital-scouts-backend:server');
 var http = require('http');
 
