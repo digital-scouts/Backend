@@ -1,4 +1,4 @@
-var router = require('express').Router(),
+const router = require('express').Router(),
     jwt = require('jsonwebtoken'),
     token = require('./token').verifyToken;
 
