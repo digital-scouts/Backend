@@ -18,6 +18,10 @@ const Errors = {
         status: 404,
         message: "Request could not be resolved."
     },
+    UnprocessableEntity:{
+        status: 422,
+        message: "Request is semantically erroneous."
+    },
     InternalServerError: {
         status: 500,
         message: "An internal server error occurred."

@@ -6,11 +6,11 @@ let ObjectID = Schema.Types.ObjectId;
 const user = new Schema({
     name_first: {
         type: String,
-        required: true
+        required: [true,"First Name is required (name_first)"]
     },
     name_last: {
         type: String,
-        required: true
+        required: [true,"Last Name is required (name_last)"]
     },
     image_profile: {
         type: String,
@@ -18,14 +18,15 @@ const user = new Schema({
     },
     email : {
         type: String,
-        required: true,
+        required: [true, "Email is required (email)"],
         unique: true,
-        lowercase: true
+        lowercase: true,
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
-    // in/out
     password: {
         type: String,
-        required: true
+        required: [true, "Password is required (password)"],
+        match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/,"Please choose a saver password. Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character (@$!%*?&.-_)."]
     },
     address: {
         plz: {
@@ -46,8 +47,10 @@ const user = new Schema({
         }
     },
     role: {
-        type: String,
-        default: 'demoUser'
+        type: [{
+            type: String
+        }],
+        default: ['demoUser']
     },
 },{
         timestamps: true

@@ -7,4 +7,11 @@ router.route('/')
     .post(users.addUser)
     .delete(users.deleteAll);
 
+router.route('/:id')
+    .get(token, users.getUser)
+    .delete(token, users.deleteUser);
+
+router.route('/image')
+    .post(token, users.setProfilePicture);
+
 module.exports = router;

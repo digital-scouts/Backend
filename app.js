@@ -14,7 +14,7 @@ const indexRouter = require('./routes/index'),
     authRouter = require('./routes/api/auth');
 
 configureExpress();
-configureDatabase(),
+configureDatabase();
 
     module.exports = app;
 
