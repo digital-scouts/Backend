@@ -20,7 +20,7 @@ const Errors = {
     },
     UnprocessableEntity:{
         status: 422,
-        message: "Request is semantically erroneous."
+        message: "Request is semantically wrong."
     },
     InternalServerError: {
         status: 500,
