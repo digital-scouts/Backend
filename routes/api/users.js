@@ -1,6 +1,7 @@
 const router = require('express').Router(),
     users = require('../../controller/userController'),
-    token = require('../token').verifyToken;
+    token = require('../token').verifyToken,
+    permission = require('../permission').hasPermission;
 
 router.route('/')
     .get(users.getAll)
@@ -12,6 +13,6 @@ router.route('/:id')
     .delete(token, users.deleteUser);
 
 router.route('/image')
-    .post(token, users.setProfilePicture);
+    .post(token, permission("hi"), users.setProfilePicture);
 
 module.exports = router;
