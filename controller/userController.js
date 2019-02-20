@@ -1,4 +1,4 @@
-const modelUser = require('../models/userModel').demoUser,
+const modelUser = require('../models/userModel').user,
     ErrorREST = require('../errors').ErrorREST,
     Errors = require('../errors').Errors;
 
@@ -61,7 +61,7 @@ function deleteAll(request, response, next) {
  * @param next
  */
 function setProfilePicture(request, response, next){
-
+    response.status(200).json("Profile Picture not implemented yet")
 }
 
 /**
