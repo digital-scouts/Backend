@@ -1,3 +1,5 @@
+//https://stackoverflow.com/questions/24286835/express-js-mongoose-user-roles-and-permissions
+
 let mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
@@ -48,7 +50,8 @@ const user = new Schema({
     },
     role: {
         type: [{
-            type: String
+            type: String,
+            enum: ['demoUser', 'woe', 'jufi', 'pfadi', 'rover', 'leader', 'admin', 'parent']
         }],
         default: ['demoUser']
     },
@@ -65,12 +68,5 @@ const user = new Schema({
 );
 
 module.exports = {
-    user_woe: mongoose.model('user_woe', user),
-    user_jufi: mongoose.model('user_jufi', user),
-    user_pfadi: mongoose.model('user_pfadi', user),
-    user_rover: mongoose.model('user_rover', user),
-    leader: mongoose.model('leader', user),
-    parent: mongoose.model('parent', user),
-    parent_representatives: mongoose.model('parent_representatives', user),
-    demoUser: mongoose.model('demo_user', user),
+    user: mongoose.model('user', user),
 };

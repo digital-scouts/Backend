@@ -1,4 +1,4 @@
-const user = require('../models/userModel').demoUser,
+const user = require('../models/userModel').user,
     jwt = require('jsonwebtoken'),
     ErrorREST = require('../errors').ErrorREST,
     Errors = require('../errors').Errors;
@@ -15,15 +15,13 @@ const user = require('../models/userModel').demoUser,
  * @returns {Promise<*>}
  */
 async function authenticate(request, response, next) {
-    /* TODO Rewrite to query? */
     if(!request.body.email) {
         return next(new ErrorREST(Errors.BadRequest, "User name missing."));
     } else if(!request.body.password) {
         return next(new ErrorREST(Errors.BadRequest, "Password missing."));
     }
 
-    let searchCriteria = { email: request.body.email };
-    user.findOne(searchCriteria).then(processData).catch(next);
+    user.findOne({ email: request.body.email }).then(processData).catch(next);
 
     function processData(user) {
         if(!user) {
