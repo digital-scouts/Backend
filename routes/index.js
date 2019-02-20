@@ -1,5 +1,4 @@
 const router = require('express').Router(),
-    jwt = require('jsonwebtoken'),
     token = require('./token').verifyToken;
 
 router.route('/')
