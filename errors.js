@@ -2,6 +2,10 @@
 /* TODO Add error handling if the request should fail - e.g. data is not in DB */
 
 const Errors = {
+    NoContent: {
+        status: 204,
+        message: "The functionality is not implemented yet. Come back later."
+    },
     BadRequest: {
         status: 400,
         message: "Request has wrong format."
@@ -18,7 +22,7 @@ const Errors = {
         status: 404,
         message: "Request could not be resolved."
     },
-    UnprocessableEntity:{
+    UnprocessableEntity: {
         status: 422,
         message: "Request is semantically wrong."
     },
@@ -33,16 +37,16 @@ const Errors = {
 };
 
 class ErrorREST extends Error {
-    constructor(type, detail=undefined, ...args) {
+    constructor(type, detail = undefined, ...args) {
         super(...args);
 
-        if(typeof type !== 'object') {
+        if (typeof type !== 'object') {
             return new Error("You need to provide the error type.");
         }
 
         this.response = type;
 
-        if(detail !== undefined) {
+        if (detail !== undefined) {
             this.response.detail = detail;
         }
     }
