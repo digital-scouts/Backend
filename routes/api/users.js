@@ -4,7 +4,7 @@ const router = require('express').Router(),
 
 router.route('/')
     .get(token, users.getAll)
-    .post(users.addUser)
+    .post(users.addUser) //no token needed to create a account
     .put(token, users.updateUser);
 
 router.route('/:id')
