@@ -3,8 +3,6 @@ const config = require('../config');
 let mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-let ObjectID = Schema.Types.ObjectId;
-
 //return string array with all rolenames set in config file
 let roleNames = config.permission.map(function (item) {
     return item['roleName'];

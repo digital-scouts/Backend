@@ -12,9 +12,11 @@ const ErrorREST = require('../errors').ErrorREST,
  * @param next
  */
 function getAllUsers(request, response, next){
-
-
-    response.status(Errors.NoContent.status);
+    if (app.get('DEBUG') || request.decoded.role === 'admin') {
+        modelUser.find().then(data => response.json(data)).catch(next);
+    } else {
+        return next(new ErrorREST(Errors.Forbidden));
+    }
 }
 
 /**
@@ -26,9 +28,18 @@ function getAllUsers(request, response, next){
  * @param next
  */
 function getOneUser(request, response, next){
+    let requestedUserID = request.params.id;
+    let ownUserID =  request.decoded.userID;
 
-
-    response.status(Errors.NoContent.status);
+    modelUser.findById(requestedUserID).then(
+        user => {
+            if(user) {
+                response.status(200).json(user)
+            } else {
+                return next(new ErrorREST(Errors.NotFound, "User does not exist."));
+            }
+        }
+    ).catch(next);
 }
 
 /**
@@ -72,9 +83,9 @@ function deleteUser(request, response, next){
  * @param next
  */
 function getNotActivatedUsers(request, response, next) {
+    //modelUser.find().then(data => response.json(data)).catch(next);
 
-
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -88,7 +99,7 @@ function getNotActivatedUsers(request, response, next) {
 function activateUser(request, response, next) {
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -102,7 +113,7 @@ function activateUser(request, response, next) {
 function getDisabledUsers(request, response, next) {
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -116,7 +127,7 @@ function getDisabledUsers(request, response, next) {
 function changeDisable(request, response, next) {
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -130,7 +141,7 @@ function changeDisable(request, response, next) {
 function getInactiveUsers(request, response, next) {
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 

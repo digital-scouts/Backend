@@ -85,7 +85,7 @@ function getUser(request, response, next){
 function updateEmail(request, response, next){
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -97,7 +97,7 @@ function updateEmail(request, response, next){
 function updatePassword(request, response, next){
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 /**
@@ -111,7 +111,7 @@ function updatePassword(request, response, next){
 function updateUser(request, response, next){
 
 
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json({});
 }
 
 
