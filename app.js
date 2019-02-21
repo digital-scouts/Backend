@@ -11,7 +11,8 @@ const express = require('express'),
 // Routes directory
 const indexRouter = require('./routes/index'),
     usersRouter = require('./routes/api/users'),
-    authRouter = require('./routes/api/auth');
+    authRouter = require('./routes/api/auth'),
+    adminAccount = require('./routes/api/adminAccounts');
 
 configureExpress();
 configureDatabase();
@@ -42,9 +43,9 @@ function configureExpress() {
     // Use REST routes
     app.use('/', indexRouter);
 
-    /* TODO [Low priority] Is it possible to map those automatically? */
     app.use('/api/users', usersRouter);
     app.use('/api/auth', authRouter);
+    app.use('/api/admin/accounts', adminAccount);
 
     // Error handler
     app.use(function (error, request, response, next) {
