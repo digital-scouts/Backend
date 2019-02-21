@@ -4,6 +4,8 @@ const modelUser = require('../models/userModel').user,
 
 /**
  * For debug and testing, show all users at once
+ * todo move to adminAccount
+ * todo return only names and group
  * @param request
  * @param response
  * @param next
@@ -39,21 +41,6 @@ async function addUser(request, result, next) {
 }
 
 /**
- * For debug and testing, remove all users at once
- * @param request
- * @param response
- * @param next
- * @returns {*}
- */
-function deleteAll(request, response, next) {
-    if (app.get('DEBUG') || request.decoded.role === 'admin') {
-        modelUser.deleteMany().then(data => response.json(data)).catch(next);
-    } else {
-        return next(new ErrorREST(Errors.Forbidden));
-    }
-}
-
-/**
  * todo set the profile picture
  * todo check if user has permission
  * @param request
@@ -61,12 +48,13 @@ function deleteAll(request, response, next) {
  * @param next
  */
 function setProfilePicture(request, response, next){
-    response.status(200).json("Profile Picture not implemented yet")
+    response.status(Errors.NoContent.status);
 }
 
 /**
  * get user by id in params
  * todo permission check
+ * todo return only names and group
  * @param request
  * @param response
  * @param next
@@ -86,26 +74,53 @@ function getUser(request, response, next){
     ).catch(next);
 }
 
+
 /**
- * delete user by id in params
- * todo permission check
+ * todo send verification email to given email
+ * todo confirm and update email in another method
  * @param request
  * @param response
  * @param next
  */
-function deleteUser(request, response, next){
-    let requestedUserID = request.params.id;
-    let ownUserID =  request.decoded.userID;
+function updateEmail(request, response, next){
 
-    modelUser.remove({_id: requestedUserID}).then(user => response.json({removedElements: user})).catch(next);
+
+    response.status(Errors.NoContent.status);
+}
+
+/**
+ * todo confirm old password, than update new password
+ * @param request
+ * @param response
+ * @param next
+ */
+function updatePassword(request, response, next){
+
+
+    response.status(Errors.NoContent.status);
+}
+
+/**
+ * update everything in the user model except email and password
+ * todo check witch data is given
+ * todo update new data
+ * @param request
+ * @param response
+ * @param next
+ */
+function updateUser(request, response, next){
+
+
+    response.status(Errors.NoContent.status);
 }
 
 
 module.exports = {
     getAll: getAll,
     addUser: addUser,
-    deleteAll: deleteAll,
     setProfilePicture:setProfilePicture,
     getUser:getUser,
-    deleteUser:deleteUser
+    updateEmail:updateEmail,
+    updatePassword:updatePassword,
+    updateUser:updateUser
 };

@@ -52,6 +52,7 @@ async function authenticate(request, response, next) {
     }
 }
 
+
 module.exports = {
-    authenticate: authenticate
+    authenticate: authenticate,
 };
