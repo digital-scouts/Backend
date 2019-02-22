@@ -77,7 +77,7 @@ function deleteUser(request, response, next){
 /**
  * todo
  * get a list of users with not activated accounts
- * permission: admin, leader
+ * permission: admin
  * @param request
  * @param response
  * @param next
@@ -91,7 +91,7 @@ function getNotActivatedUsers(request, response, next) {
 /**
  * todo
  * activate a specific users account
- * permission: admin, leader
+ * permission: admin
  * @param request
  * @param response
  * @param next
@@ -105,7 +105,7 @@ function activateUser(request, response, next) {
 /**
  * todo
  * get a list of disabled accounts
- * permission: admin, leader
+ * permission: admin
  * @param request
  * @param response
  * @param next
@@ -133,7 +133,7 @@ function changeDisable(request, response, next) {
 /**
  * todo
  * get a list of inactive accounts
- * permission: admin, leader
+ * permission: admin
  * @param request
  * @param response
  * @param next

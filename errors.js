@@ -1,6 +1,3 @@
-/* TODO Add error handling if important request data is missing */
-/* TODO Add error handling if the request should fail - e.g. data is not in DB */
-
 const Errors = {
     NoContent: {
         status: 204,

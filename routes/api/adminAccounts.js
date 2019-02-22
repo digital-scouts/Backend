@@ -1,9 +1,10 @@
 const router = require('express').Router(),
     adminAccount = require('../../controller/adminAccountController'),
-    token = require('../token').verifyToken;
+    token = require('../token').verifyToken,
+    permission = require('../permission').checkPermission;
 
 router.route('/user')
-    .get(token, adminAccount.getAllUsers)
+    .get(token, permission, adminAccount.getAllUsers)
     .delete(token, adminAccount.deleteAll);
 
 router.route('/user/:id')
