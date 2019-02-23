@@ -1,3 +1,9 @@
+## Anforderungsdokumentation ##
+
+Jeder kommentar im Dokument ist mir eine Hilfe.
+https://docs.google.com/document/d/1vvRm_NTy4QUYKYIB3qHDK87ALiySdbvNTvioZAqokQk/edit?usp=sharing
+
+
 ## Installation ## 
 
 Dank der Verwendung von Docker lässt sich das Projekt sehr einfach aufsetzten. Es reicht die Verwendung von docker-compose:
