@@ -13,8 +13,12 @@ function decodePath(requestedPath) {
     requestedPath.pop();
     let path = Config.permission;
     requestedPath.forEach(function (item) {
-        if (path[item] == null) {
-
+        if (path[item]) {
+            console.log('${item} has a path')
+            path = path[item];
+        }else{
+            //todo isID?
+            return new ErrorREST(Errors.NotFound);
         }
     });
     // console.log("________" + requestedPath )
