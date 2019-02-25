@@ -16,7 +16,7 @@ var AdminAccount = /** @class */ (function () {
      * @param next
      */
     AdminAccount.getAllUsers = function (request, response, next) {
-        if (expressApp_1.app.get('DEBUG') || request.decoded.role === 'admin') {
+        if (expressApp_1.default.get('DEBUG') || request.decoded.role === 'admin') {
             userModel_1.user.find().then(function (data) { return response.json(data); }).catch(next);
         }
         else {
@@ -52,7 +52,7 @@ var AdminAccount = /** @class */ (function () {
      * @returns {*}
      */
     AdminAccount.deleteAll = function (request, response, next) {
-        if (expressApp_1.app.get('DEBUG') || request.decoded.role === 'admin') {
+        if (expressApp_1.default.get('DEBUG') || request.decoded.role === 'admin') {
             userModel_1.user.deleteMany().then(function (data) { return response.json(data); }).catch(next);
         }
         else {
