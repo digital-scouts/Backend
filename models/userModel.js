@@ -1,10 +1,10 @@
-const config = require('../config');
+const config = require('../config').Config.user;
 
 let mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 //return string array with all rolenames set in config file
-let roleNames = config.permission.map(function (item) {
+let roleNames = config.map(function (item) {
     return item['roleName'];
 });
 

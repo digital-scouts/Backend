@@ -48,7 +48,7 @@ async function addUser(request, result, next) {
  * @param next
  */
 function setProfilePicture(request, response, next){
-    response.status(Errors.NoContent.status);
+    response.status(Errors.NoContent.status).json();
 }
 
 /**
