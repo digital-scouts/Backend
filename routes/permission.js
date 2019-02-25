@@ -1,6 +1,6 @@
-const ErrorREST = require("../errors"),
-    Errors = require("../errors"),
-    Config = require("../config");
+const ErrorREST = require("../errors").ErrorREST,
+    Errors = require("../errors").Errors,
+    Config = require("../config").Config;
 
 /**
  * todo
@@ -9,21 +9,15 @@ const ErrorREST = require("../errors"),
  * @returns {*}
  */
 function decodePath(requestedPath) {
-    requestedPath.pop();
-    requestedPath.pop();
+    requestedPath.shift();
+    requestedPath.shift();
     let path = Config.permission;
-    requestedPath.forEach(function (item) {
+    requestedPath.forEach(function (item, index) {
         if (path[item]) {
-            console.log('${item} has a path')
             path = path[item];
-        }else{
-            //todo isID?
-            return new ErrorREST(Errors.NotFound);
         }
     });
-    // console.log("________" + requestedPath )
-    // console.log("________" + config.permission[requestedPath[2]][requestedPath[3]].permissionLevel )
-    return "";
+    return path;
 }
 
 /**
@@ -35,7 +29,13 @@ function decodePath(requestedPath) {
  * @throws Errors.Forbidden
  */
 function checkApiPermission(path, method, userRole) {
-    //return next(new ErrorREST(Errors.Forbidden));
+    let permissionList = path[method].users;
+    let find = permissionList.find(function (element) {
+        return element === userRole;
+    });
+    if(find === undefined){
+        return false;
+    }
 }
 
 /**
@@ -59,7 +59,10 @@ function checkPermission(request, response, next) {
     let requestedUserID = request.params.id;
     let decodedPath = decodePath(request.originalUrl.split('/'));
 
-    checkApiPermission(decodedPath, request.method, userRole);
+    if(!checkApiPermission(decodedPath, request.method, userRole)){
+        return next(new ErrorREST(Errors.Forbidden));
+    }
+
 
     if (requestedUserID != null) {
         checkPermissionLevel();
