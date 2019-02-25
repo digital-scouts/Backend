@@ -1,4 +1,19 @@
-const Errors = {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Errors = {
     NoContent: {
         status: 204,
         message: "The functionality is not implemented yet. Come back later."
@@ -32,24 +47,21 @@ const Errors = {
         message: "The service is currently not available."
     }
 };
-
-class ErrorREST extends Error {
-    constructor(type, detail = undefined, ...args) {
-        super(...args);
-
-        if (typeof type !== 'object') {
-            return new Error("You need to provide the error type.");
+var ErrorREST = /** @class */ (function (_super) {
+    __extends(ErrorREST, _super);
+    function ErrorREST(type, detail) {
+        if (detail === void 0) { detail = undefined; }
+        var args = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            args[_i - 2] = arguments[_i];
         }
-
-        this.response = type;
-
+        var _this = _super.apply(this, args) || this;
+        _this.response = type;
         if (detail !== undefined) {
-            this.response.detail = detail;
+            _this.response.detail = detail;
         }
+        return _this;
     }
-}
-
-module.exports = {
-    ErrorREST: ErrorREST,
-    Errors: Errors
-};
+    return ErrorREST;
+}(Error));
+exports.ErrorREST = ErrorREST;
