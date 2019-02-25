@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken'),
-    ErrorREST = require('../errors').ErrorREST,
-    Errors = require('../errors').Errors;
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var expressApp_1 = require("../expressApp");
+var jwt = require("jsonwebtoken");
+var errors_1 = require("../errors");
 /**
  * This is just called by the router and checks the status of a given token.
  * @param request
@@ -10,28 +11,20 @@ const jwt = require('jsonwebtoken'),
  */
 function verifyToken(request, response, next) {
     // Extract token from header / url parameters / post parameters
-    let token = request.body.token;
+    var token = request.body.token;
     if (token) {
-        /* TODO Decoded what...? */
-        let functionProcessDecoded = function(error, decoded) {
-            /* TODO What kind of errors are possible? */
+        jwt.verify(token, expressApp_1.default.get('salt'), function (error, decoded) {
             if (error) {
-                return next(new ErrorREST(Errors.Unauthorized));
+                return next(new errors_1.ErrorREST(errors_1.Errors.Unauthorized));
             }
             // Save to request for use in other routes
             request.decoded = decoded;
             next();
-        };
-        jwt.verify(
-            token, app.get('salt'),
-            functionProcessDecoded
-        );
-    } else {
+        });
+    }
+    else {
         //return next(new ErrorREST(Errors.BadRequest, "Token required."));
-        return next(new ErrorREST(Errors.Unauthorized));
+        return next(new errors_1.ErrorREST(errors_1.Errors.Unauthorized));
     }
 }
-
-module.exports = {
-    verifyToken: verifyToken
-};
+exports.verifyToken = verifyToken;

@@ -1,25 +1,32 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express");
-var mongoose = require("mongoose");
-var bodyParser = require("body-parser");
-var morgan = require("morgan");
-var path = require("path");
-var config_1 = require("./config");
-var errors_1 = require("./errors");
-var App = /** @class */ (function () {
+import * as express from "express";
+import * as mongoose from "mongoose";
+import * as bodyParser from "body-parser";
+import * as morgan from "morgan";
+import * as path from 'path';
+import {Config} from "./config";
+import {ErrorREST, Errors} from "./errors";
+
+import indexRouter from "./routes/index";
+import usersRouter from "./routes/api/users";
+import authRouter from "./routes/api/auth";
+import adminAccount from "./routes/api/adminAccounts";
+
+class ExpressApp {
+    public express: express.Application;
+
     //Run configuration methods on the Express instance.
-    function App() {
+    constructor() {
         this.express = express();
         this.middleware();
         this.routes();
         this.mongo();
         console.log('Node.ts setup finished');
     }
-    App.prototype.middleware = function () {
-        this.express.use(bodyParser.urlencoded({ extended: false }));
-        this.express.use(bodyParser.json({ limit: "8mb" }));
-        this.express.use(express.json({ limit: "8mb" }));
+
+    private middleware(): void {
+        this.express.use(bodyParser.urlencoded({extended: false}));
+        this.express.use(bodyParser.json({limit: "8mb"}));
+        this.express.use(express.json({limit: "8mb"}));
         this.express.use(express.static(path.join(__dirname, 'public')));
         this.express.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
@@ -29,6 +36,7 @@ var App = /** @class */ (function () {
         });
         // Use morgan to log requests to the console.
         this.express.use(morgan('dev'));
+
         // Error handler
         this.express.use(function (error, request, response, next) {
             function logRequest(logger, request) {
@@ -43,44 +51,55 @@ var App = /** @class */ (function () {
                 logger("BODY:");
                 logger(request.body);
             }
-            var validRESTError = error instanceof errors_1.ErrorREST;
+
+            let validRESTError = error instanceof ErrorREST;
             if (validRESTError) {
                 logRequest(console.log, request);
                 console.log("ERROR OCCURRED:");
                 console.log(error);
-            }
-            else {
+            } else {
                 logRequest(console.error, request);
                 console.error("ERROR OCCURRED:");
                 console.error(error);
+
                 // Replace the error with a suitable one for the end user
-                error = new errors_1.ErrorREST(errors_1.Errors.InternalServerError);
+                error = new ErrorREST(Errors.InternalServerError);
             }
+
             response.status(error.response.status).send(error.response);
         });
-        // Set global constants
-        this.express.set('salt', config_1.Config.salt);
-        this.express.set('DEBUG', config_1.Config.DEBUG);
-    };
-    App.prototype.routes = function () {
-        // this.express.use('/', indexRouter);
-        // this.express.use('/api/users', usersRouter);
-        // this.express.use('/api/auth', authRouter);
-        // this.express.use('/api/admin/accounts', adminAccount);
-    };
-    App.prototype.mongo = function () {
-        var db_url = config_1.Config.database;
+// Set global constants
+        this.express.set('salt', Config.salt);
+        this.express.set('DEBUG', Config.DEBUG);
+
+    }
+
+    private routes(): void {
+        this.express.use('/', indexRouter);
+
+        this.express.use('/api/users', usersRouter);
+        this.express.use('/api/auth', authRouter);
+        this.express.use('/api/admin/accounts', adminAccount);
+    }
+
+    private mongo() {
+
+        const db_url = Config.database;
         // Connect to the mongoDB via mongoose
-        mongoose.connect(db_url, { useNewUrlParser: true });
+        mongoose.connect(db_url, {useNewUrlParser: true});
         var db = mongoose.connection;
+
         // Bind connection to error event ( to get notification of connection errors)
         db.on('error', console.error.bind(console, 'connection error: '));
         db.once('open', function () {
             // connected
             console.log('MongoDB connected..');
         });
-    };
-    return App;
-}());
-var app = new App();
-exports.default = app.express;
+    }
+}
+const app = new ExpressApp();
+export default app.express;
+
+
+
+

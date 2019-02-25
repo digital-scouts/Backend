@@ -1,23 +1,30 @@
-const router = require('express').Router(),
-    users = require('../../controller/userController'),
-    token = require('../token').verifyToken,
-    permission = require('../permission').checkPermission;
-
-router.route('/')
-    .get(token,permission, users.getAll)
-    .post(users.addUser) //no token needed to create a account
-    .put(token, users.updateUser);
-
-router.route('/:id')
-    .get(token, permission, users.getUser);
-
-router.route('/image')
-    .put(token, permission, users.setProfilePicture);
-
-router.route('/password')
-    .put(token, users.updatePassword);
-
-router.route('/email')
-    .put(token, users.updateEmail);
-
-module.exports = router;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var userController_1 = require("../../controller/userController");
+var token_1 = require("../token");
+var permission_1 = require("../permission");
+var Users = /** @class */ (function () {
+    function Users() {
+        this.router = express_1.Router();
+        this.init();
+    }
+    Users.prototype.init = function () {
+        this.router.route('/')
+            .get(token_1.verifyToken, permission_1.checkPermission, function (re, rs, ne) { return userController_1.UserController.getAll(re, rs, ne); })
+            .post(userController_1.UserController.addUser) //no token needed to create a account
+            .put(token_1.verifyToken, userController_1.UserController.updateUser);
+        this.router.route('/:id')
+            .get(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.getUser);
+        this.router.route('/image')
+            .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.setProfilePicture);
+        this.router.route('/password')
+            .put(token_1.verifyToken, userController_1.UserController.updatePassword);
+        this.router.route('/email')
+            .put(token_1.verifyToken, userController_1.UserController.updateEmail);
+    };
+    return Users;
+}());
+var usersRouter = new Users();
+usersRouter.init();
+exports.default = usersRouter.router;

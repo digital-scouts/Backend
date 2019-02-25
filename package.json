@@ -13,10 +13,16 @@
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.4.0",
+    "jstransformer": "^1.0.0",
     "mongodb": "^3.1.13",
     "mongoose": "^5.4.9",
     "morgan": "~1.9.0",
     "promise": "^8.0.2",
+    "pug": "^2.0.3",
     "save": "^2.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^11.9.5",
+    "babel-cli": "^6.26.0"
   }
 }

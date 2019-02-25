@@ -7,16 +7,20 @@ var morgan = require("morgan");
 var path = require("path");
 var config_1 = require("./config");
 var errors_1 = require("./errors");
-var App = /** @class */ (function () {
+var index_1 = require("./routes/index");
+var users_1 = require("./routes/api/users");
+var auth_1 = require("./routes/api/auth");
+var adminAccounts_1 = require("./routes/api/adminAccounts");
+var ExpressApp = /** @class */ (function () {
     //Run configuration methods on the Express instance.
-    function App() {
+    function ExpressApp() {
         this.express = express();
         this.middleware();
         this.routes();
         this.mongo();
         console.log('Node.ts setup finished');
     }
-    App.prototype.middleware = function () {
+    ExpressApp.prototype.middleware = function () {
         this.express.use(bodyParser.urlencoded({ extended: false }));
         this.express.use(bodyParser.json({ limit: "8mb" }));
         this.express.use(express.json({ limit: "8mb" }));
@@ -62,13 +66,13 @@ var App = /** @class */ (function () {
         this.express.set('salt', config_1.Config.salt);
         this.express.set('DEBUG', config_1.Config.DEBUG);
     };
-    App.prototype.routes = function () {
-        // this.express.use('/', indexRouter);
-        // this.express.use('/api/users', usersRouter);
-        // this.express.use('/api/auth', authRouter);
-        // this.express.use('/api/admin/accounts', adminAccount);
+    ExpressApp.prototype.routes = function () {
+        this.express.use('/', index_1.default);
+        this.express.use('/api/users', users_1.default);
+        this.express.use('/api/auth', auth_1.default);
+        this.express.use('/api/admin/accounts', adminAccounts_1.default);
     };
-    App.prototype.mongo = function () {
+    ExpressApp.prototype.mongo = function () {
         var db_url = config_1.Config.database;
         // Connect to the mongoDB via mongoose
         mongoose.connect(db_url, { useNewUrlParser: true });
@@ -80,7 +84,7 @@ var App = /** @class */ (function () {
             console.log('MongoDB connected..');
         });
     };
-    return App;
+    return ExpressApp;
 }());
-var app = new App();
+var app = new ExpressApp();
 exports.default = app.express;
