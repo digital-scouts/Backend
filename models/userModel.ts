@@ -7,7 +7,7 @@ let roleNames = Config.user.map(function (item) {
     return item['roleName'];
 });
 
-export const user:Schema = new Schema({
+const user:Schema = new Schema({
         name_first: {
             type: String,
             required: [true, 'First Name is required (name_first)']

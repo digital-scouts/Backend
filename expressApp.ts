@@ -63,7 +63,7 @@ class ExpressApp {
                 console.error(error);
 
                 // Replace the error with a suitable one for the end user
-                error = new ErrorREST(Errors.InternalServerError);
+                error = new ErrorREST("InternalServerError");
             }
 
             response.status(error.response.status).send(error.response);

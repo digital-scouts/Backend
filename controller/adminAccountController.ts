@@ -3,7 +3,7 @@ import express from "../expressApp";
 import {Errors} from "../errors";
 import {ErrorREST} from "../errors";
 
-import {user as modelUser} from "../models/userModel";
+import {User} from "../models/userModel";
 
 export class AdminAccount {
 
@@ -15,11 +15,11 @@ export class AdminAccount {
      * @param response
      * @param next
      */
-    public static getAllUsers(request, response, next):void{
+    public static getAllUsers(request, response, next): void {
         if (express.get('DEBUG') || request.decoded.role === 'admin') {
-            modelUser.find().then(data => response.json(data)).catch(next);
+            User.find().then(data => response.json(data)).catch(next);
         } else {
-            return next(new ErrorREST(Errors.Forbidden));
+            return next(new ErrorREST("Forbidden"));
         }
     }
 
@@ -31,16 +31,16 @@ export class AdminAccount {
      * @param response
      * @param next
      */
-    public static getOneUser(request, response, next){
+    public static getOneUser(request, response, next) {
         let requestedUserID = request.params.id;
-        let ownUserID =  request.decoded.userID;
+        let ownUserID = request.decoded.userID;
 
-        modelUser.findById(requestedUserID).then(
+        User.findById(requestedUserID).then(
             user => {
-                if(user) {
+                if (user) {
                     response.status(200).json(user)
                 } else {
-                    return next(new ErrorREST(Errors.NotFound, "User does not exist."));
+                    return next(new ErrorREST("NotFound", "User does not exist."));
                 }
             }
         ).catch(next);
@@ -56,9 +56,9 @@ export class AdminAccount {
      */
     public static deleteAll(request, response, next) {
         if (express.get('DEBUG') || request.decoded.role === 'admin') {
-            modelUser.deleteMany().then(data => response.json(data)).catch(next);
+            User.deleteMany().then(data => response.json(data)).catch(next);
         } else {
-            return next(new ErrorREST(Errors.Forbidden));
+            return next(new ErrorREST("Forbidden"));
         }
     }
 
@@ -70,11 +70,11 @@ export class AdminAccount {
      * @param response
      * @param next
      */
-    public static deleteUser(request, response, next){
+    public static deleteUser(request, response, next) {
         let requestedUserID = request.params.id;
-        let ownUserID =  request.decoded.userID;
+        let ownUserID = request.decoded.userID;
 
-        modelUser.remove({_id: requestedUserID}).then(user => response.json({removedElements: user})).catch(next);
+        User.remove({_id: requestedUserID}).then(user => response.json({removedElements: user})).catch(next);
     }
 
 
@@ -87,9 +87,10 @@ export class AdminAccount {
      * @param next
      */
     public static getNotActivatedUsers(request, response, next) {
-        //modelUser.find().then(data => response.json(data)).catch(next);
+        User.find({accountStatus: {activated: false}}).then(data => response.json(data)).catch(next);
+        //todo
 
-        response.status(Errors.NoContent.status).json();
+        //response.status(Errors.NoContent.status).json();
     }
 
     /**
@@ -142,8 +143,7 @@ export class AdminAccount {
      * @param response
      * @param next
      */
-     public static getInactiveUsers(request, response, next): void
-    {
+    public static getInactiveUsers(request, response, next): void {
 
 
         response.status(Errors.NoContent.status).json();

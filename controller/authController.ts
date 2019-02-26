@@ -1,6 +1,6 @@
-import {user} from "../models/userModel";
+import {User} from "../models/userModel";
 
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
 import {Errors, ErrorREST} from "../errors";
 import express from '../expressApp';
@@ -18,21 +18,21 @@ export class AuthController {
      */
     public static async authenticate(request, response, next) {
         if (!request.body.email) {
-            return next(new ErrorREST(Errors.BadRequest, "User name missing."));
+            return next(new ErrorREST("BadRequest", "User name missing."));
         } else if (!request.body.password) {
-            return next(new ErrorREST(Errors.BadRequest, "Password missing."));
+            return next(new ErrorREST("BadRequest", "Password missing."));
         }
 
-        user.findOne({email: request.body.email}).then(processData).catch(next);
+        User.findOne({email: request.body.email}).then(processData).catch(next);
 
         function processData(user) {
             if (!user) {
-                return next(new ErrorREST(Errors.Unauthorized, "User does not exist."));
+                return next(new ErrorREST("Unauthorized", "User does not exist."));
             } else {
                 let passwordCorrect = user.password === request.body.password;
 
                 if (!passwordCorrect) {
-                    return next(new ErrorREST(Errors.Unauthorized, "Wrong password."));
+                    return next(new ErrorREST("Unauthorized", "Wrong password."));
                 } else {
                     const payload = {
                         email: user.email,

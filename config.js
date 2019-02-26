@@ -13,22 +13,22 @@ const Config = {
     'user': [
         {
             'roleName': 'woe',
-            'childGroup': true,
+            'childGroup': true
         }, {
-            'roleName': 'jufi', 'childGroup': true,
+            'roleName': 'jufi', 'childGroup': true
         }, {
-            'roleName': 'pfadi', 'childGroup': true,
+            'roleName': 'pfadi', 'childGroup': true
         }, {
-            'roleName': 'rover', 'childGroup': true,
+            'roleName': 'rover', 'childGroup': true
         }, {
-            'roleName': 'leader', 'childGroup': false,
+            'roleName': 'leader', 'childGroup': false
         }, {
-            'roleName': 'parent', 'childGroup': false,
+            'roleName': 'parent', 'childGroup': false
         }, {
-            'roleName': 'admin', 'childGroup': false,
+            'roleName': 'admin', 'childGroup': false
         }, {
             'roleName': 'user',//weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
-            'childGroup': false,
+            'childGroup': false
         }
     ],
     'permission': {
@@ -53,13 +53,13 @@ const Config = {
                     'permissionLevel': permissionLevel.ONLY_SELF
                 }
             },
-            '/password': {
+            'password': {
                 'PUT': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.ONLY_SELF
                 }
             },
-            '/email': {
+            'email': {
                 'PUT': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.ONLY_SELF
@@ -67,26 +67,26 @@ const Config = {
             }
         },
         'admin': {
-            '/accounts': {
-                '/user': {
-                    'GET': ['admin'],
-                    'DELETE': ['admin']
+            'accounts': {
+                'user': {
+                    'GET': {'users': ['admin']},
+                    'DELETE': {'users': ['admin']}
                 },
-                '/user/:id': {
-                    'GET': ['admin'],
-                    'DELETE': ['admin']
+                'user/:id': {
+                    'GET': {'users': ['admin']},
+                    'DELETE': {'users': ['admin']}
                 },
-                '/notActivated': {
-                    'GET': ['admin'],
-                    'PUT': ['admin']
+                'notActivated': {
+                    'GET': {'users': ['admin']},
+                    'PUT': {'users': ['admin']}
                 },
-                '/disabled': {
-                    'GET': ['admin'],
-                    'PUT': ['admin']
+                'disabled': {
+                    'GET': {'users': ['admin']},
+                    'PUT': {'users': ['admin']}
                 },
-                '/inactive': {
-                    'GET': ['admin'],
-                },
+                'inactive': {
+                    'GET': {'users': ['admin']}
+                }
 
             }
         }
