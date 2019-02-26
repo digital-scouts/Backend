@@ -87,7 +87,7 @@ export class AdminAccount {
      * @param next
      */
     public static getNotActivatedUsers(request, response, next) {
-        User.find({accountStatus: {activated: false}}).then(data => response.json(data)).catch(next);
+        User.find({'accountStatus.activated': false}).then(data => response.json(data)).catch(next);
         //todo
 
         //response.status(Errors.NoContent.status).json();
@@ -116,7 +116,7 @@ export class AdminAccount {
      * @param next
      */
     public static getDisabledUsers(request, response, next) {
-
+        User.find({'accountStatus.disabled': true}).then(data => response.json(data)).catch(next);
 
         response.status(Errors.NoContent.status).json();
     }
@@ -130,7 +130,7 @@ export class AdminAccount {
      * @param next
      */
     public static changeDisable(request, response, next) {
-
+        // todo User.findOneAndUpdate({'accountStatus.disabled': true}).then(data => response.json(data)).catch(next);
 
         response.status(Errors.NoContent.status).json();
     }
@@ -144,7 +144,7 @@ export class AdminAccount {
      * @param next
      */
     public static getInactiveUsers(request, response, next): void {
-
+        User.find({'accountStatus.inactive': true}).then(data => response.json(data)).catch(next);
 
         response.status(Errors.NoContent.status).json();
     }
