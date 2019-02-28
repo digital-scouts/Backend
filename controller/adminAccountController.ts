@@ -8,7 +8,6 @@ import {User} from "../models/userModel";
 export class AdminAccount {
 
     /**
-     * todo
      * get all data from all users
      * permission: admin
      * @param request
@@ -16,15 +15,10 @@ export class AdminAccount {
      * @param next
      */
     public static getAllUsers(request, response, next): void {
-        if (express.get('DEBUG') || request.decoded.role === 'admin') {
-            User.find().then(data => response.json(data)).catch(next);
-        } else {
-            return next(new ErrorREST("Forbidden"));
-        }
+        User.find().then(data => response.json(data)).catch(next);
     }
 
     /**
-     * todo
      * get all data from one user
      * permission: admin
      * @param request
@@ -32,10 +26,9 @@ export class AdminAccount {
      * @param next
      */
     public static getOneUser(request, response, next) {
-        let requestedUserID = request.params.id;
-        let ownUserID = request.decoded.userID;
+        // let requestedUserID = request.params.id;
 
-        User.findById(requestedUserID).then(
+        User.findById(request.params.id).then(
             user => {
                 if (user) {
                     response.status(200).json(user)
@@ -47,7 +40,7 @@ export class AdminAccount {
     }
 
     /**
-     * For debug and testing, remove all users at once
+     * Remove all users at once
      * permission: admin
      * @param request
      * @param response
@@ -55,31 +48,22 @@ export class AdminAccount {
      * @returns {*}
      */
     public static deleteAll(request, response, next) {
-        if (express.get('DEBUG') || request.decoded.role === 'admin') {
-            User.deleteMany().then(data => response.json(data)).catch(next);
-        } else {
-            return next(new ErrorREST("Forbidden"));
-        }
+        User.deleteMany().then(data => response.json(data)).catch(next);
     }
 
     /**
      * delete user by id in params
      * permission: admin
-     * todo permission check
      * @param request
      * @param response
      * @param next
      */
     public static deleteUser(request, response, next) {
-        let requestedUserID = request.params.id;
-        let ownUserID = request.decoded.userID;
-
-        User.remove({_id: requestedUserID}).then(user => response.json({removedElements: user})).catch(next);
+        User.remove({_id: request.params.id}).then(user => response.json({removedElements: user})).catch(next);
     }
 
 
     /**
-     * todo
      * get a list of users with not activated accounts
      * permission: admin
      * @param request
@@ -88,9 +72,6 @@ export class AdminAccount {
      */
     public static getNotActivatedUsers(request, response, next) {
         User.find({'accountStatus.activated': false}).then(data => response.json(data)).catch(next);
-        //todo
-
-        //response.status(Errors.NoContent.status).json();
     }
 
     /**
