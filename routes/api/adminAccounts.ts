@@ -23,11 +23,15 @@ class AdminAccounts{
             .delete(token, AdminAccount.deleteUser);
 
         this.router.route('/notActivated')
-            .get(token, AdminAccount.getNotActivatedUsers)
+            .get(token, AdminAccount.getNotActivatedUsers);
+
+        this.router.route('/notActivated/:id')
             .put(token, AdminAccount.activateUser);
 
         this.router.route('/disabled')
-            .get(token, AdminAccount.getDisabledUsers)
+            .get(token, AdminAccount.getDisabledUsers);
+
+        this.router.route('/disabled/:id')
             .put(token, AdminAccount.changeDisable);
 
         this.router.route('/inactive')

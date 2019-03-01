@@ -2,7 +2,6 @@ import express from "../expressApp";
 
 import {Errors} from "../errors";
 import {ErrorREST} from "../errors";
-
 import {User} from "../models/userModel";
 
 export class AdminAccount {
@@ -75,7 +74,6 @@ export class AdminAccount {
     }
 
     /**
-     * todo
      * activate a specific users account
      * permission: admin
      * @param request
@@ -83,13 +81,14 @@ export class AdminAccount {
      * @param next
      */
     public static activateUser(request, response, next) {
-
-
-        response.status(Errors.NoContent.status).json();
+        User.findByIdAndUpdate(request.params.id, {$set: {'accountStatus.activated': true}}, {new: true}, (err, doc) => {
+            if (err)
+                response.status(Errors.BadRequest.status, "No user with this id found").json(err);
+            response.json(doc);
+        });
     }
 
     /**
-     * todo
      * get a list of disabled accounts
      * permission: admin
      * @param request
@@ -98,26 +97,29 @@ export class AdminAccount {
      */
     public static getDisabledUsers(request, response, next) {
         User.find({'accountStatus.disabled': true}).then(data => response.json(data)).catch(next);
-
-        response.status(Errors.NoContent.status).json();
     }
 
     /**
-     * todo
      * disable or enable a specific user account
      * permission: admin
      * @param request
      * @param response
      * @param next
      */
-    public static changeDisable(request, response, next) {
-        // todo User.findOneAndUpdate({'accountStatus.disabled': true}).then(data => response.json(data)).catch(next);
+    public static async changeDisable(request, response, next) {
+        let isDisabled = false;
+        await User.findById(request.params.id, (err, doc) => {
+            isDisabled = doc.accountStatus.disabled;
+        });
 
-        response.status(Errors.NoContent.status).json();
+        User.findByIdAndUpdate(request.params.id, {$set: {'accountStatus.disabled': !isDisabled}}, {new: true}, (err, doc) => {
+            if (err)
+                response.status(Errors.BadRequest.status, "No user with this id found").json(err);
+            response.json(doc);
+        });
     }
 
     /**
-     * todo
      * get a list of inactive accounts
      * permission: admin
      * @param request
@@ -126,7 +128,5 @@ export class AdminAccount {
      */
     public static getInactiveUsers(request, response, next): void {
         User.find({'accountStatus.inactive': true}).then(data => response.json(data)).catch(next);
-
-        response.status(Errors.NoContent.status).json();
     }
 }
