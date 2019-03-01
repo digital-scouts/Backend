@@ -97,9 +97,4 @@ class ExpressApp {
         });
     }
 }
-const app = new ExpressApp();
-export default app.express;
-
-
-
-
+export default new ExpressApp().express;

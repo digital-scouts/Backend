@@ -17,10 +17,12 @@ var AdminAccounts = /** @class */ (function () {
             .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getOneUser)
             .delete(token_1.verifyToken, adminAccountController_1.AdminAccount.deleteUser);
         this.router.route('/notActivated')
-            .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getNotActivatedUsers)
+            .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getNotActivatedUsers);
+        this.router.route('/notActivated/:id')
             .put(token_1.verifyToken, adminAccountController_1.AdminAccount.activateUser);
         this.router.route('/disabled')
-            .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getDisabledUsers)
+            .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getDisabledUsers);
+        this.router.route('/disabled/:id')
             .put(token_1.verifyToken, adminAccountController_1.AdminAccount.changeDisable);
         this.router.route('/inactive')
             .get(token_1.verifyToken, adminAccountController_1.AdminAccount.getInactiveUsers);

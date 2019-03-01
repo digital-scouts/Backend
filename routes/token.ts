@@ -16,7 +16,7 @@ export function verifyToken(request, response, next) {
     if (token) {
         jwt.verify(token, App.get('salt'),  (error, decoded) => {
                 if (error) {
-                    return next(new ErrorREST(Errors.Unauthorized));
+                    return next(new ErrorREST("Unauthorized"));
                 }
                 // Save to request for use in other routes
                 request.decoded = decoded;
@@ -24,6 +24,6 @@ export function verifyToken(request, response, next) {
             });
     } else {
         //return next(new ErrorREST(Errors.BadRequest, "Token required."));
-        return next(new ErrorREST(Errors.Unauthorized));
+        return next(new ErrorREST("Unauthorized"));
     }
 }
