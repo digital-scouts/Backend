@@ -4,7 +4,7 @@ import {UserController} from "../../controller/userController";
 import {verifyToken as token} from "../token";
 import {checkPermission as permission} from "../permission";
 
-class Users{
+class Users {
     router: Router;
 
     constructor() {
@@ -14,9 +14,9 @@ class Users{
 
     init() {
         this.router.route('/')
-            .get(token,permission, (re,rs,ne) => UserController.getAll(re,rs,ne))
+            .get(token, permission, (re, rs, ne) => UserController.getAll(re, rs, ne))
             .post(UserController.addUser) //no token needed to create a account
-            .put(token, UserController.updateUser);
+            .put(token, permission, UserController.updateUser);
 
         this.router.route('/:id')
             .get(token, permission, UserController.getUser);
@@ -25,10 +25,10 @@ class Users{
             .put(token, permission, UserController.setProfilePicture);
 
         this.router.route('/password')
-            .put(token, UserController.updatePassword);
+            .put(token, permission, UserController.updatePassword);
 
         this.router.route('/email')
-            .put(token, UserController.updateEmail);
+            .put(token, permission, UserController.updateEmail);
     }
 }
 

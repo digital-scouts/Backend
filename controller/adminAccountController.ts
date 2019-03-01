@@ -8,7 +8,6 @@ export class AdminAccount {
 
     /**
      * get all data from all users
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -19,7 +18,6 @@ export class AdminAccount {
 
     /**
      * get all data from one user
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -40,7 +38,6 @@ export class AdminAccount {
 
     /**
      * Remove all users at once
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -52,7 +49,6 @@ export class AdminAccount {
 
     /**
      * delete user by id in params
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -64,7 +60,6 @@ export class AdminAccount {
 
     /**
      * get a list of users with not activated accounts
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -75,7 +70,6 @@ export class AdminAccount {
 
     /**
      * activate a specific users account
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -90,7 +84,6 @@ export class AdminAccount {
 
     /**
      * get a list of disabled accounts
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -101,7 +94,6 @@ export class AdminAccount {
 
     /**
      * disable or enable a specific user account
-     * permission: admin
      * @param request
      * @param response
      * @param next
@@ -121,7 +113,6 @@ export class AdminAccount {
 
     /**
      * get a list of inactive accounts
-     * permission: admin
      * @param request
      * @param response
      * @param next

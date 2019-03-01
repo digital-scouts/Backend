@@ -5,7 +5,7 @@ import {verifyToken as token} from "../token";
 import {checkPermission as permission} from "../permission";
 
 
-class AdminAccounts{
+class AdminAccounts {
     router: Router;
 
     constructor() {
@@ -16,28 +16,29 @@ class AdminAccounts{
     init() {
         this.router.route('/user')
             .get(token, permission, AdminAccount.getAllUsers)
-            .delete(token, AdminAccount.deleteAll);
+            .delete(token, permission, AdminAccount.deleteAll);
 
         this.router.route('/user/:id')
-            .get(token, AdminAccount.getOneUser)
-            .delete(token, AdminAccount.deleteUser);
+            .get(token, permission, AdminAccount.getOneUser)
+            .delete(token, permission, AdminAccount.deleteUser);
 
         this.router.route('/notActivated')
-            .get(token, AdminAccount.getNotActivatedUsers);
+            .get(token, permission, AdminAccount.getNotActivatedUsers);
 
         this.router.route('/notActivated/:id')
-            .put(token, AdminAccount.activateUser);
+            .put(token, permission, AdminAccount.activateUser);
 
         this.router.route('/disabled')
-            .get(token, AdminAccount.getDisabledUsers);
+            .get(token, permission, AdminAccount.getDisabledUsers);
 
         this.router.route('/disabled/:id')
-            .put(token, AdminAccount.changeDisable);
+            .put(token, permission, AdminAccount.changeDisable);
 
         this.router.route('/inactive')
-            .get(token, AdminAccount.getInactiveUsers);
+            .get(token, permission, AdminAccount.getInactiveUsers);
 
-    }}
+    }
+}
 
 const adminAccountsRouter = new AdminAccounts();
 adminAccountsRouter.init();

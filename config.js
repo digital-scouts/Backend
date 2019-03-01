@@ -35,34 +35,46 @@ const Config = {
         'users': {
             'GET': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER
+                'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': false
             }, //getAllUsers
             'PUT': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                'permissionLevel': permissionLevel.ONLY_SELF
+                'permissionLevel': permissionLevel.ONLY_SELF,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': true
             },
             '/:id': {
                 'GET': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': true,
+                    'permissionForNotActivated': true
                 }
             },
             'image': {
                 'PUT': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.ONLY_SELF
+                    'permissionLevel': permissionLevel.ONLY_SELF,
+                    'permissionForDisabled': true,
+                    'permissionForNotActivated': false
                 }
             },
             'password': {
                 'PUT': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.ONLY_SELF
+                    'permissionLevel': permissionLevel.ONLY_SELF,
+                    'permissionForDisabled': true,
+                    'permissionForNotActivated': true
                 }
             },
             'email': {
                 'PUT': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.ONLY_SELF
+                    'permissionLevel': permissionLevel.ONLY_SELF,
+                    'permissionForDisabled': true,
+                    'permissionForNotActivated': true
                 }
             }
         },
@@ -73,16 +85,16 @@ const Config = {
                     'DELETE': {'users': ['admin']}
                 },
                 'user/:id': {
-                    'GET': {'users': ['admin']},
+                    'GET': {'users': ['admin', 'leader']},
                     'DELETE': {'users': ['admin']}
                 },
                 'notActivated': {
-                    'GET': {'users': ['admin']},
-                    'PUT': {'users': ['admin']}
+                    'GET': {'users': ['admin','leader']},
+                    'PUT': {'users': ['admin','leader']}
                 },
                 'disabled': {
-                    'GET': {'users': ['admin']},
-                    'PUT': {'users': ['admin']}
+                    'GET': {'users': ['admin','leader']},
+                    'PUT': {'users': ['admin','leader']}
                 },
                 'inactive': {
                     'GET': {'users': ['admin']}

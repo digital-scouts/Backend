@@ -23,7 +23,7 @@ function decodePath(requestedPath:string[]):JSON {
 }
 
 /**
- * todo
+ * todo add a disabled or notActivated check here
  * check if userRole from Request is permitted to execute this method on this path
  * @param path
  * @param method
@@ -51,7 +51,16 @@ function checkPermissionLevel() {
 }
 
 /**
- *
+ * todo
+ * check if the user is activated and not disabled
+ * @param userID
+ */
+function checkAccountStatus(userID) {
+
+}
+
+/**
+ * requested user
  * @param request
  * @param response
  * @param next
