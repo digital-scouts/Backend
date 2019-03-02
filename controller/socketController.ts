@@ -6,6 +6,8 @@ import * as jwt from "jsonwebtoken";
 export class SocketController {
 
     /**
+     * @author lange
+     * @since 2019-03-02
      * save socket id to database
      * emit status to socket
      * @param socket
@@ -29,18 +31,20 @@ export class SocketController {
 
         if (userID != null) {
             User.findByIdAndUpdate(userID, {$set: {'socketID': socket.id}}, {new: true}, (err, user) => {
-                if (err) {
+                if (err || user === null) {
                     console.error(err);
                     return;
                 } else {
                     socket.emit('authStatus', true);
-                    return user;
+                    console.log(user)
                 }
             });
         }
     }
 
     /**
+     * @author lange
+     * @since 2019-03-02
      * update socket id in database
      * @param socket
      * @return user
@@ -68,9 +72,9 @@ export class SocketController {
 
         switch (messageType) {
             case 'text':
-                let message = new TextMessage();
+                let message = new TextMessage(data);
+                break;
         }
-
 
     }
 }

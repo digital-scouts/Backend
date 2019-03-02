@@ -55,9 +55,14 @@
 </head>
 <body>
 <ul id="messages"></ul>
-<form action="">
+<form method="POST">
     <input id="m" autocomplete="off"/>
     <button>Send</button>
+    <button type="button" onclick="emitAuth()">Auth</button>
+    <button>Send1</button>
+    <button>Send2</button>
+    <button>Send3</button>
+
 </form>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -69,8 +74,28 @@
     });
 
     socket.on('authStatus', (status, message) => {
-
+        console.log('authStatus: ' + status + ' message: ' + message);
     });
+
+    function emitAuth() {
+        let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndvZUB0ZXN0LmRlIiwicm9sZSI6IndvZSIsInVzZXJJRCI6IjVjN2FlOWNiNWE0NDc3MDAxMTNlNmQ3NyIsInVzZXJOYW1lRmlyc3QiOiJKb25hIEFudG9uIiwidXNlck5hbWVMYXN0IjoiRWx6ZSIsImlhdCI6MTU1MTU1OTE0MywiZXhwIjoxNTUyMTYzOTQzfQ.Czga9QL11g_bWv3HQM2bbUw8DUCtJbhO_Qu8ZdHcLLo';
+        socket.emit('auth', token);
+    }
+
+    function sendTextMessage(chatID = '', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
+        let data = {
+            message: message,
+            sendTime: sendTime,
+            deleteTime: deleteTime,
+            silentMessage: silentMessage,
+            encoding: encoding,
+            answerToID: answerToID,
+            editedNewID: editedNewID,
+            forwardedID: forwardedID
+        };
+
+        socket.emit('sendMessage', chatID, 'text', data);
+    }
 
 </script>
 </body>

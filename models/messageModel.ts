@@ -40,17 +40,10 @@ const textMessage: Schema = new Schema({
                 default: false
             }]
         },
-        delete: {
-            selfDestruct: {
-                type: Boolean,
-                require: true,
-                default: false
-            },
-            deleteTime: { //check this before send messages to a user todo check live
-                type: Date,
-                require: true,
-                default: null
-            }
+        deleteTime: { //check this before send messages to a user todo check live
+            type: Date,
+            require: true,
+            default: null
         },
         silentMessage: {//send a message without notification
             type: Boolean,
