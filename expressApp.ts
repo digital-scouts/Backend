@@ -80,6 +80,10 @@ class ExpressApp {
         this.express.use('/api/users', usersRouter);
         this.express.use('/api/auth', authRouter);
         this.express.use('/api/admin/accounts', adminAccount);
+
+        this.express.get('/chat', function(req, res){
+            res.sendFile(__dirname + '/public/chat.html');
+        });
     }
 
     private mongo() {
