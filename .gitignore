@@ -3,7 +3,7 @@ node_modules
 
 # Ignores compiled TypeScript files
 controller/*.js
-routes/*/*.js
+routes/api/*.js
 routes/*.js
 models/*.js
 expressApp.js
