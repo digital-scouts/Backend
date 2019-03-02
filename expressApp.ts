@@ -10,6 +10,7 @@ import indexRouter from "./routes/index";
 import usersRouter from "./routes/api/users";
 import authRouter from "./routes/api/auth";
 import adminAccount from "./routes/api/adminAccounts";
+import chatRouter from './routes/api/chat';
 
 class ExpressApp {
     public express: express.Application;
@@ -79,6 +80,7 @@ class ExpressApp {
 
         this.express.use('/api/users', usersRouter);
         this.express.use('/api/auth', authRouter);
+        this.express.use('/api/chat', chatRouter);
         this.express.use('/api/admin/accounts', adminAccount);
 
         this.express.get('/chat', function(req, res){
@@ -91,7 +93,7 @@ class ExpressApp {
         const db_url = Config.database;
         // Connect to the mongoDB via mongoose
         mongoose.connect(db_url, {useNewUrlParser: true});
-        var db = mongoose.connection;
+        let db = mongoose.connection;
 
         // Bind connection to error event ( to get notification of connection errors)
         db.on('error', console.error.bind(console, 'connection error: '));

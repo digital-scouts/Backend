@@ -89,17 +89,44 @@ const Config = {
                     'DELETE': {'users': ['admin']}
                 },
                 'notActivated': {
-                    'GET': {'users': ['admin','leader']},
-                    'PUT': {'users': ['admin','leader']}
+                    'GET': {'users': ['admin', 'leader']},
+                    'PUT': {'users': ['admin', 'leader']}
                 },
                 'disabled': {
-                    'GET': {'users': ['admin','leader']},
-                    'PUT': {'users': ['admin','leader']}
+                    'GET': {'users': ['admin', 'leader']},
+                    'PUT': {'users': ['admin', 'leader']}
                 },
                 'inactive': {
                     'GET': {'users': ['admin']}
                 }
 
+            }
+        },
+        'chat': {
+            'group': {
+                'GET': {
+                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }, 'POST': {
+                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }
+            }, 'single': {
+                'GET': {
+                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }, 'POST': {
+                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }
             }
         }
     }

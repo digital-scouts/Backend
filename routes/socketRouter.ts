@@ -23,8 +23,9 @@ export class SocketRouter {
             console.log('SOCKET: a user connected');
 
             socket.on('auth', (token) => {
-                SocketController.handleAuth(socket, token);
-                console.log('SOCKET: a user authorized');
+                console.log("token: " + token)
+                console.log("socket: " + socket.id)
+               SocketController.handleAuth(socket, token);
             });
 
             /**
