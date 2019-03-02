@@ -1,5 +1,7 @@
 //https://socket.io/docs/server-api/
 
+import {SocketController} from '../controller/socketController';
+
 export class SocketRouter {
     private ioServer;
 
@@ -18,52 +20,66 @@ export class SocketRouter {
         this.ioServer.on('connection', function (socket) {
 
             //user is unknown
-            console.log('a user connected');
+            console.log('SOCKET: a user connected');
 
             socket.on('auth', (token) => {
-                //todo check token and save socket in db
+                SocketController.handleAuth(socket, token);
+                console.log('SOCKET: a user authorized');
             });
 
             /**
+             * @author lange
+             * @since 2019-03-02
              * todo
              * receives messages and handel them
-             * @param chatID - uniq chat identifier
-             * @param message - message to send
-             * @param params - some params for this message
+             * @param {string} chatID - uniq chat identifier
+             * @param {string} message - message to send
+             * @param data - some params for this message
              */
-            socket.on('sendMessage', (chatID, message, params)=>{
-                //todo check if receiver is online -> send message
-                //todo store message in db
+            socket.on('sendMessage', (chatID: string, messageType: string, data) => {
+                SocketController.handleNewMessage(chatID, messageType, data);
+                console.log('SOCKET: sendMessage');
             });
 
             /**
+             * @author lange
+             * @since 2019-03-02
              * todo
-             * edit existing messages
-             * @param chatID - uniq chat identifier
-             * @param messageID - uniq message identifier
-             * @param message - message to send
-             * @param params - some params for this message
+             * edit existing text messages
+             * @param {string}  chatID - uniq chat identifier
+             * @param {string} messageID{string} - uniq message identifier
+             * @param data - message with meta data to send
              */
-            socket.on('editMessage', (chatID, messageID, message, params)=>{
+            socket.on('editMessage', (chatID: string, messageID: string, data) => {
                 //todo validate user
                 //todo search old message, set edited flag, and a source to new message
                 //todo save edited message as new message
+                console.log('SOCKET: editMessage');
             });
 
+            /**
+             * @author lange
+             * @since 2019-03-02
+             * todo
+             * @param {string} messageID{string} - uniq message identifier
+             */
+            socket.on('deleteMessage', (messageID: string) => {
 
+            });
 
             socket.on('disconnecting', (reason) => {
                 //todo
+                console.log('SOCKET: a user disconnecting');
             });
 
             socket.on('disconnect', function (reason) {
-                //todo delete socketId in db
-                console.log('a user disconnected');
+                SocketController.handleDisconnect(socket);
+                console.log('SOCKET: a user disconnected');
             });
 
             socket.on('error', function (error) {
                 //todo what can happen here?
-                console.log('Woops an error');
+                console.log('SOCKET: Woops an error');
                 console.error(error);
             });
         });
