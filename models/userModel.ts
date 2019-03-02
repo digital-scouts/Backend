@@ -1,5 +1,4 @@
 import {Schema, Model, model} from "mongoose";
-
 import {Config} from "../config";
 
 //return string array with all rolenames set in config file
@@ -7,7 +6,7 @@ let roleNames = Config.user.map(function (item) {
     return item['roleName'];
 });
 
-const user:Schema = new Schema({
+const user: Schema = new Schema({
         name_first: {
             type: String,
             required: [true, 'First Name is required (name_first)']
@@ -28,7 +27,7 @@ const user:Schema = new Schema({
             lowercase: true,
             match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address (example: name@mail.com)']
         },
-        password: {
+        password: {//remove regex later, password will be hashed
             type: String,
             required: [true, 'Password is required (password)'],
             match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/, 'Please choose a saver password. Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character (@$!%*?&.-_).']
@@ -54,9 +53,14 @@ const user:Schema = new Schema({
         role: {
             type: String,
             enum: roleNames,//load roles from config
-            required: [true, 'Role is required (role) ('+roleNames+')']
+            required: [true, 'Role is required (role) (' + roleNames + ')']
         },
         accountStatus: {
+            namiLink: {
+                type: String,
+                default: null,
+                require: true
+            },
             activated: {
                 type: Boolean,
                 default: false,// a new account must be activated from a 'leader'
@@ -72,6 +76,11 @@ const user:Schema = new Schema({
                 default: false,// a account can be inactive after a long time not using digital-scouts
                 required: true
             }
+        },
+        socketID: {
+            type: String,
+            default: null,
+            require: true
         }
     }, {
         timestamps: true
