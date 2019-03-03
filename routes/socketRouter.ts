@@ -38,8 +38,9 @@ export class SocketRouter {
              * @param data - some params for this message
              */
             socket.on('sendMessage', (chatID: string, messageType: string, data) => {
-                SocketController.handleNewMessage(chatID, messageType, data);
-                console.log('SOCKET: sendMessage');
+
+              SocketController.handleNewMessage(socket, chatID, messageType, data);
+
             });
 
             /**

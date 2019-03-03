@@ -59,9 +59,9 @@
     <input id="m" autocomplete="off"/>
     <button>Send</button>
     <button type="button" onclick="emitAuth()">Auth</button>
-    <button>Send1</button>
+    <button type="button" onclick="sendTextMessage()">SendMessage</button>
     <button>Send2</button>
-    <button>Send3</button>
+    <button>Send34</button>
 
 </form>
 
@@ -82,7 +82,7 @@
         socket.emit('auth', token);
     }
 
-    function sendTextMessage(chatID = '', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
+    function sendTextMessage(chatID = '5c7b3157acc340001856bf0d', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
         let data = {
             message: message,
             sendTime: sendTime,

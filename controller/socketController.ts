@@ -1,5 +1,5 @@
 import {User} from "../models/userModel";
-import {TextMessage} from '../models/messageModel';
+import {ChatController} from './chatController';
 import App from "../expressApp";
 import * as jwt from "jsonwebtoken";
 
@@ -62,19 +62,36 @@ export class SocketController {
 
     /**
      *
+     * @param socket
      * @param {string} chatID
      * @param {string} messageType
      * @param data
      */
-    static handleNewMessage(chatID: string, messageType: string, data) {
+    static async handleNewMessage(socket, chatID: string, messageType: string, data) {
         //todo store message in db
         //todo check if receiver is online -> send message
 
-        switch (messageType) {
-            case 'text':
-                let message = new TextMessage(data);
-                break;
+        let userID: string;
+        await SocketController.findUserIdBySocket(socket).then((id) => {
+            userID = id;
+        });
+        if (userID !== null && userID !== undefined){
+            ChatController.newTextMessage(userID, chatID, messageType, data);
         }
+        else
+            console.error("USER " + socket.id + " NOT FOUND: "+ userID)
+    }
 
+    private static async findUserIdBySocket(socket): Promise<string> {
+        let id = null;
+        await User.findOne({socketID: socket.id}, (err, user) => {
+            if (err) {
+                console.error("error: "+ err.messages);
+                return null;
+            } else {
+                id = user._id
+            }
+        });
+        return id;
     }
 }
