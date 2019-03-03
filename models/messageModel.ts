@@ -7,7 +7,8 @@ import {Schema, Model, model} from "mongoose";
  */
 const textMessage: Schema = new Schema({
         chatID: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'Chat',
             require: true,
         },
         senderID: {
@@ -51,22 +52,24 @@ const textMessage: Schema = new Schema({
             default: false
         },
         encoding: {//todo information about encoding
-            type: {code: String},
-            require: true,
-            default: null
+            type: String,
+            require: [true, "Information about encoding required"],
         },
         answerToID: {//reference to answered message
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'TextMessage',
             require: false,
             default: null
         },
         editedNewID: {//set if message was edited, id is new message
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'TextMessage',
             require: false,
             default: null
         },
         forwardedID: {//reference to forwarded message
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'TextMessage',
             require: false,
             default: null
         },
