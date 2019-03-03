@@ -34,11 +34,11 @@ export const Errors = {
 };
 
 export class ErrorREST extends Error {
-    constructor(name: string, detail:string = undefined, ...args) {
+    public response: { status: number; message: string; detail: string };
+
+    constructor(error: { status: number, message: string }, detail: string = undefined, ...args) {
         super(...args);
-        this.name = name;
-        if (detail !== undefined) {
-            this.message = detail;
-        }
+        this.response = {status: error.status, message: error.message, detail: detail};
+        console.log("Response done")
     }
 }

@@ -19,7 +19,6 @@ class ExpressApp {
     constructor() {
         this.express = express();
         this.middleware();
-        this.routes();
         this.mongo();
         console.log('Node.ts setup finished');
     }
@@ -38,6 +37,19 @@ class ExpressApp {
         // Use morgan to log requests to the console.
         this.express.use(morgan('dev'));
 
+
+        this.express.use('/', indexRouter);
+
+        this.express.use('/api/users', usersRouter);
+        this.express.use('/api/auth', authRouter);
+        this.express.use('/api/chat', chatRouter);
+        this.express.use('/api/admin/accounts', adminAccount);
+
+        this.express.get('/chat', function (req, res) {
+            res.sendFile(__dirname + '/public/chat.html');
+        });
+
+
         // Error handler
         this.express.use(function (error, request, response, next) {
             function logRequest(logger, request) {
@@ -53,18 +65,17 @@ class ExpressApp {
                 logger(request.body);
             }
 
-            let validRESTError = error instanceof ErrorREST;
-            if (validRESTError) {
-                logRequest(console.log, request);
-                console.log("ERROR OCCURRED:");
-                console.log(error);
+            if (error != null && error.response != null) {
+                logRequest(console.error, request);
+                console.error("CUSTOM ERROR OCCURRED:");
+                console.error(error);
             } else {
                 logRequest(console.error, request);
                 console.error("ERROR OCCURRED:");
                 console.error(error);
 
                 // Replace the error with a suitable one for the end user
-                error = new ErrorREST("InternalServerError");
+                error = new ErrorREST(Errors.InternalServerError);
             }
 
             response.status(error.response.status).send(error.response);
@@ -73,19 +84,6 @@ class ExpressApp {
         this.express.set('salt', Config.salt);
         this.express.set('DEBUG', Config.DEBUG);
 
-    }
-
-    private routes(): void {
-        this.express.use('/', indexRouter);
-
-        this.express.use('/api/users', usersRouter);
-        this.express.use('/api/auth', authRouter);
-        this.express.use('/api/chat', chatRouter);
-        this.express.use('/api/admin/accounts', adminAccount);
-
-        this.express.get('/chat', function(req, res){
-            res.sendFile(__dirname + '/public/chat.html');
-        });
     }
 
     private mongo() {
@@ -103,4 +101,5 @@ class ExpressApp {
         });
     }
 }
+
 export default new ExpressApp().express;

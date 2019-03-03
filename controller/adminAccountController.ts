@@ -30,7 +30,7 @@ export class AdminAccount {
                 if (user) {
                     response.status(200).json(user)
                 } else {
-                    return next(new ErrorREST("NotFound", "User does not exist."));
+                    return next(new ErrorREST(Errors.NotFound, "User does not exist."));
                 }
             }
         ).catch(next);

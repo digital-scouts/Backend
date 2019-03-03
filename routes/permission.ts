@@ -72,7 +72,7 @@ export function checkPermission(request, response, next) {
     let decodedPath:JSON = decodePath(request.originalUrl.split('/'));
 
     if(!checkApiPermission(decodedPath, request.method, userRole)){
-        return next(new ErrorREST("Forbidden"));
+        return next(new ErrorREST(Errors.Forbidden));
     }
 
     if (requestedUserID != null) {

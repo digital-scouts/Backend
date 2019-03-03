@@ -1,4 +1,4 @@
-import {ErrorREST} from "../errors";
+import {ErrorREST, Errors} from "../errors";
 import {Chat} from '../models/chatModel';
 import {TextMessage} from "../models/messageModel";
 import {User} from "../models/userModel";
@@ -62,7 +62,7 @@ export class ChatController {
             if (err)
                 for (let errName in err.errors)
                     if (err.errors[errName].name === 'ValidatorError')
-                        return next(new ErrorREST("UnprocessableEntity", err.errors[errName].message))
+                        return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
         });
         await chat.save().then(chat => response.status(200).json(chat)).catch(next);
     }
@@ -88,7 +88,7 @@ export class ChatController {
             if (err)
                 for (let errName in err.errors)
                     if (err.errors[errName].name === 'ValidatorError')
-                        socket.emit('newMessageStatus', false, "UnprocessableEntity");
+                        return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
         });
 
         //find sender userId
@@ -130,7 +130,7 @@ export class ChatController {
      * todo push to all other
      * @param chatID
      */
-    private static sendMessage(chatID){
+    private static sendMessage(chatID) {
 
     }
 }

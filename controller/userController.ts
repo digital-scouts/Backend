@@ -18,7 +18,7 @@ export class UserController {
         if (express.get('DEBUG') || request.decoded.role === 'admin') {
             User.find().then(data => response.json(data)).catch(next);
         } else {
-            return next(new ErrorREST("Forbidden"));
+            return next(new ErrorREST(Errors.Forbidden));
         }
     }
 
@@ -31,14 +31,14 @@ export class UserController {
      */
     static async addUser(request, result, next) {
         if (await User.findOne({email: request.body.email}).lean().exec())
-            return next(new ErrorREST("Forbidden", "A user with the provided email already exists"));
+            return next(new ErrorREST(Errors.Forbidden, "A user with the provided email already exists"));
 
         let user = new User(request.body);
         user.validate(err => {
             if (err)
                 for (let errName in err.errors)
                     if (err.errors[errName].name === 'ValidatorError')
-                        return next(new ErrorREST("UnprocessableEntity", err.errors[errName].message))
+                        return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
         });
         await user.save().then(user => result.status(200).json(user)).catch(next);
     }
@@ -71,7 +71,7 @@ export class UserController {
                 if (user) {
                     response.status(200).json(user)
                 } else {
-                    return next(new ErrorREST("NotFound", "User does not exist."));
+                    return next(new ErrorREST(Errors.NotFound, "User does not exist."));
                 }
             }
         ).catch(next);
