@@ -1,10 +1,18 @@
 import {Schema, Model, model} from "mongoose";
+var mongoose = require('mongoose');
 
-const groupChat: Schema = new Schema({
+var Schema = mongoose.Schema,
+    ObjectId = Schema.ObjectId;
+
+const chat: Schema = new Schema({
         roomName: {
             type: String,
             require: false
         },
+        message: [{
+            type: ObjectId,
+            ref: 'TextMessage'
+        }],
         user: [{
             type: String,
             require: true
@@ -21,26 +29,5 @@ const groupChat: Schema = new Schema({
     }
 );
 
-const singleChat: Schema = new Schema({
-        roomName: {
-            type: String,
-            require: false
-        },
-        user: [{
-            type: String,
-            require: true
-        }]
-    }, {
-        timestamps: true
-    },
-    {
-        writeConcern: {
-            w: 1,
-            j: true,
-            wtimeout: 1000
-        }
-    }
-);
 
-export const GroupChat: Model = model("GroupChat", groupChat);
-export const SingleChat: Model = model("SingleChat", singleChat);
+export const Chat: Model = model("Chat", chat);

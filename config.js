@@ -103,30 +103,29 @@ const Config = {
             }
         },
         'chat': {
-            'group': {
+            '/:id': {
                 'GET': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                    'permissionForDisabled': false,
-                    'permissionForNotActivated': false
-                }, 'POST': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                    'permissionForDisabled': false,
-                    'permissionForNotActivated': false
+                    'permissionForDisabled': true,
+                    'permissionForNotActivated': true
                 }
-            }, 'single': {
-                'GET': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                    'permissionForDisabled': false,
-                    'permissionForNotActivated': false
-                }, 'POST': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                    'permissionForDisabled': false,
-                    'permissionForNotActivated': false
-                }
+            },
+            'GET': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            }, 'POST': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            }, 'DELETE': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
             }
         }
     }

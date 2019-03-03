@@ -13,13 +13,14 @@ class Chat {
     }
 
     init() {
-        this.router.route('/group')
-            .get(token, permission, (re, rs, ne) => ChatController.getAll(re, rs, ne, 'group'))
-            .post(token, permission, (re, rs, ne) => ChatController.createNewChat(re, rs, ne, 'group'));
+        this.router.route('/')
+            .get(token, permission, ChatController.getAllChats)
+            .post(token, permission, ChatController.createNewChat)
+            .delete(token,permission, ChatController.deleteAll);
 
-        this.router.route('/single')
-            .get(token, permission, (re, rs, ne) => ChatController.getAll(re, rs, ne, 'single'))
-            .post(token, permission, (re, rs, ne) => ChatController.createNewChat(re, rs, ne, 'single'));
+        this.router.route('/:id')
+            .get(token, permission, ChatController.getOne);
+
     }
 }
 
