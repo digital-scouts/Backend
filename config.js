@@ -107,19 +107,25 @@ const Config = {
                 'GET': {
                     'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                    'permissionForDisabled': true,
-                    'permissionForNotActivated': true
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
                 }
             },
-            '/message':{
-              '/:id':{
-                  'GET': {
-                      'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
-                      'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
-                      'permissionForDisabled': true,
-                      'permissionForNotActivated': true
-                  }
-              }
+            '/message': {
+                '/:id': {
+                    'GET': {
+                        'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                        'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                        'permissionForDisabled': false,
+                        'permissionForNotActivated': false
+                    }
+                },
+                'POST': {
+                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }
             },
             'GET': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],

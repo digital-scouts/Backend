@@ -24,6 +24,9 @@ class Chat {
         this.router.route('/message/:id')
             .get(token, permission, ChatController.getOneMessage);
 
+        this.router.route('/message')
+            .post(token, permission, ChatController.newTextMessage);
+
     }
 }
 

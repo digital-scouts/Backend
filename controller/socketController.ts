@@ -1,5 +1,4 @@
 import {User} from "../models/userModel";
-import {ChatController} from './chatController';
 import App from "../expressApp";
 import * as jwt from "jsonwebtoken";
 
@@ -58,18 +57,5 @@ export class SocketController {
                 return user;
             }
         });
-    }
-
-    /**
-     *
-     * @param socket
-     * @param {string} chatID
-     * @param {string} messageType
-     * @param data
-     */
-    static handleNewMessage(socket, chatID: string, data) {
-        //todo send message to all clients in chatroom
-        ChatController.newTextMessage(socket, chatID, data);
-
     }
 }

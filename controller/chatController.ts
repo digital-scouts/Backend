@@ -70,57 +70,57 @@ export class ChatController {
     /**
      * todo return status
      *
-     * @param socket
-     * @param {string} chatID
-     * @param data
      * @return {Promise<any>}
+     * @param request
+     * @param response
+     * @param next
      */
-    static newTextMessage(socket, chatID: string, data) {
-        let userID;
+    static newTextMessage(request, response, next) {
+        let userID = request.decoded.userID;
 
         function isUserPartOfChat(member) {
             // console.log("isUserPartOfChat, searing: " + userID + " found: " + member + " res: " + (member.toString() === userID.toString()));
             return (member.toString() === userID.toString());
         }
 
-        let message = new TextMessage(data);
+        let message = new TextMessage(request.body);
         message.validate(err => {
             if (err)
                 for (let errName in err.errors)
-                    if (err.errors[errName].name === 'ValidatorError')
-                        return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
+                    switch (err.errors[errName].name) {
+                        case 'ValidatorError':
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidatorError: "+ err.errors[errName].message));
+                        case 'ValidationError':
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidationError: "+ err.errors[errName].message));
+                        case 'CastError':
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "CastError: "+ err.errors[errName].message));
+                    }
         });
 
         //find sender userId
-        User.findOne({socketID: socket.id}, (err, user) => {
-            if (err) {
-                console.error("error: " + err.messages);
-                return;
-            } else {
-                userID = user._id;
-                if (user != null && userID !== null && userID !== undefined) {
-                    // console.log("1 User gefunden")
-                    //find the chat, check permission and push message to message array
-                    Chat.findById(chatID, (err, resChat) => {
-                        // console.log("searching Chat group: " + resChat)
-                        if (resChat != null && resChat.user.find(isUserPartOfChat)) {
-                            // console.log("2 Chat gefunden")
-                            Chat.findByIdAndUpdate(chatID, {$push: {message: message}}, {new: true}, (err, doc) => {
-                                if (err) {
-                                    console.error("WHOOPS (Update chat after new message): " + err);
-                                    socket.emit('newMessageStatus', false, "Unknown error during chat update");
+        User.findById(request.decoded.userID, (err, user) => {
+            if (user) {
+                //find the chat, check permission and push message to message array
+                Chat.findById(request.body.chatID, (err, resChat) => {
+                    if (resChat != null) {
+                        if (resChat.user.find(isUserPartOfChat)) {
+                            Chat.findByIdAndUpdate(request.body.chatID, {$push: {message: message}}, {new: true}, (err, doc) => {
+                                if (doc) {
+                                    message.save().then(message => response.status(200).json(message));
+                                } else {
+                                    return next(new ErrorREST(Errors.InternalServerError, "Unknown error during chat update"));
                                 }
-                                // console.log("3 Message gesichert")
-                                message.save();
-                                socket.emit('newMessageStatus', true, "Chat successful updated");
                             });
                         } else {
-                            socket.emit('newMessageStatus', false, "Chat did not exist or you are not in this chat");
+                            return next(new ErrorREST(Errors.Forbidden, "You are not in this chat"));
                         }
-                    });
-                } else {
-                    console.error("USER " + socket.id + " NOT FOUND: " + userID)
-                }
+                    } else {
+                        return next(new ErrorREST(Errors.NotFound, "Chat did not exist"));
+                    }
+                });
+
+            } else {
+                return next(new ErrorREST(Errors.NotFound, "User does not exist."));
             }
         });
     }
