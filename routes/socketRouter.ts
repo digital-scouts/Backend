@@ -31,16 +31,13 @@ export class SocketRouter {
             /**
              * @author lange
              * @since 2019-03-02
-             * todo
              * receives messages and handel them
              * @param {string} chatID - uniq chat identifier
              * @param {string} message - message to send
              * @param data - some params for this message
              */
             socket.on('sendMessage', (chatID: string, messageType: string, data) => {
-
               SocketController.handleNewMessage(socket, chatID, messageType, data);
-
             });
 
             /**

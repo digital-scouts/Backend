@@ -11,7 +11,7 @@ const chat: Schema = new Schema({
         },
         message: [{
             type: ObjectId,
-            ref: 'TextMessage'
+            ref: 'TextMessage'//todo hier müssen auch andere nachrichten passen
         }],
         user: [{
             type: String,

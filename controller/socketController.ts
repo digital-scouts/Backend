@@ -68,10 +68,9 @@ export class SocketController {
      * @param data
      */
     static async handleNewMessage(socket, chatID: string, messageType: string, data) {
-        //todo store message in db
-        //todo check if receiver is online -> send message
+        //todo send message to all clients in chatroom
 
-        let userID: string;
+        let userID: string = null;
         await SocketController.findUserIdBySocket(socket).then((id) => {
             userID = id;
         });
@@ -79,9 +78,16 @@ export class SocketController {
             ChatController.newTextMessage(userID, chatID, messageType, data);
         }
         else
+            //sometimes user will not be found...
+            //todo need to be fixed
             console.error("USER " + socket.id + " NOT FOUND: "+ userID)
     }
 
+    /**
+     *
+     * @param socket
+     * @return {Promise<string>}
+     */
     private static async findUserIdBySocket(socket): Promise<string> {
         let id = null;
         await User.findOne({socketID: socket.id}, (err, user) => {

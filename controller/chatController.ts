@@ -1,7 +1,5 @@
-import {Errors} from "../errors";
 import {ErrorREST} from "../errors";
 import {Chat} from '../models/chatModel';
-import {User} from "../models/userModel";
 
 export class ChatController {
 
@@ -18,16 +16,29 @@ export class ChatController {
 
     }
 
+    /**
+     * todo prüfe permission
+     * @param request
+     * @param response
+     * @param next
+     */
     static getOne(request, response, next) {
         Chat.findById(request.params.id).then(data => response.json(data)).catch(next);
     }
 
-    static deleteAll(request, response, next){
+    /**
+     * todo only for debug, block this later
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteAll(request, response, next) {
         Chat.deleteMany().then(data => response.json(data)).catch(next);
     }
 
     /**
-     *
+     * todo prüfe ob raum erstellt werden kann
+     * todo zweiter chatpartner für einen raum benötigt
      * @param request
      * @param response
      * @param next
@@ -46,6 +57,15 @@ export class ChatController {
         await chat.save().then(chat => response.status(200).json(chat)).catch(next);
     }
 
+    /**
+     * todo error handling
+     *
+     * @param {string} userID
+     * @param {string} chatID
+     * @param {string} messageType
+     * @param data
+     * @return {Promise<any>}
+     */
     static async newTextMessage(userID: string, chatID: string, messageType: string, data) {
         let chat = null;
         const isUserPartOfChat = function (el) {
@@ -53,6 +73,7 @@ export class ChatController {
             return el === userID;
         };
 
+        //create message first
         let message = new Chat(data);
 
         message.validate(err => {
@@ -62,22 +83,19 @@ export class ChatController {
                         return {status: false, message: "UnprocessableEntity: " + err}
         });
 
-        // await chat.save().then(chat => resChat = chat);
-
-        //find the chat room
+        //find the chat, check permission and push message to message array
         await Chat.findById(chatID, (err, resChat) => {
             // console.log("searching Chat group: " + resChat)
             if (resChat != null && isUserPartOfChat) {
-                Chat.findByIdAndUpdate(chatID, {$push: {message: message}},{new: true}, (err, doc) => {
-                    if (err)
-                        console.error("WOOPS: " + err)
+                Chat.findByIdAndUpdate(chatID, {$push: {message: message}}, {new: true}, (err, doc) => {
+                    if (err){
+                        console.error("WOOPS: " + err);
+                        return;
+                    }
                     console.log("Chat erstellt: " + doc)
                 });
                 chat = resChat;
-            } else {
-
             }
-
         });
 
         if (chat == null) {

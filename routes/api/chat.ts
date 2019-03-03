@@ -16,7 +16,7 @@ class Chat {
         this.router.route('/')
             .get(token, permission, ChatController.getAllChats)
             .post(token, permission, ChatController.createNewChat)
-            .delete(token,permission, ChatController.deleteAll);
+            .delete(token, permission, ChatController.deleteAll);
 
         this.router.route('/:id')
             .get(token, permission, ChatController.getOne);
