@@ -70,11 +70,15 @@
     const socket = io.connect();
     socket.on('news', function (data) {
         console.log(data);
-        socket.emit('my other event', {my: 'data'});
+        // socket.emit('my other event', {my: 'data'});
     });
 
     socket.on('authStatus', (status, message) => {
         console.log('authStatus: ' + status + ' message: ' + message);
+    });
+
+    socket.on('newMessageStatus', (status, message) => {
+        console.log('newMessageStatus: ' + status + ' message: ' + message);
     });
 
     function emitAuth() {
@@ -82,7 +86,7 @@
         socket.emit('auth', token);
     }
 
-    function sendTextMessage(chatID = '5c7b3157acc340001856bf0d', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
+    function sendTextMessage(chatID = '5c7c0fa31286e70011dae643', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
         let data = {
             message: message,
             sendTime: sendTime,
@@ -94,7 +98,7 @@
             forwardedID: forwardedID
         };
 
-        socket.emit('sendMessage', chatID, 'text', data);
+        socket.emit('sendMessage', chatID, data);
     }
 
 </script>

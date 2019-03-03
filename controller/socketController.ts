@@ -36,7 +36,7 @@ export class SocketController {
                     return;
                 } else {
                     socket.emit('authStatus', true);
-                    console.log(user)
+                    console.log("User authenticated")
                 }
             });
         }
@@ -67,37 +67,9 @@ export class SocketController {
      * @param {string} messageType
      * @param data
      */
-    static async handleNewMessage(socket, chatID: string, messageType: string, data) {
+    static handleNewMessage(socket, chatID: string, data) {
         //todo send message to all clients in chatroom
+        ChatController.newTextMessage(socket, chatID, data);
 
-        let userID: string = null;
-        await SocketController.findUserIdBySocket(socket).then((id) => {
-            userID = id;
-        });
-        if (userID !== null && userID !== undefined){
-            ChatController.newTextMessage(userID, chatID, messageType, data);
-        }
-        else
-            //sometimes user will not be found...
-            //todo need to be fixed
-            console.error("USER " + socket.id + " NOT FOUND: "+ userID)
-    }
-
-    /**
-     *
-     * @param socket
-     * @return {Promise<string>}
-     */
-    private static async findUserIdBySocket(socket): Promise<string> {
-        let id = null;
-        await User.findOne({socketID: socket.id}, (err, user) => {
-            if (err) {
-                console.error("error: "+ err.messages);
-                return null;
-            } else {
-                id = user._id
-            }
-        });
-        return id;
     }
 }

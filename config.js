@@ -111,6 +111,16 @@ const Config = {
                     'permissionForNotActivated': true
                 }
             },
+            '/message':{
+              '/:id':{
+                  'GET': {
+                      'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                      'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                      'permissionForDisabled': true,
+                      'permissionForNotActivated': true
+                  }
+              }
+            },
             'GET': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,

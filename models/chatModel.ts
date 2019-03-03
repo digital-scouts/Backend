@@ -1,7 +1,7 @@
 import {Schema, Model, model} from "mongoose";
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var Schema = mongoose.Schema,
+const Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
 const chat: Schema = new Schema({
@@ -11,7 +11,8 @@ const chat: Schema = new Schema({
         },
         message: [{
             type: ObjectId,
-            ref: 'TextMessage'//todo hier müssen auch andere nachrichten passen
+            ref: 'TextMessage',//todo hier müssen auch andere nachrichten passen
+            unique: true
         }],
         user: [{
             type: String,

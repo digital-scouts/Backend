@@ -23,8 +23,6 @@ export class SocketRouter {
             console.log('SOCKET: a user connected');
 
             socket.on('auth', (token) => {
-                console.log("token: " + token)
-                console.log("socket: " + socket.id)
                SocketController.handleAuth(socket, token);
             });
 
@@ -36,8 +34,8 @@ export class SocketRouter {
              * @param {string} message - message to send
              * @param data - some params for this message
              */
-            socket.on('sendMessage', (chatID: string, messageType: string, data) => {
-              SocketController.handleNewMessage(socket, chatID, messageType, data);
+            socket.on('sendMessage', (chatID: string, data) => {
+              SocketController.handleNewMessage(socket, chatID, data);
             });
 
             /**

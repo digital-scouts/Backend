@@ -8,7 +8,7 @@ import {Schema, Model, model} from "mongoose";
 const textMessage: Schema = new Schema({
         chatID: {
             type: String,
-            require: true
+            require: true,
         },
         senderID: {
             type: String,

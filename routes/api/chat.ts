@@ -19,7 +19,10 @@ class Chat {
             .delete(token, permission, ChatController.deleteAll);
 
         this.router.route('/:id')
-            .get(token, permission, ChatController.getOne);
+            .get(token, permission, ChatController.getOneChat);
+
+        this.router.route('/message/:id')
+            .get(token, permission, ChatController.getOneMessage);
 
     }
 }
