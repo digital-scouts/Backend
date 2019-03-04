@@ -61,8 +61,6 @@
 <form method="POST">
     <input id="m" autocomplete="off"/>
     <button>Send</button>
-    <button type="button" onclick="emitAuth()">Auth</button>
-    <button type="button" onclick="sendTextMessage()">SendMessage</button>
     <button>Send2</button>
     <button>Send34</button>
 
@@ -70,57 +68,55 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var str = "Hello, @John how's going on. Greedings to @Bob.";
+    var str = 'Hello, @John how\'s going on. Greedings to @Bob.';
     var regexToMatchMentioningStartWithAt = /[@][a-zA-Z]*/g;
     var regexToMatchBoldText = /\*.*\*/g;
 
-    var matches = str.match(regexToMatchMentioningStartWithAt)
+    var matches = str.match(regexToMatchMentioningStartWithAt);
     var split = str.split(regexToMatchMentioningStartWithAt);
 
-    for(var i = 0; i<matches.length;i++){
+    for (var i = 0; i < matches.length; i++) {
         document.body.appendChild(document.createTextNode(split[i]));
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(matches[i]));
-        a.title = "my title text";
-        a.href = "http://example.com/users/"+matches[i].split('@')[1];
+        a.title = 'my title text';
+        a.href = 'http://example.com/users/' + matches[i].split('@')[1];
         document.body.appendChild(a);
     }
-    document.body.appendChild(document.createTextNode(split[split.length-1]));
+    document.body.appendChild(document.createTextNode(split[split.length - 1]));
 
 
     const socket = io.connect();
+    emitAuth();
     socket.on('news', function (data) {
         console.log(data);
         // socket.emit('my other event', {my: 'data'});
     });
 
-    socket.on('authStatus', (status, message) => {
-        console.log('authStatus: ' + status + ' message: ' + message);
+    socket.on('newMessage', (data) => {
+        console.log('newMessage: ' + data);
     });
 
-    socket.on('newMessageStatus', (status, message) => {
-        console.log('newMessageStatus: ' + status + ' message: ' + message);
+    socket.on('error', function (data) {
+        console.log(data || 'error');
+    });
+
+    socket.on('connect_failed', function (data) {
+        console.log(data || 'connect_failed');
+    });
+
+    socket.on('authStatus', (status, message) => {
+        if (message !== undefined)
+            console.log('authStatus: ' + status + ' message: ' + message);
+        console.log('authStatus: ' + status);
     });
 
     function emitAuth() {
-        let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndvZUB0ZXN0LmRlIiwicm9sZSI6IndvZSIsInVzZXJJRCI6IjVjN2FlOWNiNWE0NDc3MDAxMTNlNmQ3NyIsInVzZXJOYW1lRmlyc3QiOiJKb25hIEFudG9uIiwidXNlck5hbWVMYXN0IjoiRWx6ZSIsImlhdCI6MTU1MTU1OTE0MywiZXhwIjoxNTUyMTYzOTQzfQ.Czga9QL11g_bWv3HQM2bbUw8DUCtJbhO_Qu8ZdHcLLo';
-        socket.emit('auth', token);
-    }
-
-    function sendTextMessage(chatID = '5c7c0fa31286e70011dae643', message = 'Unverschlüsslte Testnachricht', sendTime = new Date(), deleteTime = null, silentMessage = false, encoding = 'none', answerToID = null, editedNewID = null, forwardedID = null) {
-        let data = {
-            message: message,
-            sendTime: sendTime,
-            deleteTime: deleteTime,
-            silentMessage: silentMessage,
-            encoding: encoding,
-            answerToID: answerToID,
-            editedNewID: editedNewID,
-            forwardedID: forwardedID
-        };
-
-        socket.emit('sendMessage', chatID, data);
+        let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndvZUB0ZXN0LmRlIiwicm9sZSI6IndvZSIsInVzZXJJRCI6IjVjN2FlOWNiNWE0NDc3MDAxMTNlNmQ3NyIsInVzZXJOYW1lRmlyc3QiOiJKb25hIEFudG9uIiwidXNlck5hbWVMYXN0IjoiRWx6ZSIsImlhdCI6MTU1MTcyNjI1OCwiZXhwIjoxNTUyMzMxMDU4fQ.zzQm-kmmJPg0BOmxqX-ZwlKP_g02ASRoQe8y1yCt6TM';
+        if (token !== null && token !== undefined) {
+            socket.emit('auth', token);
+        }
     }
 
 </script>

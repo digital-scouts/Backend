@@ -1,41 +1,87 @@
 //https://socket.io/docs/server-api/
+import * as jwt from "jsonwebtoken";
+import {User} from "../models/userModel";
+import App from "../expressApp";
+import myEmitter from '../events';
 
-import {SocketController} from '../controller/socketController';
 
 export class SocketRouter {
-    private ioServer;
+    private readonly io;
 
     public constructor(ioServer) {
-        this.ioServer = ioServer;
-        this.initCalls();
+        this.io = ioServer;
+        this.initIncomingCalls();
+        this.initOutgoingCalls();
 
-        console.log("Socket setup finished...");
+        console.log("Socket Router created...")
+    }
+
+
+    /**
+     * @author lange
+     * @since 2019-03-02
+     * save socket id to database
+     * emit status to socket
+     * @param socket
+     * @param {string} token
+     * @return user
+     */
+    static handleAuth(socket, token: string) {
+        let userID = null;
+        if (token) {
+            jwt.verify(token, App.get('salt'), (error, decoded) => {
+                if (error) {
+                    socket.emit("authStatus", false, "Unauthorized: Token is not valid");
+                    return;
+                }
+                userID = decoded.userID
+            });
+        } else {
+            socket.emit('authStatus', false, "BadRequest: BadRequest");
+            return;
+        }
+
+        if (userID != null) {
+            User.findByIdAndUpdate(userID, {$set: {'socketID': socket.id}}, {new: true}, (err, user) => {
+                if (err || user === null) {
+                    console.error(err);
+                    return;
+                } else {
+                    socket.emit('authStatus', true);
+                    console.log("User authenticated")
+                }
+            });
+        }
     }
 
     /**
-     *
-     *
+     * @author lange
+     * @since 2019-03-02
+     * update socket id in database
+     * @param socket
+     * @return user
      */
-    private initCalls() {
-        this.ioServer.on('connection', function (socket) {
+    static handleDisconnect(socket) {
+        User.findOneAndUpdate({'socketID': socket.id}, {$set: {'socketID': null}}, {new: true}, (err, user) => {
+            if (err) {
+                console.error(err);
+                return;
+            } else {
+                return user;
+            }
+        });
+    }
 
+
+    private initIncomingCalls() {
+        this.io.on('connection', socket => incomingCalls(socket));
+
+        function incomingCalls(socket) {
             //user is unknown
             console.log('SOCKET: a user connected');
 
             socket.on('auth', (token) => {
-               SocketController.handleAuth(socket, token);
-            });
-
-            /**
-             * @author lange
-             * @since 2019-03-02
-             * receives messages and handel them
-             * @param {string} chatID - uniq chat identifier
-             * @param {string} message - message to send
-             * @param data - some params for this message
-             */
-            socket.on('sendMessage', (chatID: string, data) => {
-              SocketController.handleNewMessage(socket, chatID, data);
+                SocketRouter.handleAuth(socket, token);
             });
 
             /**
@@ -70,7 +116,7 @@ export class SocketRouter {
             });
 
             socket.on('disconnect', function (reason) {
-                SocketController.handleDisconnect(socket);
+                SocketRouter.handleDisconnect(socket);
                 console.log('SOCKET: a user disconnected');
             });
 
@@ -79,6 +125,12 @@ export class SocketRouter {
                 console.log('SOCKET: Woops an error');
                 console.error(error);
             });
+        }
+    }
+
+    private initOutgoingCalls(){
+        myEmitter.on('newMessage', (socketId) => {
+            this.io.to(socketId).emit('newMessage');
         });
     }
 }

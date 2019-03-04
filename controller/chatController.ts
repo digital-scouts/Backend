@@ -2,6 +2,7 @@ import {ErrorREST, Errors} from "../errors";
 import {Chat} from '../models/chatModel';
 import {TextMessage} from "../models/messageModel";
 import {User} from "../models/userModel";
+import myEmitter from '../events';
 
 export class ChatController {
 
@@ -89,11 +90,11 @@ export class ChatController {
                 for (let errName in err.errors)
                     switch (err.errors[errName].name) {
                         case 'ValidatorError':
-                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidatorError: "+ err.errors[errName].message));
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidatorError: " + err.errors[errName].message));
                         case 'ValidationError':
-                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidationError: "+ err.errors[errName].message));
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "ValidationError: " + err.errors[errName].message));
                         case 'CastError':
-                            return next(new ErrorREST(Errors.UnprocessableEntity, "CastError: "+ err.errors[errName].message));
+                            return next(new ErrorREST(Errors.UnprocessableEntity, "CastError: " + err.errors[errName].message));
                     }
         });
 
@@ -107,6 +108,7 @@ export class ChatController {
                             Chat.findByIdAndUpdate(request.body.chatID, {$push: {message: message}}, {new: true}, (err, doc) => {
                                 if (doc) {
                                     message.save().then(message => response.status(200).json(message));
+                                    ChatController.sendMessage(request.body.chatID);
                                 } else {
                                     return next(new ErrorREST(Errors.InternalServerError, "Unknown error during chat update"));
                                 }
@@ -126,11 +128,23 @@ export class ChatController {
     }
 
     /**
-     * notify all connected users in the chat (dont send the message)
+     * notify all connected users in the chat, who did not received all messages about a new message(dont send the message)
      * todo push to all other
      * @param chatID
      */
     private static sendMessage(chatID) {
-
+        Chat.findById(chatID, 'user', (err, users) => {
+            if (users) {
+                users.user.forEach(userID => {
+                    User.findById(userID, 'socketID', (err, user) => {
+                        if (user) {
+                            myEmitter.emit('newMessage', user.socketID);
+                        } else {
+                            console.log("Error user not found for id: " + userID + " error: " + err)
+                        }
+                    });
+                });
+            }
+        });
     }
 }

@@ -14,7 +14,7 @@ class Users {
 
     init() {
         this.router.route('/')
-            .get(token, permission, (re, rs, ne) => UserController.getAll(re, rs, ne))
+            .get(token, permission,UserController.getAll)
             .post(UserController.addUser) //no token needed to create a account
             .put(token, permission, UserController.updateUser);
 
