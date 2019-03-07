@@ -11,7 +11,7 @@ class Index {
 
     init() {
         this.router.route('/')
-            .get(function (req, res, next) {//test the RESTful API
+            .get(function (req, res, next) {//tests the RESTful API
                 res.status(200).json(
                     {
                         status: 200,
@@ -19,7 +19,7 @@ class Index {
                     }
                 );
             })
-            .post(token, function (req, res, next) {//test if the token is valid
+            .post(token, function (req, res, next) {//tests if the token is valid
                 res.status(200).json(
                     {
                         status: 200,

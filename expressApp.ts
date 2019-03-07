@@ -5,14 +5,12 @@ import * as morgan from "morgan";
 import * as path from 'path';
 import {Config} from "./config";
 import {ErrorREST, Errors} from "./errors";
-import {SocketRouter} from "./routes/socketRouter";
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/api/users";
 import authRouter from "./routes/api/auth";
 import adminAccount from "./routes/api/adminAccounts";
 import chatRouter from './routes/api/chat';
-import {ChatController} from "./controller/chatController";
 
 class ExpressApp {
     public express: express.Application;

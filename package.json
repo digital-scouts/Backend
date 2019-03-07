@@ -1,22 +1,21 @@
 {
   "name": "digital-scouts-backend",
+  "description": "A system to manage communication, organisation and planing in child groups.",
   "version": "0.0.0",
+  "author": "Janneck Lange",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "mocha --require babel-register tests/*.js --exit"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.4.0",
     "jstransformer": "^1.0.0",
     "mongodb": "^3.1.13",
-    "mongoose": "^5.4.9",
-    "morgan": "~1.9.0",
     "promise": "^8.0.2",
     "pug": "^2.0.3",
     "save": "^2.3.3",
@@ -25,6 +24,16 @@
   },
   "devDependencies": {
     "@types/node": "^11.9.5",
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mocha": "^6.0.2",
+    "mongoose": "^5.4.17",
+    "morgan": "^1.9.1",
+    "nyc": "^13.3.0"
   }
 }
