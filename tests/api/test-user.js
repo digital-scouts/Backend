@@ -1,12 +1,29 @@
-const should = require('chai').should();
+const app = require('../../expressApp').default,
+    server = app.server;
 
-module.exports = function () {
+const chai = require('chai'),
+    chaiHttp = require('chai-http'),
+    should = chai.should();
 
+chai.use(chaiHttp);
+const userController = require('../../controller/userController');
+const userModel = require('./../../models/chatModel').Chat;
+
+module.exports = function (test_data) {
     describe('Users', function () {
         describe('/POST user', () => {
             it('should post a new user with minimal correct data', (done) => {
-                const x = 300;
-                x.should.equal(401);
+                chai.request(server)
+                    .post('/api/users')
+                    .query(test_data.users[0])
+                    .end(async (err, res) => {
+                        res.should.have.status(200);
+
+                        let dbRequest = await userModel.findById(res._id).exec();
+                        should.exist(dbRequest);
+
+                        done();
+                    });
                 done();
             });
 

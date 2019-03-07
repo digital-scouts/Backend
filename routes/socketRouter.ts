@@ -5,7 +5,7 @@ import App from "../expressApp";
 import myEmitter from '../events';
 
 
-export class SocketRouter {
+export default class SocketRouter {
     private readonly io;
 
     public constructor(ioServer) {
@@ -29,7 +29,7 @@ export class SocketRouter {
     static handleAuth(socket, token: string) {
         let userID = null;
         if (token) {
-            jwt.verify(token, App.get('salt'), (error, decoded) => {
+            jwt.verify(token, App.express.get('salt'), (error, decoded) => {
                 if (error) {
                     socket.emit("authStatus", false, "Unauthorized: Token is not valid");
                     return;

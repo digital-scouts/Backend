@@ -1,10 +1,15 @@
-import * as express from "express";
+import * as express from 'express';
 import * as mongoose from "mongoose";
 import * as bodyParser from "body-parser";
 import * as morgan from "morgan";
 import * as path from 'path';
+import * as http from 'http';
+import debug from 'debug';
+
+debug('digital-scouts-backend:server');
 import {Config} from "./config";
 import {ErrorREST, Errors} from "./errors";
+import SocketRouter from './routes/socketRouter';
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/api/users";
@@ -13,7 +18,8 @@ import adminAccount from "./routes/api/adminAccounts";
 import chatRouter from './routes/api/chat';
 
 class ExpressApp {
-    public express: express.Application;
+    public express;
+    public server;
 
     //Run configuration methods on the Express instance.
     constructor() {
@@ -80,17 +86,93 @@ class ExpressApp {
 
             response.status(error.response.status).send(error.response);
         });
-// Set global constants
+        // Set global constants
         this.express.set('salt', Config.salt);
         this.express.set('DEBUG', Config.DEBUG);
 
+        //prepare server
+        const port = normalizePort(process.env.PORT || '3000');
+        this.express.set('port', port);
+
+        const server = http.createServer(this.express);
+        server.listen(port);
+        server.on('error', onError);
+        server.on('listening', onListening);
+        this.server = server;
+        const io = new SocketRouter(require('socket.io')(server));
+
+        /**
+         * Normalize a port into a number, string, or false.
+         */
+        function normalizePort(val) {
+            const port = parseInt(val, 10);
+
+            if (isNaN(port)) {
+                // named pipe
+                return val;
+            }
+
+            if (port >= 0) {
+                // port number
+                return port;
+            }
+
+            return false;
+        }
+
+        /**
+         * Event listener for HTTP server "error" event.
+         */
+        function onError(error) {
+            if (error.syscall !== 'listen') {
+                throw error;
+            }
+
+            const bind = typeof port === 'string'
+                ? 'Pipe ' + port
+                : 'Port ' + port;
+
+            // handle specific listen errors with friendly messages
+            switch (error.code) {
+                case 'EACCES':
+                    console.error(bind + ' requires elevated privileges');
+                    process.exit(1);
+                    break;
+                case 'EADDRINUSE':
+                    console.error(bind + ' is already in use');
+                    process.exit(1);
+                    break;
+                default:
+                    throw error;
+            }
+        }
+
+        /**
+         * Event listener for HTTP server "listening" event.
+         */
+        function onListening() {
+            const addr = server.address();
+            const bind = typeof addr === 'string'
+                ? 'pipe ' + addr
+                : 'port ' + addr.port;
+            debug('Listening on ' + bind);
+        }
     }
 
     private mongo() {
-
-        const db_url = Config.database;
+        let db_url = function (nodeEnvironment) {
+            switch (nodeEnvironment) {
+                case 'test':
+                    console.log("running on test database");
+                    return Config.test_database;
+                default:
+                    console.log("running on normal database");
+                    return Config.database;
+            }
+        }(process.env.NODE_ENV);
         // Connect to the mongoDB via mongoose
         mongoose.connect(db_url, {useNewUrlParser: true});
+        mongoose.set("useCreateIndex", true);
         let db = mongoose.connection;
 
         // Bind connection to error event ( to get notification of connection errors)
@@ -101,4 +183,7 @@ class ExpressApp {
         });
     }
 }
-export default new ExpressApp().express;
+
+const app = new ExpressApp(), server = app.server, express = app.express;
+const appObj = {server, express};
+export default appObj;
