@@ -1,5 +1,4 @@
 const dbOperations = require('./shared/db-operations');
-const dependencies = require("./shared/dependencies");
 
 const testFilesToRun = [
 "./api/test-user.js"
@@ -10,12 +9,13 @@ describe('Backend test suite', () => {
         dbOperations.clearDatabase()
             .then(executeTests)
             .then(done);
-    });
+    }).timeout(5000);
 });
 
 function executeTests() {
+
     testFilesToRun.forEach(function(path) {
         let test = require(path);
-        test(dependencies);
+        test();
     });
 }
