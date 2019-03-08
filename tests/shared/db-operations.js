@@ -1,7 +1,9 @@
+const chai = require('chai');
+
 let models = {
-    message: require("./../../models/messageModel").TextMessage,
-    chat: require("./../../models/chatModel").Chat,
-    user: require("./../../models/userModel").User
+    message: require('./../../models/messageModel').TextMessage,
+    chat: require('./../../models/chatModel').Chat,
+    user: require('./../../models/userModel').User
 };
 
 async function clearDatabase() {
@@ -12,5 +14,5 @@ async function clearDatabase() {
 
 
 module.exports = {
-    clearDatabase: clearDatabase
+    clearDatabase: clearDatabase,
 };

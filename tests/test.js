@@ -4,7 +4,7 @@ const test_data = require('./shared/test-data');
 const testFilesToRun = [
     "./api/test-user.js"
 ];
-console.log(server)
+
 describe('Backend test suite', () => {
     it('it should run all backend tests', (done) => {
         dbOperations.clearDatabase()
