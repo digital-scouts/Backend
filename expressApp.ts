@@ -5,8 +5,8 @@ import * as morgan from "morgan";
 import * as path from 'path';
 import * as http from 'http';
 import debug from 'debug';
-
 debug('digital-scouts-backend:server');
+
 import {Config} from "./config";
 import {ErrorREST, Errors} from "./errors";
 import SocketRouter from './routes/socketRouter';
@@ -18,46 +18,45 @@ import adminAccount from "./routes/api/adminAccounts";
 import chatRouter from './routes/api/chat';
 
 class ExpressApp {
-    public express;
+    public app;
     public server;
 
     //Run configuration methods on the Express instance.
     constructor() {
-        this.express = express();
+        this.app = express();
         this.middleware();
         this.mongo();
         console.log('Node.ts setup finished');
     }
 
     private middleware(): void {
-        this.express.use(bodyParser.urlencoded({extended: false}));
-        this.express.use(bodyParser.json({limit: "8mb"}));
-        this.express.use(express.json({limit: "8mb"}));
-        this.express.use(express.static(path.join(__dirname, 'public')));
-        this.express.use(function (req, res, next) {
+        this.app.use(bodyParser.urlencoded({extended: false}));
+        this.app.use(bodyParser.json({limit: "8mb"}));
+        this.app.use(express.json({limit: "8mb"}));
+        this.app.use(express.static(path.join(__dirname, 'public')));
+        this.app.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
             res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
             next();
         });
         // Use morgan to log requests to the console.
-        this.express.use(morgan('dev'));
+        this.app.use(morgan('dev'));
 
+        this.app.use('/', indexRouter);
 
-        this.express.use('/', indexRouter);
+        this.app.use('/api/users', usersRouter);
+        this.app.use('/api/auth', authRouter);
+        this.app.use('/api/chat', chatRouter);
+        this.app.use('/api/admin/accounts', adminAccount);
 
-        this.express.use('/api/users', usersRouter);
-        this.express.use('/api/auth', authRouter);
-        this.express.use('/api/chat', chatRouter);
-        this.express.use('/api/admin/accounts', adminAccount);
-
-        this.express.get('/chat', function (req, res) {
+        this.app.get('/chat', function (req, res) {
             res.sendFile(__dirname + '/public/chat.html');
         });
 
 
         // Error handler
-        this.express.use(function (error, request, response, next) {
+        this.app.use(function (error, request, response, next) {
             function logRequest(logger, request) {
                 logger("REQUEST:");
                 logger(request.method + " " + request.url);
@@ -70,7 +69,6 @@ class ExpressApp {
                 logger("BODY:");
                 logger(request.body);
             }
-
             if (error != null && error.response != null) {
                 logRequest(console.error, request);
                 console.error("CUSTOM ERROR OCCURRED:");
@@ -87,19 +85,20 @@ class ExpressApp {
             response.status(error.response.status).send(error.response);
         });
         // Set global constants
-        this.express.set('salt', Config.salt);
-        this.express.set('DEBUG', Config.DEBUG);
+        this.app.set('salt', Config.salt);
+        this.app.set('DEBUG', Config.DEBUG);
 
         //prepare server
         const port = normalizePort(process.env.PORT || '3000');
-        this.express.set('port', port);
+        this.app.set('port', port);
 
-        const server = http.createServer(this.express);
+        const server = http.createServer(this.app);
         server.listen(port);
         server.on('error', onError);
         server.on('listening', onListening);
         this.server = server;
         const io = new SocketRouter(require('socket.io')(server));
+        console.log('Socket.io setup finished');
 
         /**
          * Normalize a port into a number, string, or false.
@@ -184,6 +183,8 @@ class ExpressApp {
     }
 }
 
-const app = new ExpressApp(), server = app.server, express = app.express;
-const appObj = {server, express};
+const app = new ExpressApp(),
+    serverEx = app.server,
+    expressEx = app.app;
+const appObj = {serverEx, expressEx};
 export default appObj;
