@@ -2,10 +2,9 @@ module.exports = {
     users: [{//test user with minimal data
         name_first: "Test User",
         name_last:"Minimal Data",
-        email:"user1@mail.de",
+        email:"user1@mail.des",
         password:"1234sad??dd.S",
         role:"woe",
-        id:null
     },{//test user with maximal data
         name_first: "Test User2",
         name_last:"Maximal Data",

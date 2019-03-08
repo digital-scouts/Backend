@@ -1,10 +1,8 @@
-import * as App from "../expressApp";
-
 import * as jwt from "jsonwebtoken";
-
 import {ErrorREST, Errors} from "../errors";
 
-const express = App.appE;
+const app = require('../expressApp'),
+    express = app.appE;
 
 /**
  * This is just called by the router and checks the status of a given token.

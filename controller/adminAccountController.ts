@@ -1,5 +1,3 @@
-import express from "../expressApp";
-
 import {Errors} from "../errors";
 import {ErrorREST} from "../errors";
 import {User} from "../models/userModel";

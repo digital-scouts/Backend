@@ -8,7 +8,8 @@ let permissionLevel = {
 
 const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
-    'test_database': 'mongodb://192.168.99.100:27017/test-social-scout',
+    'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
+    'local_database':'mongodb://127.0.0.1:27017/social-scout',
     'salt': 'digital-scouts-santa-lucia',
     'DEBUG': true,//debugmode can overwrite permissions, be careful
     'user': [

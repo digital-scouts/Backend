@@ -1,6 +1,6 @@
 import {User} from "../models/userModel";
-import express from "../expressApp";
-
+import * as app from "../expressApp";
+const express = app.appE;
 import {ErrorREST, Errors} from "../errors";
 
 

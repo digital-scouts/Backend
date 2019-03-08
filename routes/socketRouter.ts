@@ -1,7 +1,8 @@
 //https://socket.io/docs/server-api/
 import * as jwt from "jsonwebtoken";
 import {User} from "../models/userModel";
-import App from "../expressApp";
+import * as app from "../expressApp";
+const express = app.appE;
 import myEmitter from '../events';
 
 
@@ -29,7 +30,7 @@ export default class SocketRouter {
     static handleAuth(socket, token: string) {
         let userID = null;
         if (token) {
-            jwt.verify(token, App.express.get('salt'), (error, decoded) => {
+            jwt.verify(token, express.get('salt'), (error, decoded) => {
                 if (error) {
                     socket.emit("authStatus", false, "Unauthorized: Token is not valid");
                     return;

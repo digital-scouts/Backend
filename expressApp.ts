@@ -166,8 +166,11 @@ class ExpressApp {
                 case 'test':
                     console.log("running on test database");
                     return Config.test_database;
+                case 'local':
+                    console.log("running on local database");
+                    return Config.local_database;
                 default:
-                    console.log("running on normal database");
+                    console.log("running on docker database");
                     return Config.database;
             }
         }(process.env.NODE_ENV);

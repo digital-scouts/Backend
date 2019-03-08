@@ -1,6 +1,3 @@
-const app = require('../../expressApp'),
-    server = app.serverE;
-
 const dnOperations = require('../shared/db-operations');
 
 const chai = require('chai'),
@@ -9,10 +6,8 @@ const chai = require('chai'),
     expect = chai.expect;
 
 chai.use(chaiHttp);
-const userController = require('../../controller/userController');
-const userModel = require('./../../models/chatModel').Chat;
 
-module.exports = function (test_data) {
+module.exports = function (test_data, server) {
     describe('Users', function () {
         afterEach(function () {
             dnOperations.clearDatabase();
