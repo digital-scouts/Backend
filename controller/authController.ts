@@ -3,7 +3,9 @@ import {User} from "../models/userModel";
 import * as jwt from "jsonwebtoken";
 
 import {Errors, ErrorREST} from "../errors";
-import express from '../expressApp';
+import * as app from './../expressApp';
+
+const express = app.appE;
 
 export class AuthController {
     /**

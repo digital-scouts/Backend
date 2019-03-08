@@ -5,6 +5,7 @@ import * as morgan from "morgan";
 import * as path from 'path';
 import * as http from 'http';
 import debug from 'debug';
+
 debug('digital-scouts-backend:server');
 
 import {Config} from "./config";
@@ -26,7 +27,7 @@ class ExpressApp {
         this.app = express();
         this.middleware();
         this.mongo();
-        console.log('Node.ts setup finished');
+        console.log('Node setup finished...');
     }
 
     private middleware(): void {
@@ -69,6 +70,7 @@ class ExpressApp {
                 logger("BODY:");
                 logger(request.body);
             }
+
             if (error != null && error.response != null) {
                 logRequest(console.error, request);
                 console.error("CUSTOM ERROR OCCURRED:");
@@ -84,6 +86,7 @@ class ExpressApp {
 
             response.status(error.response.status).send(error.response);
         });
+
         // Set global constants
         this.app.set('salt', Config.salt);
         this.app.set('DEBUG', Config.DEBUG);
@@ -98,7 +101,6 @@ class ExpressApp {
         server.on('listening', onListening);
         this.server = server;
         const io = new SocketRouter(require('socket.io')(server));
-        console.log('Socket.io setup finished');
 
         /**
          * Normalize a port into a number, string, or false.
@@ -178,13 +180,15 @@ class ExpressApp {
         db.on('error', console.error.bind(console, 'connection error: '));
         db.once('open', function () {
             // connected
-            console.log('MongoDB connected..');
+            console.log('MongoDB connected...');
         });
     }
 }
 
-const app = new ExpressApp(),
-    serverEx = app.server,
-    expressEx = app.app;
-const appObj = {serverEx, expressEx};
-export default appObj;
+const app = new ExpressApp();
+const serverE = app.server;
+const appE =  app.app;
+export {
+    serverE,
+    appE
+};
