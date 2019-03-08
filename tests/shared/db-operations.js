@@ -6,9 +6,7 @@ let models = {
 
 async function clearDatabase() {
     for (let modelKey in models) {
-        models[modelKey].deleteMany().then((data)=>{
-            data.ok.should.equal(1);
-        });
+        await models[modelKey].deleteMany().exec();
     }
 }
 
