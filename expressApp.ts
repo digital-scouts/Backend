@@ -87,10 +87,6 @@ class ExpressApp {
             response.status(error.response.status).send(error.response);
         });
 
-        // Set global constants
-        this.app.set('salt', Config.salt);
-        this.app.set('DEBUG', Config.DEBUG);
-
         //prepare server
         const port = normalizePort(process.env.PORT || '3000');
         this.app.set('port', port);

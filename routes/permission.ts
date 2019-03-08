@@ -34,7 +34,7 @@ function checkApiPermission(path:JSON, method:string, userRole:string) {
     let permissionList:string[] = path[method].users;
     //console.log(path[method].users)
     let find = permissionList.find(function (element) {
-        console.log("___________Permission --> Suche:"+userRole+", Gefunden:"+ element + ", permission: "+ (element === userRole));
+        // console.log("___________Permission --> Suche:"+userRole+", Gefunden:"+ element + ", permission: "+ (element === userRole));
         return element === userRole;
     });
     return find !== undefined;

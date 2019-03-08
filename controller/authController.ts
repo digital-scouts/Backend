@@ -1,11 +1,7 @@
 import {User} from "../models/userModel";
-
 import * as jwt from "jsonwebtoken";
-
 import {Errors, ErrorREST} from "../errors";
-import * as app from './../expressApp';
-
-const express = app.appE;
+import * as config from '../config';
 
 export class AuthController {
     /**
@@ -48,7 +44,7 @@ export class AuthController {
                         {
                             status: 200,
                             message: "Request successful.",
-                            token: jwt.sign(payload, express.get('salt'), {expiresIn: 604800})//one week
+                            token: jwt.sign(payload, config.Config.salt, {expiresIn: 604800})//one week
                         }
                     );
                 }

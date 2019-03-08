@@ -1,8 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import {ErrorREST, Errors} from "../errors";
-
-const app = require('../expressApp'),
-    express = app.appE;
+import * as config from '../config';
 
 /**
  * This is just called by the router and checks the status of a given token.
@@ -14,7 +12,7 @@ export function verifyToken(request, response, next) {
     // Extract token from header / url parameters / post parameters
     let token = request.body.token;
     if (token) {
-        jwt.verify(token, express.get('salt'),  (error, decoded) => {
+        jwt.verify(token, config.Config.salt,  (error, decoded) => {
                 if (error) {
                     return next(new ErrorREST(Errors.Unauthorized));
                 }

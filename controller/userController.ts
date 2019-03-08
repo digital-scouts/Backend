@@ -1,6 +1,4 @@
 import {User} from "../models/userModel";
-import * as app from "../expressApp";
-const express = app.appE;
 import {ErrorREST, Errors} from "../errors";
 
 
@@ -15,11 +13,7 @@ export class UserController {
      * @returns {*}
      */
     static getAll(request, response, next) {
-        if (express.get('DEBUG') || request.decoded.role === 'admin') {
-            User.find().then(data => response.json(data)).catch(next);
-        } else {
-            return next(new ErrorREST(Errors.Forbidden));
-        }
+        User.find().then(data => response.json(data)).catch(next);
     }
 
     /**
