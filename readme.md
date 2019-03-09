@@ -1,10 +1,10 @@
-## Anforderungsdokumentation ##
+# Anforderungsdokumentation #
 
 Jeder kommentar im Dokument ist mir eine Hilfe.
 https://docs.google.com/document/d/1vvRm_NTy4QUYKYIB3qHDK87ALiySdbvNTvioZAqokQk/edit?usp=sharing
 
 
-## Installation ## 
+# Installation #
 
 Dank der Verwendung von Docker lässt sich das Projekt sehr einfach aufsetzten. Es reicht die Verwendung von docker-compose:
 
@@ -28,3 +28,29 @@ docker-compose up -d --force-recreate --build
 
 Dies baut beide Container neu und bezieht auch neue bzw. geänderte Dateien mit ein.
 Die Datenbank wird hierbei nicht gelöscht!
+
+# Run Configurations #
+
+## Docker ##
+Docker required, setup config.database
+
+Compose Files: .\docker-compose.yml; 
+
+Options: force build images
+
+## Node (Local) ##
+Local MongoDB required, setup config.local_database
+
+JavaScript files: expressApp.js
+
+Enviroment variables: NODE_ENV=local
+
+
+## Mocha (Local) ##
+Local MongoDB required, setup config.test_database
+
+User interface: bdd
+
+Choose 'Test file': /test/test.js
+
+Enviroment variables: NODE_ENV=test
