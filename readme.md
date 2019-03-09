@@ -6,6 +6,12 @@ https://docs.google.com/document/d/1vvRm_NTy4QUYKYIB3qHDK87ALiySdbvNTvioZAqokQk/
 
 # Installation #
 
+Vor dem ersten start oder bei Änderungen an package.json sollten die node_modules geupdatet werden.
+
+```bash
+npm install
+```
+
 Dank der Verwendung von Docker lässt sich das Projekt sehr einfach aufsetzten. Es reicht die Verwendung von docker-compose:
 
 ```bash
@@ -26,10 +32,10 @@ Sollte sich etwas an den Quelldateien geändert haben, müssen die Docker Contai
 docker-compose up -d --force-recreate --build
 ```
 
-Dies baut beide Container neu und bezieht auch neue bzw. geänderte Dateien mit ein.
+Dies baut alle Container neu und bezieht auch neue bzw. geänderte Dateien mit ein.
 Die Datenbank wird hierbei nicht gelöscht!
 
-# Run Configurations #
+# WebStorm Run Configurations #
 
 ## Docker ##
 Docker required, setup config.database
