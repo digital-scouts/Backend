@@ -13,7 +13,7 @@ module.exports = function (test_data, server) {
             dbOperations.clearDatabase();
         });
 
-        describe('/POST user', () => {
+        describe('Create a new User', () => {
             it('should post a new user with minimal correct data', (done) => {
                 chai.request(server)
                     .post('/api/users')
@@ -182,7 +182,7 @@ module.exports = function (test_data, server) {
             });
         });
 
-        describe('/GET users', () => {
+        describe('Show all users (with same group)', () => {
             it('should get all users in the same group', (done) => {
                 chai.request(server)
                     .post('/api/users')
@@ -203,7 +203,7 @@ module.exports = function (test_data, server) {
                                             .send({token: woeToken})
                                             .end((err, res) => { //get all with woe token
                                                 expect(res.body[0]._id).to.equal(woeID);
-                                                expect(res.body.length).to.equal(1, "Created only one 'woe'. 'jufi' should be hidden.");
+                                                expect(res.body.length).to.equal(1, 'Created only one \'woe\'. \'jufi\' should be hidden.');
                                                 done();
                                             });
                                     });
@@ -216,10 +216,10 @@ module.exports = function (test_data, server) {
 
             it('should fail with missing permission');
 
-            it('should fail with wrong token',(done)=>{
+            it('should fail with wrong token', (done) => {
                 chai.request(server)
                     .get('/api/users')
-                    .send({token:""})
+                    .send({token: ''})
                     .end((err, res) => { //get all with woe token
                         expect(res).to.have.status(401);
                         done();
@@ -227,44 +227,105 @@ module.exports = function (test_data, server) {
             });
         });
 
-        describe('/PUT user', () => {
+        describe('Update other information\'s', () => {
             it('should update a user');
-
-            it('should fail with wrong id');
 
             it('should fail with missing permission');
 
             it('should fail with wrong token');
         });
 
-        describe('/PUT user-image', () => {
+        describe('Update Profile image', () => {
             it('should update a user image');
 
             it('should fail with wrong id');
 
-            it('should fail with missing permission');
-
             it('should fail with wrong token');
         });
 
-        describe('/PUT user-password', () => {
-            it('should update a user password');
+        describe('Update Password', () => {
+            it('should update a user password', (done) => {
+                let newPassword = 'SaveNewPassword213!';
+                let userData = dbOperations.createUser(test_data.users[1]);
 
-            it('should fail with wrong id');
+                chai.request(server)
+                    .put('/api/users/password')
+                    .send({
+                        token: userData.token,
+                        oldPassword: test_data.users[1].password,
+                        password: newPassword
+                    })
+                    .end((err, res) => { //get all with woe token
+                        expect(res).to.have.status(200);
+                        expect(res.body.password).to.equal(newPassword);
+                        done();
+                    });
+            });
 
-            it('should fail with missing permission');
+            it('should fail with wrong old password', (done) => {
+                let userData = dbOperations.createUser(test_data.users[1]);
 
-            it('should fail with wrong token');
+                chai.request(server)
+                    .put('/api/users/password')
+                    .send({
+                        token: userData.token,
+                        oldPassword: test_data.users[1].password + 'wrong',
+                        password: 'newPasswordNotNecessary'
+                    })
+                    .end((err, res) => { //get all with woe token
+                        expect(res).to.have.status(422);
+                        done();
+                    });
+            });
+
+            it('should fail with wrong token', (done) => {
+                let userData = dbOperations.createUser(test_data.users[1]);
+
+                chai.request(server)
+                    .put('/api/users/password')
+                    .send({
+                        token: userData.token + 'x', //wrong token
+                        oldPassword: test_data.users[1].password,
+                        password: 'newPasswordNotNecessary'
+                    })
+                    .end((err, res) => { //get all with woe token
+                        expect(res).to.have.status(401);
+                        done();
+                    });
+            });
         });
 
-        describe('/PUT user-email', () => {
-            it('should update a user email');
+        describe('Update E-Mail', () => {
+            it('should update a user email', (done) => {
+                let userData = dbOperations.createUser(test_data.users[1]);
+                let newMail = 'new@mail.com';
+                chai.request(server)
+                    .put('/api/users/email')
+                    .send({
+                        token: userData.token + 'x', //wrong token
+                        email: newMail
+                    })
+                    .end((err, res) => { //get all with woe token
+                        expect(res).to.have.status(200);
+                        expect(res.body.email).to.equal(newMail);
+                        done();
+                    });
+            });
 
-            it('should fail with wrong id');
+            it('should fail with wrong token', (done) => {
+                let userData = dbOperations.createUser(test_data.users[1]);
 
-            it('should fail with missing permission');
-
-            it('should fail with wrong token');
+                chai.request(server)
+                    .put('/api/users/email')
+                    .send({
+                        token: userData.token + 'x', //wrong token
+                        email: 'new@mail.com'
+                    })
+                    .end((err, res) => { //get all with woe token
+                        expect(res).to.have.status(401);
+                        done();
+                    });
+            });
         });
 
     });
