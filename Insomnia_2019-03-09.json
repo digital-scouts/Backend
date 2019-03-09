@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2019-03-03T21:38:15.130Z",
+  "__export_date": "2019-03-09T00:13:49.124Z",
 	"__export_source": "insomnia.desktop.app:v6.3.2",
 	"resources": [
 		{
@@ -12,15 +12,36 @@
 			"name": "Insomnia",
 			"parentId": null,
 			"_type": "workspace"
+        },
+      {
+        "_id": "wrk_2920076d8d0948e19ab2d4127882d0d2",
+        "created": 1540893908907,
+        "description": "",
+        "modified": 1540893908907,
+        "name": "Insomnia",
+        "parentId": null,
+        "_type": "workspace"
 		},
 		{
 			"_id": "env_a1cfa22952bb4ee8a986bbc90bce60e7",
 			"color": null,
 			"created": 1540819461054,
-			"data": {},
+          "data": {
+            "default_email": "lange@test.com",
+            "default_password": "123Ee!!!!",
+            "default_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlYnVnVXNlckBtYWlsLmRlIiwicm9sZSI6ImFkbWluIiwidXNlcklEIjoibm90U2V0IiwidXNlck5hbWVGaXJzdCI6ImRlYnVnVXNlciIsInVzZXJOYW1lTGFzdCI6ImRlYnVnVXNlciIsImlhdCI6MTU1MjA4MDQ2OSwiZXhwIjoxNTUyNjg1MjY5fQ.Y-gLOiJsHEGgnQw6Z-r2sPHl0hO1eBHWEefVAYvZ_Gw",
+            "path": {
+              "admin": {
+                "account": "api/admin/accounts/"
+              },
+              "auth": "api/auth",
+              "chat": "api/chat",
+              "users": "api/users"
+            }
+          },
 			"isPrivate": false,
 			"metaSortKey": 1540819461054,
-			"modified": 1540910511760,
+          "modified": 1552080481016,
 			"name": "New Environment",
 			"parentId": "wrk_e25c517fc71244d6a9cc002b7f659121",
 			"_type": "environment"
@@ -84,27 +105,51 @@
 			"_type": "request"
 		},
 		{
+          "_id": "env_9444f43c2d3d4228ad689003f9e00d87",
+          "color": null,
+          "created": 1540893908960,
+          "data": {},
+          "isPrivate": false,
+          "metaSortKey": 1540893908960,
+          "modified": 1541146172094,
+          "name": "New Environment",
+          "parentId": "wrk_2920076d8d0948e19ab2d4127882d0d2",
+          "_type": "environment"
+        },
+      {
+        "_id": "jar_86ce294a40d9484fbcfc359fd57a6681",
+        "cookies": [],
+        "created": 1540893908969,
+        "modified": 1540893908969,
+        "name": "Default Jar",
+        "parentId": "wrk_2920076d8d0948e19ab2d4127882d0d2",
+        "_type": "cookie_jar"
+      },
+      {
 			"_id": "env_33e84ba08ad640fdab99ef6ba76b3c1b",
 			"color": "#7d69cb",
 			"created": 1550613772116,
 			"data": {
-				"base_url": "http://192.168.99.100:3000/",
-				"default_email": "lange@test.com",
-				"default_password": "123Ee!!!!",
-				"default_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndvZUB0ZXN0LmRlIiwicm9sZSI6IndvZSIsInVzZXJJRCI6IjVjN2FlOWNiNWE0NDc3MDAxMTNlNmQ3NyIsInVzZXJOYW1lRmlyc3QiOiJKb25hIEFudG9uIiwidXNlck5hbWVMYXN0IjoiRWx6ZSIsImlhdCI6MTU1MTY0NjE3NiwiZXhwIjoxNTUyMjUwOTc2fQ.s9db-fuxJeJq1pUmfvYQjSh7m7VEu-D02xMr4IyVQbM",
-				"path": {
-					"admin": {
-						"account": "api/admin/accounts/"
-					},
-					"auth": "api/auth",
-					"chat": "api/chat",
-					"users": "api/users"
-				}
+              "base_url": "http://192.168.99.100:3000/"
 			},
 			"isPrivate": false,
 			"metaSortKey": 1550613772116,
-			"modified": 1551646183660,
-			"name": "local: social-scout",
+        "modified": 1552075079427,
+        "name": "docker",
+        "parentId": "env_a1cfa22952bb4ee8a986bbc90bce60e7",
+        "_type": "environment"
+      },
+      {
+        "_id": "env_9b0379e6ce194c908c55c6272f952586",
+        "color": "#6bdd57",
+        "created": 1552075060354,
+        "data": {
+          "base_url": "http://localhost:3000/"
+        },
+        "isPrivate": false,
+        "metaSortKey": 1552075060354,
+        "modified": 1552075135788,
+        "name": "local",
 			"parentId": "env_a1cfa22952bb4ee8a986bbc90bce60e7",
 			"_type": "environment"
 		},
@@ -234,7 +279,7 @@
 						"disabled": false,
 						"id": "pair_55384e5c569a41e3aedf7c5deb837458",
 						"name": "email",
-						"value": "woe@test.de"
+                      "value": "woe@test.dem"
 					},
 					{
 						"disabled": false,
@@ -245,7 +290,7 @@
 					{
 						"id": "pair_a09699b3e1fd48409c0e4e2c4846da83",
 						"name": "role",
-						"value": "woe"
+                      "value": "admin"
 					}
 				]
 			},
@@ -261,7 +306,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1549549493996,
 			"method": "POST",
-			"modified": 1551560785556,
+          "modified": 1552080050020,
 			"name": "newUser",
 			"parameters": [],
 			"parentId": "fld_c5f7735f5c6a43c4a551fe455e215ffe",
@@ -313,44 +358,6 @@
 			"_type": "request"
 		},
 		{
-			"_id": "req_ead27e43a3214ddfa6628007b4488738",
-			"authentication": {},
-			"body": {
-				"mimeType": "application/x-www-form-urlencoded",
-				"params": [
-					{
-						"id": "pair_e938d527521d4c3dbe5e82912902dc61",
-						"name": "token",
-						"value": "{{ default_token  }}"
-					}
-				]
-			},
-			"created": 1550613464690,
-			"description": "",
-			"headers": [
-				{
-					"id": "pair_48c0eee329104c0e860c6b0e67779ea6",
-					"name": "Content-Type",
-					"value": "application/x-www-form-urlencoded"
-				}
-			],
-			"isPrivate": false,
-			"metaSortKey": -1550613464690,
-			"method": "PUT",
-			"modified": 1551560780194,
-			"name": "picture",
-			"parameters": [],
-			"parentId": "fld_c5f7735f5c6a43c4a551fe455e215ffe",
-			"settingDisableRenderRequestBody": false,
-			"settingEncodeUrl": true,
-			"settingMaxTimelineDataSize": 1000,
-			"settingRebuildPath": true,
-			"settingSendCookies": true,
-			"settingStoreCookies": true,
-			"url": "{{ base_url  }}{{ path.users }}/image",
-			"_type": "request"
-		},
-		{
 			"_id": "req_3b6c8e7f3a1c4d0b981b55111c11d9a9",
 			"authentication": {},
 			"body": {
@@ -359,7 +366,7 @@
 					{
 						"id": "pair_3db4f0c9a62745dc8fdc7110c0278e66",
 						"name": "email",
-						"value": "woe@test.de"
+                      "value": "woe@test.d"
 					},
 					{
 						"id": "pair_e8fb098ed36d447cba014dbcc4baae41",
@@ -380,7 +387,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1549553466258,
 			"method": "POST",
-			"modified": 1551559142228,
+          "modified": 1552085704021,
 			"name": "login",
 			"parameters": [],
 			"parentId": "fld_591b1ccd2c3e4ec29767e729eae4dc7b",
@@ -423,6 +430,7 @@
 				"mimeType": "application/x-www-form-urlencoded",
 				"params": [
 					{
+                      "disabled": false,
 						"id": "pair_17842cbb46c24e1aaca0b2e7b01f2b10",
 						"name": "token",
 						"value": "{{ default_token  }}"
@@ -441,7 +449,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1549548691325.5,
 			"method": "POST",
-			"modified": 1550735642988,
+          "modified": 1552080538897,
 			"name": "test_token",
 			"parameters": [],
 			"parentId": "fld_e6e559aab3014674ae0447c116435f14",
@@ -632,6 +640,44 @@
 			"settingStoreCookies": true,
 			"url": "{{ base_url  }}{{ path.chat  }}",
 			"_type": "request"
+        },
+      {
+        "_id": "req_ead27e43a3214ddfa6628007b4488738",
+        "authentication": {},
+        "body": {
+          "mimeType": "application/x-www-form-urlencoded",
+          "params": [
+            {
+              "id": "pair_e938d527521d4c3dbe5e82912902dc61",
+              "name": "token",
+              "value": "{{ default_token  }}"
+            }
+          ]
+        },
+        "created": 1550613464690,
+        "description": "",
+        "headers": [
+          {
+            "id": "pair_48c0eee329104c0e860c6b0e67779ea6",
+            "name": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "isPrivate": false,
+        "metaSortKey": -1550740046579,
+        "method": "PUT",
+        "modified": 1552084723218,
+        "name": "picture",
+        "parameters": [],
+        "parentId": "fld_5987f70727c9483ca96cfb506a4ab921",
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingMaxTimelineDataSize": 1000,
+        "settingRebuildPath": true,
+        "settingSendCookies": true,
+        "settingStoreCookies": true,
+        "url": "{{ base_url  }}{{ path.users }}/image",
+        "_type": "request"
 		},
 		{
 			"_id": "req_a35ac63506b14ee497f413ded413136f",
@@ -701,7 +747,18 @@
 			"authentication": {},
 			"body": {
 				"mimeType": "application/x-www-form-urlencoded",
-				"params": []
+              "params": [
+                {
+                  "id": "pair_3bb4cf0795014f88a0792cbd866b21fc",
+                  "name": "token",
+                  "value": "{{ default_token  }}"
+                },
+                {
+                  "id": "pair_f5fcbf082b3d442cb677bc30f40d88c4",
+                  "name": "",
+                  "value": ""
+                }
+              ]
 			},
 			"created": 1550740046529,
 			"description": "",
@@ -715,7 +772,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1550740046529,
 			"method": "PUT",
-			"modified": 1551560769892,
+          "modified": 1552082888702,
 			"name": "password",
 			"parameters": [],
 			"parentId": "fld_5987f70727c9483ca96cfb506a4ab921",
@@ -1185,7 +1242,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1551645857498,
 			"method": "POST",
-			"modified": 1551648524374,
+          "modified": 1551726321388,
 			"name": "message",
 			"parameters": [],
 			"parentId": "fld_6182fd7329694aaaad3b11c349cbe650",
