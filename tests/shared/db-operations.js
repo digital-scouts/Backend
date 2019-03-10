@@ -1,4 +1,3 @@
-const userModel = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
 
 let models = {
@@ -7,34 +6,135 @@ let models = {
     user: require('./../../models/userModel').User
 };
 
+const chai = require('chai'),
+    chaiHttp = require('chai-http');
+chai.use(chaiHttp);
+
 async function clearDatabase() {
     for (let modelKey in models) {
         await models[modelKey].deleteMany().exec();
     }
 }
 
-async function createUser(user) {
-    let data = {
-        id: null,
-        token: null
-    };
-    let newUser = new userModel(user);
-    await newUser.save().then(user => {
-        const payload = {
-            email: user.email,
-            role: user.role,
-            userID: user._id,
-            userNameFirst: user.name_first,
-            userNameLast: user.name_last
-        };
-        data.token = jwt.sign(payload, config.Config.salt, {expiresIn: 604800});
-        data.id = user._id;
+/**
+ *
+ * @param id
+ * @param server
+ * @return {Promise}
+ */
+function disableUser(id, server) {
+    let done;
+    models['user'].findByIdAndUpdate(id, {$set: {'accountStatus.disabled': true}}, {new: true}, (err, doc) => {
+        done = true;
     });
-    return data;
+    return new Promise(resolve => {
+        function checkFlag() {
+            if (done) {
+                resolve();
+            } else {
+                setTimeout(checkFlag, 100);
+            }
+        }
+
+        checkFlag();
+    });
+}
+
+/**
+ *
+ * @param id
+ * @param server
+ * @return {Promise}
+ */
+function activateUser(id, server) {
+    let done;
+    models['user'].findByIdAndUpdate(id, {$set: {'accountStatus.activated': true}}, {new: true}, (err, doc) => {
+        done = true;
+    });
+
+    return new Promise(resolve => {
+        function checkFlag() {
+            if (done) {
+                resolve();
+            } else {
+                setTimeout(checkFlag, 100);
+            }
+        }
+
+        checkFlag();
+    });
+}
+
+/**
+ *
+ * @param id
+ * @param server
+ * @return {Promise}
+ */
+function deactivateUser(id, server) {
+    let done;
+    models['user'].findByIdAndUpdate(id, {$set: {'accountStatus.activated': false}}, {new: true}, (err, doc) => {
+        done = true;
+    });
+
+    return new Promise(resolve => {
+        function checkFlag() {
+            if (done) {
+                resolve();
+            } else {
+                setTimeout(checkFlag, 100);
+            }
+        }
+
+        checkFlag();
+    });
+}
+
+/**
+ * create a user and activate it
+ * @param user
+ * @param server
+ * @return {Promise} with 'token' and 'id'
+ */
+function prepareUser(user, server) {
+    let id;
+    let token;
+
+    chai.request(server)
+        .post('/api/users')
+        .send(user)
+        .end((err, res) => { // create a woe and save id
+            id = res.body._id;
+            chai.request(server)
+                .post('/api/auth')
+                .send({email: user.email, password: user.password})
+                .end(async (err, res) => { //auth the woe and save token
+                    await activateUser(id, server);
+                    token = res.body.token;
+                });
+        });
+
+    return new Promise(resolve => {
+        function checkFlag() {
+            if (token) {
+                resolve({
+                    id: id,
+                    token: token
+                });
+            } else {
+                setTimeout(checkFlag, 100);
+            }
+        }
+
+        checkFlag();
+    });
 }
 
 
 module.exports = {
     clearDatabase: clearDatabase,
-    createUser: createUser
+    activateUser: activateUser,
+    deactivateUser: deactivateUser,
+    disableUser: disableUser,
+    prepareUser: prepareUser
 };
