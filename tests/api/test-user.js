@@ -1,11 +1,10 @@
 const dbOperations = require('../shared/db-operations');
 
 const chai = require('chai'),
-    chaiHttp = require('chai-http'),
-    should = chai.should(),
     expect = chai.expect;
 
-chai.use(chaiHttp);
+chai.use(require('chai-things'));
+chai.use(require('chai-http'));
 
 module.exports = function (test_data, server) {
     describe('Users', function () {
@@ -191,7 +190,7 @@ module.exports = function (test_data, server) {
                             .get('/api/users')
                             .send({token: woeRes.token})
                             .end((err, res) => { //get all with woe token
-                                expect(res.body._id).to.equal(woeRes.id);
+                                expect(res.body).all.have.property('_id', woeRes.id);
                                 expect(res.body.length).to.equal(1, 'Created only one \'woe\'. \'jufi\' should be hidden.');
                                 done();
                             });

@@ -112,7 +112,7 @@ module.exports = function (test_data, server) {
                     dbOperations.prepareUser(test_data.users[3], server).then(uRes2 => {
                         chai.request(server)
                             .post('/api/chat')
-                            .send({token: uRes1.token, chatName: 'name', member: [uRes2.id]})
+                            .send({token: uRes1.token, chatName: 'Chat with 2 members', member: [uRes2.id]})
                             .end((err, res) => {
                                 expect(res.body.user).to.include.members([uRes1.id, uRes2.id]);
                                 done();
@@ -129,8 +129,6 @@ module.exports = function (test_data, server) {
                             .send({token: uRes1.token, chatName: 'name', member: [uRes2.id]})
                             .end((err, res) => {
                                 expect(res.body.user).to.not.include.members([uRes2.id]);
-                                //or
-                                expect(res).to.have.status(401);
                                 done();
                             });
                     });

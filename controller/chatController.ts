@@ -57,15 +57,44 @@ export class ChatController {
      * @return {Promise<any>}
      */
     static async createNewChat(request, response, next) {
-        let chat = new Chat({roomName: request.body.chatName, user: [request.decoded.userID]});
+        let users: string[] = [request.decoded.userID];
+        let length = 0;
+        let pushed = 0;
 
-        chat.validate(err => {
-            if (err)
-                for (let errName in err.errors)
-                    if (err.errors[errName].name === 'ValidatorError')
-                        return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
-        });
-        await chat.save().then(chat => response.status(200).json(chat)).catch(next);
+        //concept info: you can create a group with yourself and add more users later
+        if (request.body.member) {
+            length = request.body.member.length;
+            request.body.member.forEach(user => {
+                User.findById(user).then(data => {
+                    if (data && data.accountStatus.activated && data.role == request.decoded.role) {
+                        users.push(user);
+                    }
+                    pushed++;
+                });
+            });
+        }
+
+        async function checkFlag() {
+            if (length != pushed) {
+                setTimeout(checkFlag, 100); // wait until async push of members to users finished
+            } else {
+                let chat = new Chat({roomName: request.body.chatName, user: users});
+
+                chat.validate(err => {
+                    if (err)
+                        for (let errName in err.errors)
+                            if (err.errors[errName].name === 'ValidatorError')
+                                return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
+                });
+                await chat.save().then(chat => {
+                    response.status(200).json(chat)
+                }).catch(next);
+            }
+        }
+
+        checkFlag();
+        //todo benachtichtige
+
     }
 
     /**

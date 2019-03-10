@@ -30,6 +30,7 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
+    "chai-things": "^0.2.0",
     "cors": "^2.8.5",
     "mocha": "^6.0.2",
     "mongoose": "^5.4.17",

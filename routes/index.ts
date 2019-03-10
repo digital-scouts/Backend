@@ -1,7 +1,5 @@
 import {Router} from "express";
 import {verifyToken as token} from "./token";
-import * as jwt from "jsonwebtoken";
-import * as config from '../config';
 
 class Index {
     router: Router;
