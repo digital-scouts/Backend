@@ -60,8 +60,7 @@ export class UserController {
         let requestedUserID = request.params.id;
         let ownUserID = request.decoded.userID;
 
-        User.findById(requestedUserID).then(
-            user => {
+        User.findById(requestedUserID).then(user => {
                 if (user) {
                     response.status(200).json(user)
                 } else {

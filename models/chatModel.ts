@@ -7,12 +7,12 @@ const Schema = mongoose.Schema,
 const chat: Schema = new Schema({
         roomName: {
             type: String,
-            require: false
+            require: true
         },
         message: [{
             type: ObjectId,
             ref: 'TextMessage',//todo hier müssen auch andere nachrichten passen
-            unique: true
+            require: false
         }],
         user: [{
             type: String,
