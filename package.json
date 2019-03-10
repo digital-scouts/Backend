@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node  expressApp.js",
-    "test": "mocha --require babel-register tests/*.js --exit"
+    "test": "set NODE_ENV=test&& nyc mocha --require babel-register tests/*.js --exit"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
