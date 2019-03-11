@@ -74,9 +74,10 @@ export class ChatController {
             });
         }
 
+        // wait until async push of members to users finished
         async function checkFlag() {
             if (length != pushed) {
-                setTimeout(checkFlag, 100); // wait until async push of members to users finished
+                setTimeout(checkFlag, 100);
             } else {
                 let chat = new Chat({roomName: request.body.chatName, user: users});
 
@@ -93,8 +94,8 @@ export class ChatController {
         }
 
         checkFlag();
-        //todo benachtichtige
 
+        //todo benachtichtige mitglieder über neuen chat
     }
 
     /**

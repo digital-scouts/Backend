@@ -1,6 +1,8 @@
 import {Schema, Model, model} from "mongoose";
 import {Config} from "../config";
 
+const ObjectId = Schema.ObjectId;
+
 //return string array with all rolenames set in config file
 let roleNames = Config.user.map(function (item) {
     return item['roleName'];
@@ -81,7 +83,13 @@ const user: Schema = new Schema({
             type: String,
             default: null,
             require: true
-        }
+        },
+    notifications:
+        [{
+            type: ObjectId,
+            ref: 'Notification',
+            require: false
+    }]
     }, {
         timestamps: true
     },
