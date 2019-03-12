@@ -24,6 +24,16 @@ export class NotificationController {
 
     }
 
+    /**
+     * create a new notification and append it to user model (show all unread messages in app)
+     * send a push message
+     *
+     * @param priority
+     * @param title
+     * @param message
+     * @param category
+     * @param meta
+     */
     private static createNotification(priority: number, title: string, message: string, category: string, meta) {
 
     }
