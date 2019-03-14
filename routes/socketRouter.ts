@@ -2,6 +2,7 @@
 import * as jwt from "jsonwebtoken";
 import {User} from "../models/userModel";
 import * as app from "../expressApp";
+
 const express = app.appE;
 import myEmitter from '../events';
 
@@ -13,7 +14,6 @@ export default class SocketRouter {
         this.io = ioServer;
         this.initIncomingCalls();
         this.initOutgoingCalls();
-
         console.log("Socket Router created...")
     }
 
@@ -85,32 +85,6 @@ export default class SocketRouter {
                 SocketRouter.handleAuth(socket, token);
             });
 
-            /**
-             * @author lange
-             * @since 2019-03-02
-             * todo
-             * edit existing text messages
-             * @param {string}  chatID - uniq chat identifier
-             * @param {string} messageID{string} - uniq message identifier
-             * @param data - message with meta data to send
-             */
-            socket.on('editMessage', (chatID: string, messageID: string, data) => {
-                //todo validate user
-                //todo search old message, set edited flag, and a source to new message
-                //todo save edited message as new message
-                console.log('SOCKET: editMessage');
-            });
-
-            /**
-             * @author lange
-             * @since 2019-03-02
-             * todo
-             * @param {string} messageID{string} - uniq message identifier
-             */
-            socket.on('deleteMessage', (messageID: string) => {
-
-            });
-
             socket.on('disconnecting', (reason) => {
                 //todo
                 console.log('SOCKET: a user disconnecting');
@@ -129,7 +103,7 @@ export default class SocketRouter {
         }
     }
 
-    private initOutgoingCalls(){
+    private initOutgoingCalls() {
         myEmitter.on('newMessage', (socketId) => {
             this.io.to(socketId).emit('newMessage');
         });

@@ -3,6 +3,7 @@ import {Chat} from '../models/chatModel';
 import {TextMessage} from "../models/messageModel";
 import {User} from "../models/userModel";
 import myEmitter from '../events';
+import * as NotificationController from './notificationController';
 
 export class ChatController {
 
@@ -74,7 +75,7 @@ export class ChatController {
             });
         }
 
-        // wait until async push of members to users finished
+        // wait until async push of members to users array finished
         async function checkFlag() {
             if (length != pushed) {
                 setTimeout(checkFlag, 100);
@@ -88,12 +89,20 @@ export class ChatController {
                                 return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message))
                 });
                 await chat.save().then(chat => {
-                    response.status(200).json(chat)
+                    response.status(200).json(chat);
+
+                    //notify each user except the creator about the new chat
+                    users.forEach(user => {
+                        if (user != request.decoded.userID) {
+                            NotificationController.NotificationController.notifyAboutNewChat(user, chat._id);
+                        }
+                    });
                 }).catch(next);
             }
         }
 
         checkFlag();
+
 
         //todo benachtichtige mitglieder über neuen chat
     }
@@ -137,8 +146,11 @@ export class ChatController {
                         if (resChat.user.find(isUserPartOfChat)) {
                             Chat.findByIdAndUpdate(request.body.chatID, {$push: {message: message}}, {new: true}, (err, doc) => {
                                 if (doc) {
-                                    message.save().then(message => response.status(200).json(message));
-                                    ChatController.sendMessage(request.body.chatID);
+                                    message.save().then(message => {
+                                        response.status(200).json(message);
+                                        ChatController.sendMessage(request.body.chatID, message._id);
+                                    });
+
                                 } else {
                                     return next(new ErrorREST(Errors.InternalServerError, "Unknown error during chat update"));
                                 }
@@ -159,20 +171,15 @@ export class ChatController {
 
     /**
      * notify all connected users in the chat, who did not received all messages about a new message(dont send the message)
-     * todo push to all other
      * @param chatID
+     * @param messageID
      */
-    private static sendMessage(chatID) {
+    private static sendMessage(chatID, messageID) {
         Chat.findById(chatID, 'user', (err, users) => {
             if (users) {
                 users.user.forEach(userID => {
-                    User.findById(userID, 'socketID', (err, user) => {
-                        if (user) {
-                            myEmitter.emit('newMessage', user.socketID);
-                        } else {
-                            console.log("Error user not found for id: " + userID + " error: " + err)
-                        }
-                    });
+                    NotificationController.NotificationController.notifyAboutNewChatMessage(userID, chatID, messageID);
+
                 });
             }
         });
