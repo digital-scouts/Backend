@@ -50,7 +50,6 @@ export class ChatController {
 
     /**
      * todo prüfe ob raum erstellt werden kann
-     * todo zweiter chatpartner für einen raum benötigt
      * @param request
      * @param response
      * @param next

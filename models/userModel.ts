@@ -3,7 +3,7 @@ import {Config} from "../config";
 
 const ObjectId = Schema.ObjectId;
 
-//return string array with all rolenames set in config file
+//return string array with all roleNames set in config file
 let roleNames = Config.user.map(function (item) {
     return item['roleName'];
 });
@@ -34,7 +34,7 @@ const user: Schema = new Schema({
             required: [true, 'Password is required (password)'],
             match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/, 'Please choose a saver password. Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character (@$!%*?&.-_).']
         },
-        address: {
+        address: { // dont use addressModel
             plz: {
                 type: String,
                 required: false
@@ -52,7 +52,7 @@ const user: Schema = new Schema({
                 required: false
             }
         },
-        role: {
+        role: { // todo replace this with object
             type: String,
             enum: roleNames,//load roles from config
             required: [true, 'Role is required (role) (' + roleNames + ')']
