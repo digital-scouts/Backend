@@ -19,9 +19,9 @@ const event: Schema = new Schema({
             },
         type: // type of the calenderElement [event, groupLesson, planningObject, task]
             {
-            type: String,
-            default: "event"
-        },
+                type: String,
+                default: "event"
+            },
         eventName: // title of the event
             {
                 type: String,
@@ -63,10 +63,22 @@ const event: Schema = new Schema({
                     ref: 'Document'
                 }],
             picture: // list of pictures (only one is recommended) from last event for some impressions
-                [{
+                {
                     type: String // todo not supported yet replace with object later
-                }],
-        }
+                },
+        },
+        creator:// event creator info
+            {
+                type: ObjectId,
+                ref: 'User',
+                require: [true, "A Creator must be given for security reasons"]
+            },
+        lastEdit: //update this field, when someone change this event
+            {
+                type: ObjectId,
+                ref: 'User',
+                default: null
+            }
     }, {
         timestamps: true
     },

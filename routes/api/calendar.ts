@@ -14,15 +14,12 @@ class Calendar {
 
     init() {
         this.router.route('/')
-            .get(token, permission, CalendarController.getAllEvents())
-            .post(token, permission, CalendarController.createNewEvent())
-            .put(token, permission, CalendarController.updateEvent());
-
-        this.router.route('/:id')
-            .get(token, permission, CalendarController.getAllEventsForId());
+            .get(token, permission, CalendarController.getAllEvents)
+            .post(token, permission, CalendarController.createNewEvent)
+            .put(token, permission, CalendarController.updateEvent);
 
         this.router.route('/public')
-            .get(CalendarController.getAllPublicEvents());
+            .get(CalendarController.getAllPublicEvents);
 
     }
 }
