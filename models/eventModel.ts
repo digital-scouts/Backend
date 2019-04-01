@@ -17,6 +17,11 @@ const event: Schema = new Schema({
             {
                 type: String // todo not supported yet replace with object later
             },
+        type: // type of the calenderElement [event, groupLesson, planningObject, task]
+            {
+            type: String,
+            default: "event"
+        },
         eventName: // title of the event
             {
                 type: String,
