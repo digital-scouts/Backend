@@ -9,9 +9,10 @@ let permissionLevel = {
 const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
-    'local_database':'mongodb://127.0.0.1:27017/social-scout',
+    'local_database': 'mongodb://127.0.0.1:27017/social-scout',
     'salt': 'digital-scouts-santa-lucia',
-    'DEBUG': true,//debugmode can overwrite permissions, be careful
+    'DEBUG': true,// debugmode can overwrite permissions, be careful
+    'PERMISSION': true, // permission can be disabled
     'user': [
         {
             'roleName': 'woe',
@@ -145,6 +146,26 @@ const Config = {
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
             }
+        },
+        'calendar':{
+            'GET': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': false
+            },
+            'POST': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': false
+            },
+            'PUT': {
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': false
+            },
         }
     }
 };
