@@ -14,14 +14,13 @@ export function verifyToken(request, response, next) {
     if (token) {
         jwt.verify(token, config.Config.salt,  (error, decoded) => {
                 if (error) {
-                    return next(new ErrorREST(Errors.Unauthorized));
+                    return next(new ErrorREST(Errors.Unauthorized), "Token not valid: " +error);
                 }
                 // Save to request for use in other routes
                 request.decoded = decoded;
                 next();
             });
     } else {
-        //return next(new ErrorREST(Errors.BadRequest, "Token required."));
-        return next(new ErrorREST(Errors.Unauthorized));
+        return next(new ErrorREST(Errors.Unauthorized),"Token required.");
     }
 }

@@ -31,7 +31,15 @@ function decodePath(requestedPath: string[]): JSON {
  * @throws Errors.Forbidden
  */
 function checkApiPermission(path: JSON, method: string, userRole: string) {
-    let permissionList: string[] = path[method].users;
+    let permissionList: string[] = null;
+    try {
+        permissionList = path[method].users;
+    } catch (ex) {
+        console.log("Can not get Permission for this route: " + path + " | " + method);
+        console.log("Did you configure it in config.js?");
+        throw ex;
+    }
+
     //console.log(path[method].users)
     let find = permissionList.find(function (element) {
         // console.log("___________Permission --> Suche:"+userRole+", Gefunden:"+ element + ", permission: "+ (element === userRole));
@@ -57,6 +65,10 @@ function checkPermissionLevel() {
  * @returns {*}
  */
 export function checkPermission(request, response, next) {
+    if (!Config.PERMISSION) {
+        next();
+        return;
+    }
     let userRole: string = request.decoded.role;
     let requestedUserID: string = request.decoded.userID;
     let decodedPath: JSON = decodePath(request.originalUrl.split('/'));
@@ -89,5 +101,4 @@ export function checkPermission(request, response, next) {
     }
 
     checkFlag();
-
 }

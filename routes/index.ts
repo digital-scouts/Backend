@@ -24,6 +24,11 @@ class Index {
                     {
                         status: 200,
                         message: "Token is correct.",
+                        userID: req.decoded.userID,
+                        email: req.decoded.email,
+                        role: req.decoded.role,
+                        userNameFirst: req.decoded.userNameFirst,
+                        userNameLast: req.decoded.userNameLast,
                     }
                 );
             });
