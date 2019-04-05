@@ -1,7 +1,7 @@
 import {ErrorREST, Errors} from "../errors";
-import {User} from "../models/userModel";
 import {Group} from "../models/groupModel";
 import {GroupLesson} from "../models/groupLessonModel";
+import {_helper as Helper} from "./_helper";
 
 export class GroupController {
 
@@ -22,11 +22,11 @@ export class GroupController {
      * @param next
      */
     static newGroup(request, response, next) {
-        GroupController.validateLeader(request.body.leader).then((leaders) => {
+        Helper.getActiveLeadersByArray(request.body.leader).then((leaders) => {
             let group = new Group({
                 name: request.body.name,
                 leader: leaders,
-                logo: GroupController.validateImage(request.body.logo)
+                logo:request.body.logo
             });
 
             group.validate(async err => {
@@ -80,7 +80,7 @@ export class GroupController {
      */
     static newGroupLesson(request, response, next) {
 
-        if(GroupController.validateGroup(request.body.group)){
+        if(Helper.isGroupValid(request.body.group)){
             let group = new Group({
                 group: request.body.group,
                 frequency: request.body.frequency,
@@ -116,61 +116,8 @@ export class GroupController {
 
     /* PRIVATE START */
 
-    /**
-     * validate the request leader, return id array with valid leaders
-     * @param leaderIDs
-     */
-    private static validateLeader(leaderIDs: string[]) {
-        let resultLeader = [];
-        let i = 0;
-        if (leaderIDs != undefined) {
-            leaderIDs.forEach(id => {
-                i++;
-                User.findById(id).then(user => {
-                    if (user) {
-                        if (user.role == 'leader' && user.accountStatus.activated == true) {
-                            resultLeader.push(user._id)
-                        }
-                    } else {
-                        //user did not exist
-                    }
-                });
-            });
 
-            return new Promise(resolve => {
-                function checkFlag() {
-                    if (i == leaderIDs.length) {
-                        resolve(resultLeader);
-                    } else {
-                        setTimeout(checkFlag, 100);
-                    }
-                }
 
-                checkFlag();
-            });
-        } else {
-            return Promise.resolve(null);
-        }
 
-    }
 
-    /**
-     * check if the image exist
-     * todo
-     * @param logo
-     */
-    private static validateImage(logo: string): string {
-
-        return "Not Implemented yet";
-    }
-
-    /**
-     * check if the group exist
-     * @param group
-     */
-    private static validateGroup(group:string):boolean{
-        return GroupLesson.findById(group).then(group=>{
-           return !!group;
-        });
-    }
 }

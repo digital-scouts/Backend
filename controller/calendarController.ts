@@ -1,6 +1,7 @@
 import {Errors, ErrorREST} from "../errors";
 import * as config from '../config';
 import {Event} from "../models/eventModel";
+import {_helper as Helper} from "./_helper";
 
 export class CalendarController {
 
@@ -81,8 +82,8 @@ export class CalendarController {
      * @param next
      */
     static createNewEvent(request, response, next) {
-        let startDateTime: Date = CalendarController.calculateStartDate(request.body.startDate);
-        let endDateTime: Date = CalendarController.calculateEndDate(startDateTime, request.body.endDate);
+        let startDateTime: Date = new Date(request.body.startDate);
+        let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
         if (endDateTime == null) {
             return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
         }
@@ -142,8 +143,8 @@ export class CalendarController {
                     event.eventName = request.body.eventName;
                 }
                 if (request.body.dateStart != undefined) {
-                    let startDateTime: Date = CalendarController.calculateStartDate(request.body.startDate);
-                    let endDateTime: Date = CalendarController.calculateEndDate(startDateTime, request.body.endDate);
+                    let startDateTime: Date = new Date(request.body.startDate);
+                    let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
                     if (endDateTime == null) {
                         return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
                     } else {
@@ -151,7 +152,7 @@ export class CalendarController {
                         event.endDate = endDateTime;
                     }
                 }else if(request.body.dateEnd != undefined){
-                    let endDateTime: Date = CalendarController.calculateEndDate(event.startDate, request.body.endDate);
+                    let endDateTime: Date = Helper.checkEndDate(event.startDate, request.body.endDate);
                     if (endDateTime == null) {
                         return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
                     } else {
@@ -182,7 +183,7 @@ export class CalendarController {
     }
 
     /**
-     * check if the new event collide with an existing event
+     * todo check if the new event collide with an existing event
      * @param event
      */
     private static willEventCollide(event: Event) {
@@ -198,28 +199,5 @@ export class CalendarController {
         return {status: status, message: message};
     }
 
-    /**
-     * check the format (only day or with hour/minute) of the given date
-     * @return Date
-     * @param startDate
-     */
-    private static calculateStartDate(startDate: string): Date {
-        return new Date(startDate);
-    }
 
-    /**
-     * check the format of the given endDate
-     * @return endDate
-     * @param startDate
-     * @param endDate
-     */
-    private static calculateEndDate(startDate: Date, endDate: string): Date {
-        let end = new Date(endDate);
-
-        if (end != null && startDate <= end) {
-            return end;
-        }
-
-        return null;
-    }
 }
