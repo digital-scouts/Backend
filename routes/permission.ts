@@ -10,12 +10,13 @@ import {Config} from "../config";
 function decodePath(requestedPath: string[]): JSON {
     requestedPath.shift();
     requestedPath.shift();
+
     let path: JSON = JSON.parse(JSON.stringify(Config.permission));
-    //console.log(path)
     requestedPath.forEach(function (item) {
+        item=item.split('?')[0];
         if (path[item]) {
             // console.log("___________decode: go for "+item+": ")
-            //console.log(path[item])
+            // console.log(path[item])
             path = path[item];
         }
     });
@@ -35,7 +36,7 @@ function checkApiPermission(path: JSON, method: string, userRole: string) {
     try {
         permissionList = path[method].users;
     } catch (ex) {
-        console.log("Can not get Permission for this route: " + path + " | " + method);
+        console.log("Can not get Permission for this route: " + JSON.stringify(path) + " | " + method);
         console.log("Did you configure it in config.js?");
         throw ex;
     }
