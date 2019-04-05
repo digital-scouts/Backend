@@ -13,6 +13,10 @@ const Config = {
     'salt': 'digital-scouts-santa-lucia',
     'DEBUG': true,// debugmode can overwrite permissions, be careful
     'PERMISSION': true, // permission can be disabled
+    'calender': {
+        'public_event_daysPast':10,
+        'public_event_daysFuture':183,
+    },
     'user': [
         {
             'roleName': 'woe',

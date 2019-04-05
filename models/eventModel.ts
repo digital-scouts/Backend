@@ -46,7 +46,7 @@ const event: Schema = new Schema({
                 type: ObjectId,
                 ref: 'User'
             }],
-        member:  // members (person or groups) Who is the appointment for?
+        groups:  // members (person or groups) Who is the appointment for?
             [{
                 type: ObjectId,
                 ref: 'Group'
