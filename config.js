@@ -17,7 +17,7 @@ const Config = {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,
     },
-    'user': [
+    'user': [// dont remove non child groups
         {
             'roleName': 'woe', 'childGroup': true
         }, {
@@ -30,7 +30,7 @@ const Config = {
             'roleName': 'leader', 'childGroup': false
         }, {
             'roleName': 'parent', 'childGroup': false
-        }, {
+        }, {// dont remove 'admin'
             'roleName': 'admin', 'childGroup': false
         }, {//weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
             'roleName': 'user', 'childGroup': false
@@ -194,7 +194,7 @@ const Config = {
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
             },
-            'lesson':{
+            'lesson': {
                 'GET': {
                     'users': ['admin'],
                     'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
@@ -212,7 +212,7 @@ const Config = {
                     'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
                     'permissionForDisabled': false,
                     'permissionForNotActivated': false
-                },
+                }
             }
         },
     }

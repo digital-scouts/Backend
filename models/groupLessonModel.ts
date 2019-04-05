@@ -14,7 +14,8 @@ const groupLesson: Schema = new Schema({
         group: //only one group for a lesson. Reason: it is possible to change this later, change only on groups lessen then
             {
                 type: ObjectId,
-                ref: "Group"
+                ref: "Group",
+                require: true
             },
         frequency: //
             {
