@@ -10,17 +10,16 @@ const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
-    'salt': 'digital-scouts-santa-lucia',
+    'salt': 'digital-scouts-santa-lucia', // change the salt to disable all tokens (force login)
     'DEBUG': true,// debugmode can overwrite permissions, be careful
-    'PERMISSION': true, // permission can be disabled
+    'PERMISSION': true, // permission can be disabled (active = true, disabled = false)
     'calender': {
-        'public_event_daysPast':10,
-        'public_event_daysFuture':183,
+        'public_event_daysPast': 10,
+        'public_event_daysFuture': 183,
     },
     'user': [
         {
-            'roleName': 'woe',
-            'childGroup': true
+            'roleName': 'woe', 'childGroup': true
         }, {
             'roleName': 'jufi', 'childGroup': true
         }, {
@@ -33,9 +32,8 @@ const Config = {
             'roleName': 'parent', 'childGroup': false
         }, {
             'roleName': 'admin', 'childGroup': false
-        }, {
-            'roleName': 'user',//weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
-            'childGroup': false
+        }, {//weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
+            'roleName': 'user', 'childGroup': false
         }
     ],
     'permission': {
@@ -151,7 +149,7 @@ const Config = {
                 'permissionForNotActivated': false
             }
         },
-        'calendar':{
+        'calendar': {
             'GET': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
@@ -170,7 +168,53 @@ const Config = {
                 'permissionForDisabled': true,
                 'permissionForNotActivated': false
             },
-        }
+        },
+        'group': {
+            'GET': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+            'POST': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+            'PUT': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+            'DELETE': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+            'lesson':{
+                'GET': {
+                    'users': ['admin'],
+                    'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                },
+                'POST': {
+                    'users': ['admin'],
+                    'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                },
+                'PUT': {
+                    'users': ['admin'],
+                    'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                },
+            }
+        },
     }
 };
 
