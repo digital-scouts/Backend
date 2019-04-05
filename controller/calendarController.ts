@@ -127,13 +127,58 @@ export class CalendarController {
     }
 
     /**
-     *
+     *todo
      * @param request
      * @param response
      * @param next
      */
     static updateEvent(request, response, next) {
+        Event.findById(request.body.id, async function (err, event) {
+            if (event) {
+                if (request.body.public != undefined) {
+                    event.public = request.body.public;
+                }
+                if (request.body.eventName != undefined) {
+                    event.eventName = request.body.eventName;
+                }
+                if (request.body.dateStart != undefined) {
+                    let startDateTime: Date = CalendarController.calculateStartDate(request.body.startDate);
+                    let endDateTime: Date = CalendarController.calculateEndDate(startDateTime, request.body.endDate);
+                    if (endDateTime == null) {
+                        return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                    } else {
+                        event.startDate = startDateTime;
+                        event.endDate = endDateTime;
+                    }
+                }else if(request.body.dateEnd != undefined){
+                    let endDateTime: Date = CalendarController.calculateEndDate(event.startDate, request.body.endDate);
+                    if (endDateTime == null) {
+                        return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                    } else {
+                        event.endDate = endDateTime;
+                    }
+                }
+                if (request.body.description != undefined) {
+                    event.description = request.body.description;
+                }
 
+                //todo remove later
+                if (request.body.complement != undefined || request.body.groups != undefined || request.body.address != undefined || request.body.origin != undefined || request.body.documents != undefined || request.body.picture != undefined) {
+                    return next(new ErrorREST(Errors.NoContent), "A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.");
+                }
+
+                //todo change complement
+                //todo change member
+                //todo change address
+                //todo change attachments
+                //todo change origin?
+
+                event.lastEdit = request.decoded.userID;
+                await event.save().then(event => response.status(200).json(event)).catch(next);
+            } else {
+                return next(new ErrorREST(Errors.UnprocessableEntity, "The event could not be found"));
+            }
+        });
     }
 
     /**
