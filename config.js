@@ -10,14 +10,29 @@ const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
-    'salt': 'digital-scouts-santa-lucia', // change the salt to disable all tokens (force login)
-    'DEBUG': true,// debugmode can overwrite permissions, be careful
-    'PERMISSION': true, // permission can be disabled (active = true, disabled = false)
+    'salt': 'digital-scouts-santa-lucia', // hint change the salt to disable all tokens (force login)
+    'DEBUG': true,// WARNING debugmode can overwrite permissions, be careful
+    'PERMISSION': true, // WARNING permission can be disabled (active = true, disabled = false)
     'calender': {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,
     },
-    'user': [// dont remove non child groups
+    'defaultGroups': [
+        {
+            'groupName': 'Wölflinge',
+            'assignedRole': 'woe'
+        }, {
+            'groupName': 'Jungpfadfinder',
+            'assignedRole': 'jufi'
+        }, {
+            'groupName': 'Pfadfinder',
+            'assignedRole': 'pfadi'
+        }, {
+            'groupName': 'Rover',
+            'assignedRole': 'rover'
+        },
+    ],
+    'user': [// warning: Removing groups can cause errors in the system
         {
             'roleName': 'woe', 'childGroup': true
         }, {
@@ -30,9 +45,9 @@ const Config = {
             'roleName': 'leader', 'childGroup': false
         }, {
             'roleName': 'parent', 'childGroup': false
-        }, {// dont remove 'admin'
+        }, {// warning dont remove 'admin'
             'roleName': 'admin', 'childGroup': false
-        }, {//weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
+        }, {//hint weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
             'roleName': 'user', 'childGroup': false
         }
     ],

@@ -29,7 +29,7 @@ const user: Schema = new Schema({
             lowercase: true,
             match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address (example: name@mail.com)']
         },
-        password: {//remove regex later, password will be hashed
+        password: {//todo remove regex later, password will be hashed
             type: String,
             required: [true, 'Password is required (password)'],
             match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/, 'Please choose a saver password. Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character (@$!%*?&.-_).']
