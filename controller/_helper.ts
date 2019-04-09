@@ -1,5 +1,6 @@
 import {GroupLesson} from "../models/groupLessonModel";
 import {User} from "../models/userModel";
+import {Group} from "../models/groupModel";
 
 export class _helper {
 
@@ -7,9 +8,23 @@ export class _helper {
      * check if the group exist
      * @param group
      */
-    static isGroupValid(group: string): boolean {
-        return GroupLesson.findById(group).then(group => {
-            return !!group;
+    static isGroupValid(group: string) {
+        let ret = null;
+
+        Group.findById(group).then(group => {
+            ret = !!group;
+        });
+
+        return new Promise(resolve => {
+            function checkFlag() {
+                if (ret != null) {
+                    resolve(ret);
+                } else {
+                    setTimeout(checkFlag, 100);
+                }
+            }
+
+            checkFlag();
         });
     }
 
