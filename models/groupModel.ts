@@ -7,15 +7,12 @@ const Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
 //return string array with all roleNames set in config file
-let roleNames = Config.user.map(function (item) {
-    return item['roleName'];
-});
+
 
 const group: Schema = new Schema({
         name: {
             type: String,
-            enum: roleNames,
-            require: true
+            require: [true, "Name is missing, each group needs a name to identify them."]
         },
         leader: [{
             type: ObjectId,

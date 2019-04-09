@@ -1,7 +1,8 @@
 import {ErrorREST, Errors} from "../errors";
 import {Group} from "../models/groupModel";
 import {GroupLesson} from "../models/groupLessonModel";
-import {_helper as Helper} from "./_helper";
+import {_helper, _helper as Helper} from "./_helper";
+import {Event} from "../models/eventModel";
 
 export class GroupController {
 
@@ -26,7 +27,7 @@ export class GroupController {
             let group = new Group({
                 name: request.body.name,
                 leader: leaders,
-                logo:request.body.logo
+                logo: request.body.logo
             });
 
             group.validate(async err => {
@@ -59,7 +60,33 @@ export class GroupController {
      * @param next
      */
     static updateGroup(request, response, next) {
-        return next(new ErrorREST(Errors.NoContent));
+        let anyChanges = false;
+        Group.findById(request.body.id, function (err, group) {
+            if (group) {
+                if (request.body.name != undefined && request.body.name != group.name) {
+                    group.name = request.body.name;
+                    anyChanges = true;
+                }
+                if (request.body.leader != undefined && request.body.leader != group.leader) {
+                    group.leader = _helper.getActiveLeadersByArray(request.body.leader);
+                    anyChanges = true;
+                }
+                if (request.body.logo != undefined && request.body.logo != group.logo) {
+                    group.logo = request.body.logo;
+                    anyChanges = true;
+                }
+
+                if (anyChanges) {
+                    group.lastEdit = request.decoded.userID;
+                    group.save().then(group => response.status(200).json(group)).catch(next);
+                }else{
+                    response.status(200).json("No Changes")
+                }
+
+            } else {
+                return next(new ErrorREST(Errors.UnprocessableEntity, "The group could not be found"));
+            }
+        });
     }
 
     /**
@@ -80,12 +107,12 @@ export class GroupController {
      */
     static newGroupLesson(request, response, next) {
 
-        if(Helper.isGroupValid(request.body.group)){
+        if (Helper.isGroupValid(request.body.group)) {
             let group = new Group({
                 group: request.body.group,
                 frequency: request.body.frequency,
                 startDate: request.body.startDate,
-                end: (request.body.end == undefined)? null:request.body.end,
+                end: (request.body.end == undefined) ? null : request.body.end,
                 duration: request.body.duration,
             });
 
@@ -99,7 +126,7 @@ export class GroupController {
 
                 await group.save().then(event => response.status(200).json(event)).catch(next);
             });
-        }else{
+        } else {
             return next(new ErrorREST(Errors.UnprocessableEntity, "The group is not valid."));
         }
     }
@@ -115,9 +142,6 @@ export class GroupController {
     }
 
     /* PRIVATE START */
-
-
-
 
 
 }

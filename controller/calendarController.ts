@@ -76,6 +76,16 @@ export class CalendarController {
     }
 
     /**
+     * CAUTION: This will delete all Events
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteAllEvents(request, response, next) {
+        Event.deleteMany().then(data => response.json(data)).catch(next);
+    }
+
+    /**
      *
      * @param request
      * @param response
@@ -119,6 +129,7 @@ export class CalendarController {
 
             if (eventCollision.status) {
                 //todo do some magic and make a confirmation from client possible
+                //todo confirm and place element, cancel or move blocking element
                 console.log(eventCollision.message);
                 return response.status().json(eventCollision.message);
             }
@@ -128,21 +139,24 @@ export class CalendarController {
     }
 
     /**
-     *todo
+     *
      * @param request
      * @param response
      * @param next
      */
     static updateEvent(request, response, next) {
-        Event.findById(request.body.id, async function (err, event) {
+        let anyChanges: boolean = false;
+        Event.findById(request.body.id, function (err, event) {
             if (event) {
-                if (request.body.public != undefined) {
+                if (request.body.public != undefined && JSON.parse(request.body.public) !== event.public) {
                     event.public = request.body.public;
+                    anyChanges = true;
                 }
-                if (request.body.eventName != undefined) {
+                if (request.body.eventName != undefined && request.body.eventName != event.eventName) {
                     event.eventName = request.body.eventName;
+                    anyChanges = true;
                 }
-                if (request.body.dateStart != undefined) {
+                if (request.body.dateStart != undefined && request.body.dateStart != event.dateStart) {
                     let startDateTime: Date = new Date(request.body.startDate);
                     let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
                     if (endDateTime == null) {
@@ -150,17 +164,20 @@ export class CalendarController {
                     } else {
                         event.startDate = startDateTime;
                         event.endDate = endDateTime;
+                        anyChanges = true;
                     }
-                }else if(request.body.dateEnd != undefined){
+                } else if (request.body.dateEnd != undefined && request.body.dateEnd != event.dateEnd) {
                     let endDateTime: Date = Helper.checkEndDate(event.startDate, request.body.endDate);
                     if (endDateTime == null) {
                         return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
                     } else {
                         event.endDate = endDateTime;
+                        anyChanges = true;
                     }
                 }
-                if (request.body.description != undefined) {
+                if (request.body.description != undefined && request.body.description != event.description) {
                     event.description = request.body.description;
+                    anyChanges = true;
                 }
 
                 //todo remove later
@@ -174,8 +191,13 @@ export class CalendarController {
                 //todo change attachments
                 //todo change origin?
 
-                event.lastEdit = request.decoded.userID;
-                await event.save().then(event => response.status(200).json(event)).catch(next);
+                if (anyChanges) {
+                    event.lastEdit = request.decoded.userID;
+                    event.save().then(event => response.status(200).json(event)).catch(next);
+                } else {
+                    response.status(200).json("No Changes")
+                }
+
             } else {
                 return next(new ErrorREST(Errors.UnprocessableEntity, "The event could not be found"));
             }

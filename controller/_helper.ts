@@ -25,12 +25,8 @@ export class _helper {
             leaderIDs.forEach(id => {
                 i++;
                 User.findById(id).then(user => {
-                    if (user) {
-                        if (user.role == 'leader' && user.accountStatus.activated == true) {
-                            resultLeader.push(user._id)
-                        }
-                    } else {
-                        //user did not exist
+                    if (user && user.role == 'leader' && user.accountStatus.activated == true) {
+                        resultLeader.push(user._id)
                     }
                 });
             });
