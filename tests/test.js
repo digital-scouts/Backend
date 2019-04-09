@@ -6,7 +6,9 @@ const testFilesToRun = [
     './api/test-auth.js',
     './api/test-chat.js',
     './api/test-admin-account.js',
-    './api/test-calendar.js'
+    './api/test-calendar.js',
+    './api/test-group.js',
+
 ];
 
 describe('Backend test suite', () => {
