@@ -18,6 +18,7 @@ import authRouter from "./routes/api/auth";
 import adminAccount from "./routes/api/adminAccounts";
 import chatRouter from './routes/api/chat';
 import calendar from "./routes/api/calendar";
+import group from "./routes/api/group";
 
 class ExpressApp {
     public app;
@@ -52,6 +53,7 @@ class ExpressApp {
         this.app.use('/api/chat', chatRouter);
         this.app.use('/api/admin/accounts', adminAccount);
         this.app.use('/api/calendar', calendar);
+        this.app.use('/api/group', group);
 
         this.app.get('/chat', function (req, res) {
             res.sendFile(__dirname + '/public/chat.html');

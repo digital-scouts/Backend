@@ -150,6 +150,12 @@ const Config = {
             }
         },
         'calendar': {
+            'DELETE': { // todo modify users
+                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': true,
+                'permissionForNotActivated': false
+            },
             'GET': {
                 'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
