@@ -50,8 +50,6 @@ export class UserController {
 
     /**
      * get user by id in params
-     * todo permission check
-     * todo return only names and group
      * @param request
      * @param response
      * @param next
@@ -60,7 +58,12 @@ export class UserController {
         let requestedUserID = request.params.id;
         let ownUserID = request.decoded.userID;
 
-        User.findById(requestedUserID).then(user => {
+        User.findById(requestedUserID, {
+            name_first: 1,
+            name_last: 1,
+            image_profile: 1,
+            role: 1
+        }).then(user => {
                 if (user) {
                     response.status(200).json(user)
                 } else {
