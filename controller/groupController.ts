@@ -2,7 +2,6 @@ import {ErrorREST, Errors} from "../errors";
 import {Group} from "../models/groupModel";
 import {GroupLesson} from "../models/groupLessonModel";
 import {_helper, _helper as Helper} from "./_helper";
-import {Event} from "../models/eventModel";
 
 export class GroupController {
 
@@ -27,7 +26,8 @@ export class GroupController {
             let group = new Group({
                 name: request.body.name,
                 leader: leaders,
-                logo: request.body.logo
+                logo: request.body.logo,
+                creator:  request.decoded.userID
             });
 
             group.validate(async err => {
@@ -44,17 +44,38 @@ export class GroupController {
     }
 
     /**
-     * delete all groups
+     * delete all groups and all GroupLessons
      * @param request
      * @param response
      * @param next
      */
     static deleteGroups(request, response, next) {
-        Group.deleteMany().then(data => response.json(data)).catch(next);
+        Group.deleteMany().then(groupData => {
+            GroupLesson.deleteMany().then(lessonData => response.json({
+                groups: groupData,
+                groupLessons: lessonData
+            })).catch(next)
+        }).catch(next);
     }
 
     /**
-     * todo
+     * delete a specific group and all related groupLessons
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteGroup(request, response, next) {
+        Group.remove({_id: request.params.id}).then(groupData => {
+            if (groupData.n > 0) {
+                GroupLesson.deleteMany({group: request.params.id}).then(lessonData => response.json({
+                    groups: groupData,
+                    groupLessons: lessonData
+                })).catch(next);
+            }
+        }).catch(next);
+    }
+
+    /**
      * @param request
      * @param response
      * @param next
@@ -100,7 +121,7 @@ export class GroupController {
     }
 
     /**
-     *
+     * create a new groupLesson
      * @param request
      * @param response
      * @param next
@@ -114,6 +135,7 @@ export class GroupController {
                     startDate: request.body.startDate,
                     end: (request.body.end == undefined) ? null : request.body.end,
                     duration: request.body.duration,
+                    creator:  request.decoded.userID
                 });
 
                 groupLeson.validate(err => {
@@ -125,7 +147,7 @@ export class GroupController {
                                 }
 
 
-                    groupLeson.save().then(event => response.status(200).json(event)).catch(next);
+                        groupLeson.save().then(event => response.status(200).json(event)).catch(next);
                     }
                 );
             } else {
@@ -136,16 +158,50 @@ export class GroupController {
     }
 
     /**
-     * todo
+     * hint dont change group, can be dangerous
+     * hint dont change start, create a new groupLesson instead
+     * change frequency, end or duration
      * @param request
      * @param response
      * @param next
      */
     static changeGroupLesson(request, response, next) {
-        return next(new ErrorREST(Errors.NoContent));
+        let anyChanges = false;
+        GroupLesson.findById(request.body.id, function (err, lesson) {
+            if (lesson) {
+                if (request.body.frequency != undefined && request.body.frequency != lesson.frequency) {
+                    lesson.frequency = request.body.frequency;
+                    anyChanges = true;
+                }
+                if (request.body.end != undefined && request.body.end != lesson.end) {
+                    lesson.end = request.body.end;
+                    anyChanges = true;
+                }
+                if (request.body.duration != undefined && request.body.duration != lesson.duration) {
+                    lesson.duration = request.body.duration;
+                    anyChanges = true;
+                }
+
+                if (anyChanges) {
+                    lesson.lastEdit = request.decoded.userID;
+                    lesson.save().then(lesson => response.status(200).json(lesson)).catch(next);
+                } else {
+                    response.status(200).json("No Changes")
+                }
+
+            } else {
+                return next(new ErrorREST(Errors.UnprocessableEntity, "The groupLesson could not be found"));
+            }
+        });
     }
 
-    /* PRIVATE START */
-
-
+    /**
+     * delete a specific groupLesson
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteGroupLesson(request, response, next) {
+        GroupLesson.remove({_id: request.params.id}).then(data => response.json(data)).catch(next);
+    }
 }
