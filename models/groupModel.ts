@@ -20,7 +20,19 @@ const group: Schema = new Schema({
         }],
         logo: {
             type: String // todo not supported yet replace with object later
-        }
+        },
+        creator:// creator info
+            {
+                type: ObjectId,
+                ref: 'User',
+                require: [true, "A Creator must be given for security reasons"]
+            },
+        lastEdit: //update this field, when someone change this schema
+            {
+                type: ObjectId,
+                ref: 'User',
+                default: null
+            }
     }, {
         timestamps: true
     },

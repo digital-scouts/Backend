@@ -215,6 +215,14 @@ const Config = {
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
             },
+            '/:id': {
+                'DELETE': {
+                    'users': ['admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }
+            },
             'lesson': {
                 'GET': {
                     'users': ['admin'],
@@ -233,7 +241,15 @@ const Config = {
                     'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
                     'permissionForDisabled': false,
                     'permissionForNotActivated': false
-                }
+                },
+                '/:id': {
+                    'DELETE': {
+                        'users': ['admin'],
+                        'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                        'permissionForDisabled': false,
+                        'permissionForNotActivated': false
+                    }
+                },
             }
         },
     }

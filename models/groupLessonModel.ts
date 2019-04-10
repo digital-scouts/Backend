@@ -41,6 +41,18 @@ const groupLesson: Schema = new Schema({
                 default: 1.5,
                 require: true
             },
+        creator:// creator info
+            {
+                type: ObjectId,
+                ref: 'User',
+                require: [true, "A Creator must be given for security reasons"]
+            },
+        lastEdit: //update this field, when someone change this schema
+            {
+                type: ObjectId,
+                ref: 'User',
+                default: null
+            }
     }, {
         timestamps: true
     },
