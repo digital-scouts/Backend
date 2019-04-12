@@ -252,6 +252,29 @@ const Config = {
                 },
             }
         },
+        'address': {
+            '/:id': {
+                'DELETE': {
+                    'users': ['admin'],
+                    'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
+                    'permissionForDisabled': false,
+                    'permissionForNotActivated': false
+                }
+            },
+            'POST': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+            'GET': {
+                'users': ['admin'],
+                'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
+                'permissionForDisabled': false,
+                'permissionForNotActivated': false
+            },
+
+        }
     }
 };
 

@@ -19,6 +19,7 @@ import adminAccount from "./routes/api/adminAccounts";
 import chatRouter from './routes/api/chat';
 import calendar from "./routes/api/calendar";
 import group from "./routes/api/group";
+import address from "./routes/api/address";
 
 class ExpressApp {
     public app;
@@ -54,6 +55,7 @@ class ExpressApp {
         this.app.use('/api/admin/accounts', adminAccount);
         this.app.use('/api/calendar', calendar);
         this.app.use('/api/group', group);
+        this.app.use('/api/address', address);
 
         this.app.get('/chat', function (req, res) {
             res.sendFile(__dirname + '/public/chat.html');
