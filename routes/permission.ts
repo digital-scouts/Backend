@@ -10,13 +10,10 @@ import {Config} from "../config";
 function decodePath(requestedPath: string[]): JSON {
     requestedPath.shift();
     requestedPath.shift();
-
     let path: JSON = JSON.parse(JSON.stringify(Config.permission));
     requestedPath.forEach(function (item) {
-        item=item.split('?')[0];
+        item = item.split('?')[0];
         if (path[item]) {
-            // console.log("___________decode: go for "+item+": ")
-            // console.log(path[item])
             path = path[item];
         }
     });

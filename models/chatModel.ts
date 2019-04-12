@@ -7,16 +7,16 @@ const Schema = mongoose.Schema,
 const chat: Schema = new Schema({
         roomName: {
             type: String,
-            require: true
+            required: true
         },
         message: [{
             type: ObjectId,
             ref: 'TextMessage',//todo hier müssen auch andere nachrichten passen
-            require: false
+            required: false
         }],
         user: [{
             type: String,
-            require: true
+            required: true
         }]
     }, {
         timestamps: true

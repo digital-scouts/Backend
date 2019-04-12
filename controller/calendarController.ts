@@ -109,10 +109,10 @@ export class CalendarController {
             description: request.body.discription,
             competent: /* todo validate complements */ request.body.complement,
             groups: /* todo validate groups */ request.body.groups,
-            address: /* todo validate address */ request.body.address,
+            address: request.body.address,
             attachments: {
-                document: /* todo validate documents */ request.body.documents,
-                picture:  /* todo validate picture */ request.body.picture
+                document: request.body.documents,
+                picture: request.body.picture
             },
             creator: userId,
         });
@@ -179,15 +179,18 @@ export class CalendarController {
                     event.description = request.body.description;
                     anyChanges = true;
                 }
+                if (request.body.address != undefined && request.body.address != event.address) {
+                    event.address = request.body.address;
+                    anyChanges = true;
+                }
 
                 //todo remove later
-                if (request.body.complement != undefined || request.body.groups != undefined || request.body.address != undefined || request.body.origin != undefined || request.body.documents != undefined || request.body.picture != undefined) {
+                if (request.body.complement != undefined || request.body.groups != undefined || request.body.origin != undefined || request.body.documents != undefined || request.body.picture != undefined) {
                     return next(new ErrorREST(Errors.NoContent), "A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.");
                 }
 
                 //todo change complement
                 //todo change member
-                //todo change address
                 //todo change attachments
                 //todo change origin?
 

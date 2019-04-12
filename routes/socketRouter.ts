@@ -85,20 +85,15 @@ export default class SocketRouter {
                 SocketRouter.handleAuth(socket, token);
             });
 
-            socket.on('disconnecting', (reason) => {
-                //todo
-                console.log('SOCKET: a user disconnecting');
-            });
-
             socket.on('disconnect', function (reason) {
                 SocketRouter.handleDisconnect(socket);
                 console.log('SOCKET: a user disconnected');
             });
 
             socket.on('error', function (error) {
-                //todo what can happen here?
-                console.log('SOCKET: Woops an error');
+                console.log('SOCKET: Woops an error. -> Client Disconnect.');
                 console.error(error);
+                SocketRouter.handleDisconnect(socket);
             });
         }
     }
