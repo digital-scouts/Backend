@@ -10,7 +10,7 @@ import * as config from '../config';
  */
 export function verifyToken(request, response, next) {
     // Extract token from header / url parameters / post parameters
-    let token = request.body.token;
+    let token =  request.headers['x-access-token'] || request.headers['authorization'];
     if (token) {
         jwt.verify(token, config.Config.salt,  (error, decoded) => {
                 if (error) {
