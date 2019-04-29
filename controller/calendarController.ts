@@ -22,31 +22,31 @@ export class CalendarController {
         let today = new Date();
 
         let filter = [];
-        if (filterDateStart != undefined) {
+        if (filterDateStart != undefined && filterDateStart != 'null') {
             filter.push({'dateStart': {"$gte": filterDateStart}});
         } else {
             filter.push({'dateStart': {"$gte": today.setDate(today.getDate() - config.Config.calender.public_event_daysPast)}});
         }
 
-        if (filterDateEnd != undefined) {
+        if (filterDateEnd != undefined && filterDateEnd != 'null') {
             filter.push({'dateEnd': {"$lt": filterDateEnd}});
         } else {
             filter.push({'dateEnd': {"$lt": today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture)}});
         }
 
-        if (filterComplement != null) {
+        if (filterComplement != null && filterComplement != 'null') {
             filter.push({'competent': {$in: filterComplement}});
         }
 
-        if (filterOrigin != null) {
+        if (filterOrigin != null && filterOrigin != 'null') {
             filter.push({'origin': filterOrigin});
         }
 
-        if (filterType != null) {
+        if (filterType != null && filterType != 'null') {
             filter.push({'type': filterType});
         }
 
-        if (filterGroup != null) {
+        if (filterGroup != null && filterGroup != 'null') {
             filter.push({'member': {$in: filterGroup}});
         } else {
             if (request.decoded.role != 'admin')
