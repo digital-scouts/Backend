@@ -86,6 +86,16 @@ export class CalendarController {
     }
 
     /**
+     * CAUTION: This will delete one Event
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteEvent(request, response, next) {
+        Event.remove({_id:request.params.id}).then(event => response.json({removedElements: event})).catch(next);
+    }
+
+    /**
      *
      * @param request
      * @param response
