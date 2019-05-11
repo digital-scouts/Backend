@@ -7,6 +7,7 @@ export class CalendarController {
 
     /**
      * list all existing events depends on filter in request body
+     * sort and group by dateStart
      * @param request
      * @param response
      * @param next
@@ -54,7 +55,22 @@ export class CalendarController {
                 filter.push({'member': request.decoded.role});
         }
 
-        Event.find({$and: filter}).then(data => response.json(data)).catch(next);
+        Event.find({$and: filter}, {
+            competent: 0, creator: 0, lastEdit: 0, public: 0, updatedAt: 0, createdAt: 0, attachments: 0, description: 0
+        })
+            .sort({'dateStart': 1})
+            .then(data => {
+                let rData = {};
+
+                data.forEach(event => {
+                    let date = new Date(event.dateStart).toISOString().split('T')[0];//ISO Date without time
+                    if (!rData.hasOwnProperty(date)) {
+                        rData[date] = [];
+                    }
+                    rData[date].push(event);
+                });
+                response.json(rData)
+            }).catch(next);
     }
 
     /**
@@ -92,7 +108,7 @@ export class CalendarController {
      * @param next
      */
     static deleteEvent(request, response, next) {
-        Event.remove({_id:request.params.id}).then(event => response.json({removedElements: event})).catch(next);
+        Event.remove({_id: request.params.id}).then(event => response.json({removedElements: event})).catch(next);
     }
 
     /**
