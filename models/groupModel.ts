@@ -21,6 +21,9 @@ const group: Schema = new Schema({
         logo: {
             type: String // todo not supported yet replace with object later
         },
+        color: {
+            type: String // todo not supported yet replace with object later
+        },
         creator:// creator info
             {
                 type: ObjectId,

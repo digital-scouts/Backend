@@ -59,6 +59,7 @@ export class CalendarController {
             competent: 0, creator: 0, lastEdit: 0, public: 0, updatedAt: 0, createdAt: 0, attachments: 0, description: 0
         })
             .sort({'dateStart': 1})
+            .populate('groups')
             .then(data => {
                 let rData = {};
 
@@ -133,7 +134,7 @@ export class CalendarController {
             dateStart: startDateTime,
             dateEnd: endDateTime,
             description: request.body.discription,
-            competent: /* todo validate complements */ request.body.complement,
+            competent: /* todo validate complements */ request.body.competent,
             groups: /* todo validate groups */ request.body.groups,
             address: request.body.address,
             attachments: {
