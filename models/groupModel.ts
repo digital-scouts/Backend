@@ -22,7 +22,13 @@ const group: Schema = new Schema({
             type: String // todo not supported yet replace with object later
         },
         color: {
-            type: String // todo not supported yet replace with object later
+            type: String
+        },
+        defaultForRole: {
+            type: String
+        },
+        childGroup: {
+            type: Boolean
         },
         creator:// creator info
             {

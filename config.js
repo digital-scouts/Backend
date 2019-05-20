@@ -17,38 +17,23 @@ const Config = {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,
     },
-    'defaultGroups': [
-        {
-            'groupName': 'Wölflinge',
-            'assignedRole': 'woe'
-        }, {
-            'groupName': 'Jungpfadfinder',
-            'assignedRole': 'jufi'
-        }, {
-            'groupName': 'Pfadfinder',
-            'assignedRole': 'pfadi'
-        }, {
-            'groupName': 'Rover',
-            'assignedRole': 'rover'
-        },
-    ],
     'user': [// warning: Removing groups can cause errors in the system
         {
-            'roleName': 'woe', 'childGroup': true
+            'roleName': 'woe'
         }, {
-            'roleName': 'jufi', 'childGroup': true
+            'roleName': 'jufi'
         }, {
-            'roleName': 'pfadi', 'childGroup': true
+            'roleName': 'pfadi'
         }, {
-            'roleName': 'rover', 'childGroup': true
+            'roleName': 'rover'
         }, {
-            'roleName': 'leader', 'childGroup': false
+            'roleName': 'leader'
         }, {
-            'roleName': 'parent', 'childGroup': false
+            'roleName': 'parent'
         }, {// warning dont remove 'admin'
-            'roleName': 'admin', 'childGroup': false
+            'roleName': 'admin'
         }, {//hint weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
-            'roleName': 'user', 'childGroup': false
+            'roleName': 'user'
         }
     ],
     'permission': {
