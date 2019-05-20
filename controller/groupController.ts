@@ -27,8 +27,10 @@ export class GroupController {
                 name: request.body.name,
                 leader: leaders,
                 logo: request.body.logo,
-                creator:  request.decoded.userID,
-                color: request.body.color
+                creator: request.decoded.userID,
+                color: request.body.color,
+                defaultForRole: request.body.defaultForRole,
+                childGroup: request.body.childGroup
             });
 
             group.validate(async err => {
@@ -97,6 +99,19 @@ export class GroupController {
                     group.logo = request.body.logo;
                     anyChanges = true;
                 }
+                if (request.body.color != undefined && request.body.color != group.color) {
+                    group.color = request.body.color;
+                    anyChanges = true;
+                }
+                if (request.body.defaultForRole != undefined && request.body.defaultForRole != group.defaultForRole) {
+                    //todo check if group exist in config
+                    group.defaultForRole = request.body.defaultForRole;
+                    anyChanges = true;
+                }
+                if (request.body.childGroup != undefined && request.body.childGroup != group.childGroup) {
+                    group.childGroup = request.body.childGroup;
+                    anyChanges = true;
+                }
 
                 if (anyChanges) {
                     group.lastEdit = request.decoded.userID;
@@ -136,7 +151,7 @@ export class GroupController {
                     startDate: request.body.startDate,
                     end: (request.body.end == undefined) ? null : request.body.end,
                     duration: request.body.duration,
-                    creator:  request.decoded.userID
+                    creator: request.decoded.userID
                 });
 
                 groupLeson.validate(err => {

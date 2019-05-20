@@ -28,7 +28,8 @@ const group: Schema = new Schema({
             type: String
         },
         childGroup: {
-            type: Boolean
+            type: Boolean,
+            default: true
         },
         creator:// creator info
             {
