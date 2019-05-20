@@ -48,7 +48,14 @@ export class CalendarController {
         }
 
         if (filterGroup != null && filterGroup != 'null') {
-            filter.push({'member': {$in: filterGroup}});
+            try {
+                //try to use it like a array, when it fail use it as parameter and put it in array
+                let l = filterGroup.length;
+                filter.push({'groups': {$in: filterGroup}});
+            } catch (ex) {
+                filter.push({'groups': {$in: [filterGroup]}});
+            }
+
         } else {
             if (request.decoded.role != 'admin')
             //if admin then show all events -> dont filter
