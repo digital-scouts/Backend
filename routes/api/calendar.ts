@@ -19,7 +19,7 @@ class Calendar {
             .put(token, permission, CalendarController.updateEvent)
             .delete(token, permission, CalendarController.deleteAllEvents);
 
-        this.router.route('/:id')
+        this.router.route(':id')
             .delete(token, permission, CalendarController.deleteEvent);
 
         this.router.route('/public')
@@ -28,7 +28,8 @@ class Calendar {
         this.router.route('/lesson')
             .get(token, permission, CalendarController.getGroupLessons)
             .post(token, permission, CalendarController.newGroupLesson)
-            .put(token, permission, CalendarController.changeGroupLesson);
+            .delete(token, permission, CalendarController.deleteAllGroupLessons);
+        //.put(token, permission, CalendarController.changeGroupLesson);
 
         this.router.route('/lesson/:id')
             .delete(token, permission, CalendarController.deleteGroupLesson);

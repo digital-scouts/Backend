@@ -3,6 +3,7 @@ import * as config from '../config';
 import {Event} from "../models/eventModel";
 import {_helper as Helper} from "./_helper";
 import {GroupLesson} from "../models/groupLessonModel";
+import * as moment from 'moment';
 
 export class CalendarController {
 
@@ -280,6 +281,7 @@ export class CalendarController {
      * @param next
      */
     static newGroupLesson(request, response, next) {
+
         Helper.isGroupValid(request.body.group).then(isGroupValid => {
             if (isGroupValid) {
                 let groupLesson = new GroupLesson({
@@ -299,9 +301,9 @@ export class CalendarController {
                                     return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
                                 }
 
-
-                        groupLesson.save().then(event => response.status(200).json(event)).then(() => {
-                            //todo create events
+                    groupLesson.save().then(groupLesson => {
+                        CalendarController.createNewGroupLessonEvents(groupLesson);
+                        response.status(200).json(groupLesson)
                         });
                     }
                 );
@@ -323,7 +325,6 @@ export class CalendarController {
         GroupLesson.findById(request.body.id, function (err, lesson) {
             if (lesson && request.body.end != undefined && request.body.end != lesson.end) {
                 lesson.end = request.body.end;
-
                 lesson.lastEdit = request.decoded.userID;
                 lesson.save().then(lesson => response.status(200).json(lesson)).then(() => {
 
@@ -363,9 +364,60 @@ export class CalendarController {
         }
     }
 
-    private static createNewGroupLessonEvents(group: string, date: Date, origin: string) {
-        let endDateTime: Date = new Date() /* date + duration (use momentjs)*/;
+    /**
+     *
+     * @param request
+     * @param response
+     * @param next
+     * @return {any}
+     */
+    static deleteAllGroupLessons(request, response, next) {
+        console.log('delete all')
+        if (config.Config.DEBUG) {
+            GroupLesson.remove().then(data => response.json(data)).catch(next);
+        } else {
+            return next(new ErrorREST(Errors.BadRequest, "This is only for debug, Debug is disabled"));
+        }
+    }
 
+    /**
+     * create all missing groupLessonEvents for the next (maxGroupLessonsEvents * frequency) days
+     * @param groupLesson
+     * @param maxGroupLessonsEvents
+     */
+    public static createNewGroupLessonEvents(groupLesson, maxGroupLessonsEvents = 10) {
+        let groupLessonStartMoment = moment(groupLesson.startDate);
+        groupLessonStartMoment = (moment() > groupLessonStartMoment) ? moment().day(groupLessonStartMoment.day()).hour(groupLessonStartMoment.hour()).minute(groupLessonStartMoment.minute()) : groupLessonStartMoment;
+        for (let i = 0, day = groupLessonStartMoment; i < maxGroupLessonsEvents; i++, day = groupLessonStartMoment.clone().add(groupLesson.frequency * i, 'd')) {
+            console.log(`check if this lesson is already in events for ${day.format('DD.MM HH:mm')}`)
+
+            let filter = [];
+            filter.push({'dateStart': {"$gte": day}});
+            filter.push({'origin': groupLesson._id});
+
+            Event.find({$and: filter}, {})
+                .sort({'dateStart': 1})
+                .then(data => {
+                    if (data.length == 0) {
+                        console.log(`groupLessonEvent did not exist`)
+                        CalendarController.createNewGroupLessonEvent(groupLesson._id, day.toDate(), groupLesson.duration, groupLesson.group);
+                    } else {
+                        console.log(`groupLessonEvent already exist`)
+                    }
+                });
+        }
+    }
+
+    /**
+     * create a new groupLessonEvent
+     * @param {string} origin
+     * @param {Date} date
+     * @param {number} duration
+     * @param {string} group
+     */
+    private static createNewGroupLessonEvent(origin: string, date: Date, duration: number, group: string) {
+        let endDateTime: Date = moment(date).clone().add(duration, 'h').toDate();
+        console.log(`create new event from ${date} to ${endDateTime}`)
         let event = new Event({
             public: true,
             origin: origin,
@@ -382,12 +434,10 @@ export class CalendarController {
         event.validate(async err => {
             if (err)
                 for (let errName in err.errors)
-                    if (err.errors[errName].name === 'ValidatorError') {
+                    if (err.errors[errName].name === 'ValidatorError')
                         console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
-                        //return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
-                    }
 
-            await event.save();
+            event.save();
         });
     }
 }

@@ -5,6 +5,7 @@ import * as morgan from "morgan";
 import * as path from 'path';
 import * as http from 'http';
 import debug from 'debug';
+import * as timedScripts from './timedScripts.js';
 
 debug('digital-scouts-backend:server');
 
@@ -30,6 +31,7 @@ class ExpressApp {
         this.app = express();
         this.middleware();
         this.mongo();
+        timedScripts.timedScripts.startScripts();
         console.log('Node setup finished...');
     }
 
