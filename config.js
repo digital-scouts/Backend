@@ -12,7 +12,7 @@ const Config = {
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
     'salt': 'digital-scouts-santa-lucia', // hint change the salt to disable all tokens (force login)
     'DEBUG': true,// WARNING debugmode can overwrite permissions, be careful
-    'PERMISSION': true, // WARNING permission can be disabled (active = true, disabled = false)
+    'PERMISSION': false, // WARNING permission can be disabled (active = true, disabled = false)
     'calender': {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,

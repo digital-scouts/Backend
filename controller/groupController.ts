@@ -133,7 +133,7 @@ export class GroupController {
      * @param next
      */
     static getGroupLessons(request, response, next) {
-        GroupLesson.find().then(data => response.json(data)).catch(next);
+        GroupLesson.find().populate('group').then(data => response.json(data)).catch(next);
     }
 
     /**
