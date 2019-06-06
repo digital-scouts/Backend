@@ -2,6 +2,7 @@ import {Errors, ErrorREST} from "../errors";
 import * as config from '../config';
 import {Event} from "../models/eventModel";
 import {_helper as Helper} from "./_helper";
+import {GroupLesson} from "../models/groupLessonModel";
 
 export class CalendarController {
 
@@ -258,5 +259,135 @@ export class CalendarController {
         return {status: status, message: message};
     }
 
+    /*
+    ****************************************** GROUP LESSON
+     */
 
+    /**
+     * send all groupLessons unfiltered
+     * @param request
+     * @param response
+     * @param next
+     */
+    static getGroupLessons(request, response, next) {
+        GroupLesson.find().populate('group').then(data => response.json(data)).catch(next);
+    }
+
+    /**
+     * create a new groupLesson
+     * @param request
+     * @param response
+     * @param next
+     */
+    static newGroupLesson(request, response, next) {
+        Helper.isGroupValid(request.body.group).then(isGroupValid => {
+            if (isGroupValid) {
+                let groupLesson = new GroupLesson({
+                    group: request.body.group,
+                    frequency: request.body.frequency,
+                    startDate: request.body.startDate,
+                    // end: (request.body.end == undefined) ? null : request.body.end,
+                    duration: request.body.duration,
+                    creator: request.decoded.userID
+                });
+
+                groupLesson.validate(err => {
+                        if (err)
+                            for (let errName in err.errors)
+                                if (err.errors[errName].name === 'ValidatorError') {
+                                    console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                                    return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
+                                }
+
+
+                        groupLesson.save().then(event => response.status(200).json(event)).then(() => {
+                            //todo create events
+                        });
+                    }
+                );
+            } else {
+                return next(new ErrorREST(Errors.UnprocessableEntity, "The group is not valid."));
+            }
+        });
+    }
+
+    /**
+     * set end of groupLessons and remove all following groupLesson events
+     * todo validate end
+     * todo remove all following groupLesson events
+     * @param request
+     * @param response
+     * @param next
+     */
+    static finishGroupLessonPeriode(request, response, next) {
+        GroupLesson.findById(request.body.id, function (err, lesson) {
+            if (lesson && request.body.end != undefined && request.body.end != lesson.end) {
+                lesson.end = request.body.end;
+
+                lesson.lastEdit = request.decoded.userID;
+                lesson.save().then(lesson => response.status(200).json(lesson)).then(() => {
+
+                });
+            } else {
+                if (lesson) {
+                    response.status(200).json("No Changes")
+                } else {
+                    return next(new ErrorREST(Errors.UnprocessableEntity, "The groupLesson could not be found"));
+                }
+            }
+        });
+    }
+
+    /**
+     * todo set groupLesson event to canceled
+     * @param request
+     * @param response
+     * @param next
+     */
+    static cancelGroupLessonEvent(request, response, next) {
+
+    }
+
+    /**
+     *
+     * Warning: only for debug - delete a specific groupLesson
+     * @param request
+     * @param response
+     * @param next
+     */
+    static deleteGroupLesson(request, response, next) {
+        if (config.Config.DEBUG) {
+            GroupLesson.remove({_id: request.params.id}).then(data => response.json(data)).catch(next);
+        } else {
+            return next(new ErrorREST(Errors.BadRequest, "This is only for debug, Debug is disabled"));
+        }
+    }
+
+    private static createNewGroupLessonEvents(group: string, date: Date, origin: string) {
+        let endDateTime: Date = new Date() /* date + duration (use momentjs)*/;
+
+        let event = new Event({
+            public: true,
+            origin: origin,
+            type: 'lesson',
+            eventName: 'Gruppenstunde',
+            dateStart: date,
+            dateEnd: endDateTime,
+            description: null,
+            competent: null,
+            groups: [group],
+            address: null,
+        });
+
+        event.validate(async err => {
+            if (err)
+                for (let errName in err.errors)
+                    if (err.errors[errName].name === 'ValidatorError') {
+                        console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                        //return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
+                    }
+
+            await event.save();
+        });
+    }
 }

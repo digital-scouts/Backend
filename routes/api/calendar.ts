@@ -25,6 +25,13 @@ class Calendar {
         this.router.route('/public')
             .get(CalendarController.getAllPublicEvents);
 
+        this.router.route('/lesson')
+            .get(token, permission, CalendarController.getGroupLessons)
+            .post(token, permission, CalendarController.newGroupLesson)
+            .put(token, permission, CalendarController.changeGroupLesson);
+
+        this.router.route('/lesson/:id')
+            .delete(token, permission, CalendarController.deleteGroupLesson);
     }
 }
 

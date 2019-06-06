@@ -23,14 +23,6 @@ class Group {
         this.router.route('/:id')
             .delete(token, permission, GroupController.deleteGroup);
 
-        this.router.route('/lesson')
-            .get(token, permission, GroupController.getGroupLessons)
-            .post(token, permission, GroupController.newGroupLesson)
-            .put(token, permission, GroupController.changeGroupLesson);
-
-        this.router.route('/lesson/:id')
-            .delete(token, permission, GroupController.deleteGroupLesson);
-
     }
 }
 
