@@ -1,3 +1,5 @@
+import {ErrorREST, Errors} from "../errors";
+
 let request = require('request');
 
 export enum Status {
@@ -32,9 +34,10 @@ export class NamiAPI {
     status: Status;
     apiMajor: any;
     apiMinor: any;
+    groupId: number;
 
 //contains the untergliederungId for the search request
-    constructor(loginName, password) {
+    constructor(loginName, password, groupId) {
         request.defaults({jar: true});
         this.loginName = loginName;
         this.password = password;
@@ -44,11 +47,7 @@ export class NamiAPI {
         this.status = Status.IDLE;
         this.apiMajor = null;
         this.apiMinor = null;
-
-    }
-
-    getSearchURL() {
-        return `${this.host}/ica/rest/api/${this.apiMajor}/${this.apiMinor}/service/nami/search/result-list`
+        this.groupId = groupId;
     }
 
     /**
@@ -117,51 +116,104 @@ export class NamiAPI {
                     reject(body.statusMessage)
                 }
             })
+    }
+
+    /**
+     * get some details from all members matching search criteria
+     * @param request
+     * @param response
+     * @param next
+     */
+    private searchMember(request, response, next) {
+        if (this.status !== Status.CONNECTED) {
+            return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
+        }
+
+        let searchedValues = {
+            // mglStatusId: "AKTIV",
+            // mglTypeId: "MITGLIED",
+            untergliederungId: Stufe.ALLE,
+            taetigkeitId:' '
+        };
+
+        let params = {
+            searchedValues: JSON.stringify(searchedValues),
+            page: 1,
+            start: 0,
+            limit: 999999
+        };
+
+        request.get({
+            url: `${this.host}/ica/rest/api/${this.apiMajor}/${this.apiMinor}/service/nami/search/result-list`,
+            qs: params,
+            useQueryString: true,
+            jar: this.cookieJar
+        }, (error, response, body) => {
+            response.status(200).json(JSON.parse(body).data);
         })
     }
 
     /**
-     * Returns a promise to an array of members.
-     * @param {Number} stufe  which group we should search for.
-     * Use NamiAPI.Stufe for this
-     * @param {*} leiter (bool) if the group leaders should be included or not. Defaults to true
+     * return a list of all members
+     * @param request
+     * @param response
+     * @param next
      */
-    listMembers(stufe, leiter = true) {
-        let searchFor = {
-            mglStatusId: "AKTIV",
-            mglTypeId: "MITGLIED",
-            untergliederungId: stufe
-        };
-        if (leiter !== null)
-            searchFor['taetigkeitId'] = (leiter) ? 6 : " ";
-
-        return this.search(searchFor)
-    }
-
-    /**
-     * Returns a promise to the full search
-     * @param {*} searchedValues what to search for. Possible keys (but not all of them); taetigkeitId, mglStatusId, mglTypeId, untergliederungId
-     */
-    search(searchedValues) {
-        return new Promise((resolve, reject) => {
-            if (this.status !== Status.CONNECTED) {
-                reject("Authenticate before trying to search")
+    public static getAllMemberForGroup(request, response, next) {
+        let nami = new NamiAPI('203636', 'yx*&M%nD3pT$6C', 350716);
+        nami.startSession().then(()=>{
+            if (nami.status !== Status.CONNECTED) {
+                return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
             }
             let params = {
-                searchedValues: JSON.stringify(searchedValues),
                 page: 1,
                 start: 0,
                 limit: 999999
             };
 
             request.get({
-                url: this.getSearchURL(),
+                url: `${nami.host}/ica/rest/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${nami.groupId}`,
                 qs: params,
                 useQueryString: true,
-            jar: this.cookieJar
+                jar: nami.cookieJar
             }, (error, response, body) => {
-                resolve(JSON.parse(body).data)
-            })
-        })
+                console.log(error)
+                response.status(200).json(JSON.parse(body).data);
+            });
+        }, (error) => {
+            response.status(200).json("Nami Anmeldung fehlgeschlagen. Fehler: " + error)
+        });
+    }
+
+    /**
+     * get all details from one member
+     * @param request
+     * @param response
+     * @param next
+     */
+    public static getOneMemberFromGroupById(request, response, next) {
+        let nami = new NamiAPI('203636', 'yx*&M%nD3pT$6C', 350716);
+        nami.startSession().then(()=>{
+            if (nami.status !== Status.CONNECTED) {
+                return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
+            }
+            let params = {
+                page: 1,
+                start: 0,
+                limit: 999999
+            };
+
+            request.get({
+                url: `${nami.host}/ica/rest/api/${nami.apiMajor}/${nami.apiMinor}/service/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${nami.groupId}/${request.params.id}`,
+                qs: params,
+                useQueryString: true,
+                jar: nami.cookieJar
+            }, (error, response, body) => {
+                console.log(error)
+                response.status(200).json(JSON.parse(body).data);
+            });
+        }, (error) => {
+            response.status(200).json("Nami Anmeldung fehlgeschlagen. Fehler: " + error)
+        });
     }
 }

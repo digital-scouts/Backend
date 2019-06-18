@@ -1,6 +1,5 @@
 import {Router} from "express";
 import {NamiAPI} from "../../controller/namiController";
-import {Stufe} from "../../controller/namiController";
 
 class Nami {
     router: Router;
@@ -11,18 +10,11 @@ class Nami {
     }
 
     init() {
-        this.router.route('/')
-            .get(async (request, response, next) => {
-                let nami = new NamiAPI('203636', 'yx*&M%nD3pT$6C');
-                nami.startSession().then((success) => {
+        this.router.route('/member')
+            .get(NamiAPI.getAllMemberForGroup);
 
-                    nami.listMembers(Stufe.ALLE, null).then((data) => {
-                        response.status(200).json(data)
-                    });
-                }, (error) => {
-                    response.status(200).json("Nami Anmeldung fehlgeschlagen. Fehler: " + error)
-                })
-            });
+        this.router.route('/member/:id')
+            .get(NamiAPI.getOneMemberFromGroupById)
     }
 }
 

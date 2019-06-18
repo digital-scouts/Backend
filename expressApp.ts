@@ -20,6 +20,7 @@ import chatRouter from './routes/api/chat';
 import calendar from "./routes/api/calendar";
 import group from "./routes/api/group";
 import address from "./routes/api/address";
+import nami from "./routes/api/nami";
 
 class ExpressApp {
     public app;
@@ -56,6 +57,7 @@ class ExpressApp {
         this.app.use('/api/calendar', calendar);
         this.app.use('/api/group', group);
         this.app.use('/api/address', address);
+        this.app.use('/api/nami', nami);
 
         this.app.get('/chat', function (req, res) {
             res.sendFile(__dirname + '/public/chat.html');
