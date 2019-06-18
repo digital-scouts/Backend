@@ -120,41 +120,6 @@ export class NamiAPI {
     }
 
     /**
-     * get some details from all members matching search criteria
-     * @param request
-     * @param response
-     * @param next
-     */
-    private searchMember(request, response, next) {
-        if (this.status !== Status.CONNECTED) {
-            return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
-        }
-
-        let searchedValues = {
-            // mglStatusId: "AKTIV",
-            // mglTypeId: "MITGLIED",
-            untergliederungId: Stufe.ALLE,
-            taetigkeitId: ' '
-        };
-
-        let params = {
-            searchedValues: JSON.stringify(searchedValues),
-            page: 1,
-            start: 0,
-            limit: 999999
-        };
-
-        request.get({
-            url: `${this.host}/ica/rest/api/${this.apiMajor}/${this.apiMinor}/service/nami/search/result-list`,
-            qs: params,
-            useQueryString: true,
-            jar: this.cookieJar
-        }, (error, response, body) => {
-            response.status(200).json(JSON.parse(body).data);
-        })
-    }
-
-    /**
      * return a list of all members
      * @param request
      * @param response
