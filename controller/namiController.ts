@@ -1,6 +1,6 @@
 import {ErrorREST, Errors} from "../errors";
 
-let request = require('request');
+let apiClient = require('request');
 
 export enum Status {
     //connection hasn't started
@@ -38,12 +38,12 @@ export class NamiAPI {
 
 //contains the untergliederungId for the search request
     constructor(loginName, password, groupId) {
-        request.defaults({jar: true});
+        apiClient.defaults({jar: true});
         this.loginName = loginName;
         this.password = password;
         this.host = "https://nami.dpsg.de";
         this.authURL = "/ica/rest/nami/auth/manual/sessionStartup";
-        this.cookieJar = request.jar();
+        this.cookieJar = apiClient.jar();
         this.status = Status.IDLE;
         this.apiMajor = null;
         this.apiMinor = null;
@@ -68,7 +68,7 @@ export class NamiAPI {
                 return;
             }
             this.status = Status.AUTH;
-            request.post({
+            apiClient.post({
                 url: this.host + this.authURL,
                 jar: this.cookieJar,
                 form: {
@@ -84,7 +84,7 @@ export class NamiAPI {
                     return;
                 }
                 if (response.statusCode === 302) {
-                    request.get({
+                    apiClient.get({
                         url: response.headers.location,
                         jar: this.cookieJar
                     }, (error2, response2, body2) => {
@@ -116,6 +116,7 @@ export class NamiAPI {
                     reject(body.statusMessage)
                 }
             })
+        });
     }
 
     /**
@@ -133,7 +134,7 @@ export class NamiAPI {
             // mglStatusId: "AKTIV",
             // mglTypeId: "MITGLIED",
             untergliederungId: Stufe.ALLE,
-            taetigkeitId:' '
+            taetigkeitId: ' '
         };
 
         let params = {
@@ -161,7 +162,7 @@ export class NamiAPI {
      */
     public static getAllMemberForGroup(request, response, next) {
         let nami = new NamiAPI('203636', 'yx*&M%nD3pT$6C', 350716);
-        nami.startSession().then(()=>{
+        nami.startSession().then(() => {
             if (nami.status !== Status.CONNECTED) {
                 return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
             }
@@ -171,13 +172,12 @@ export class NamiAPI {
                 limit: 999999
             };
 
-            request.get({
+            apiClient.get({
                 url: `${nami.host}/ica/rest/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${nami.groupId}`,
                 qs: params,
                 useQueryString: true,
                 jar: nami.cookieJar
-            }, (error, response, body) => {
-                console.log(error)
+            }, (error, namiResponse, body) => {
                 response.status(200).json(JSON.parse(body).data);
             });
         }, (error) => {
@@ -193,7 +193,7 @@ export class NamiAPI {
      */
     public static getOneMemberFromGroupById(request, response, next) {
         let nami = new NamiAPI('203636', 'yx*&M%nD3pT$6C', 350716);
-        nami.startSession().then(()=>{
+        nami.startSession().then(() => {
             if (nami.status !== Status.CONNECTED) {
                 return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
             }
@@ -203,13 +203,12 @@ export class NamiAPI {
                 limit: 999999
             };
 
-            request.get({
+            apiClient.get({
                 url: `${nami.host}/ica/rest/api/${nami.apiMajor}/${nami.apiMinor}/service/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${nami.groupId}/${request.params.id}`,
                 qs: params,
                 useQueryString: true,
                 jar: nami.cookieJar
-            }, (error, response, body) => {
-                console.log(error)
+            }, (error, namiResponse, body) => {
                 response.status(200).json(JSON.parse(body).data);
             });
         }, (error) => {
