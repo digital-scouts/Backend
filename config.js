@@ -10,6 +10,12 @@ const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
+    'mail':{
+        'pass':'9F6$5@x4Sub%JS',
+        'user':'dpsg.santa.lucia@gmail.com',
+        'user_name':'⚜️DPSG Santa Lucia',
+        'service':'gmail',
+    },
     'salt': 'digital-scouts-santa-lucia', // hint change the salt to disable all tokens (force login)
     'DEBUG': true,// WARNING debugmode can overwrite permissions, be careful
     'PERMISSION': false, // WARNING permission can be disabled (active = true, disabled = false)
