@@ -4,66 +4,81 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <style>
+        .content_width {
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hidelink {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
 </head>
-<body style="width: 70%; margin-left: auto; margin-right: auto">
-<div class="header" style="vertical-align: middle; display: flex">
-    <h1 class="subject">
-        <img width="50px" height="50px" alt="Stammesabzeichen" src="cid:img_stammesabzeichen"
-             onError="this.onerror=null;this.src='./../img/stammesabzeichen.png';"/>
-        <span style="vertical-align: super;">{{betreff}}</span>
-    </h1>
+<body style="font-family: Georgia,serif; background-color: rgb(255, 250, 234); height: fit-content;">
+<div style="background-color: rgb(255, 238, 210);">
+    <div class="header content_width" style="vertical-align: middle; display: flex; ">
+        <h1 class="subject">
+            <img width="50px" height="auto" alt="Stammesabzeichen" src="cid:img_stammesabzeichen"
+                 onError="this.onerror=null;this.src='./../img/stammesabzeichen.png';"/>
+            <span style="vertical-align: super;">{{betreff}}</span>
+        </h1>
+    </div>
 </div>
 
-<div class="main_content">
-    {{text}}
+<div class="main_content content_width" style="margin: 20px auto 50px auto">
+    <p>{{text}}</p>
 </div>
 
-<div class="social-media" style="display: flex; width: fit-content; margin: 20px auto;">
-    <a style="margin: 5px; text-decoration: none; color: black" href="https://www.instagram.com/dpsg_santa_lucia/">
-        <img alt="instagram icon" src="cid:ig_img" height="24" width="24"
-             onError="this.onerror=null;this.src='../img/instagram.png';"/>
-        <span style="vertical-align: super;">Instagram</span>
-    </a>
-    <a style="margin: 5px; text-decoration: none; color: black" href="http://dpsg-santa-lucia.de">
-        <img alt="web icon" src="cid:web_img" height="24" width="24"
-             onError="this.onerror=null;this.src='../img/web.png';"/>
-        <span style="vertical-align: super;">Webseite</span>
-    </a>
-</div>
+<hr class="content_width">
 
-<hr >
-
-<div class="informations" style="display: flex">
+<div class="informations content_width" style="display: flex; ">
     <div class="nextEvents" style="width: 50%">
-        <h2>Nächste Termine</h2>
+        <h3>Nächste Termine</h3>
         <ul>
-            <li><a href="">22.06. Gemeinde-Rallye</a> </li>
+            <li><a href="">22.06. Gemeinde-Rallye</a></li>
         </ul>
     </div>
     <div class="recentDocuments" style="width: 50%">
-        <h2>Aktuell Interessante Dokumente</h2>
+        <h3>Aktuell Interessante Dokumente</h3>
         <ul>
-            <li><a href="www-drive.de">Gemeinde-Rallye</a> </li>
-            <li><a href="">Sommerlager-Packliste</a> </li>
-            <li><a href="">Sommerlager-Informationen</a> </li>
+            <li><a href="www-drive.de">Gemeinde-Rallye</a></li>
+            <li><a href="">Sommerlager-Packliste</a></li>
+            <li><a href="">Sommerlager-Informationen</a></li>
         </ul>
     </div>
-    <div class="shop">
+</div>
 
+<div class="" style="background-color: rgb(255, 238, 210); padding: 10px; font-size: 0.9em">
+    <div class="footer content_width" style="text-align: center; ">
+        <div class="social-media" style="display: flex; width: fit-content; margin: 20px auto;">
+            <a class="hidelink" style="margin: 5px; " href="https://www.instagram.com/dpsg_santa_lucia/">
+                <img alt="instagram icon" src="cid:ig_img" height="24" width="24"
+                     onError="this.onerror=null;this.src='../img/instagram.png';"/>
+                <span style="vertical-align: super;">Instagram</span>
+            </a>
+            <a class="hidelink" style="margin: 5px;" href="http://dpsg-santa-lucia.de">
+                <img alt="web icon" src="cid:web_img" height="24" width="24"
+                     onError="this.onerror=null;this.src='../img/web.png';"/>
+                <span style="vertical-align: super;">Webseite</span>
+            </a>
+        </div>
+
+        <hr style="width: 60%">
+
+        <i>Copyright ©
+            <script>document.write(new Date().getFullYear());</script>
+            DPSG Santa Lucia</i><br>
+        <br>
+        <b>Stamm Santa Lucia</b><br>
+        <a class="hidelink" href="mailto:dpsg-eidelstedt@gmx.de">dpsg-eidelstedt@gmx.de</a><br>
+        Niekampsweg 24 | 22523 Hamburg | Germany<br>
+        <br>
     </div>
-
 </div>
 
-<hr >
-
-<div class="footer" style="text-align: center;">
-    Diese E-Mail wurde an {{mail}} gesendet. <br>
-    <!--Sie erhalten diese E-Mail, weil Sie im {{gruppe}} Verteiler sind.<br>-->
-    Stamm Santa Lucia · Niekampsweg 24 · Hamburg 22523 · Germany<br>
-    <br>
-    <img width="200px" height="auto" src="cid:dpsg-stamm-logo" alt="dpsg-stamm-logo"
-         onError="this.onerror=null;this.src='./../img/dpsg-stamm-logo.png';"/>
-</div>
 
 </body>
 </html>

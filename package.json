@@ -14,6 +14,7 @@
     "express": "^4.16.4",
     "handlebars": "^4.1.2",
     "http-errors": "~1.6.2",
+    "ical-generator": "^1.7.1",
     "jsonwebtoken": "^8.4.0",
     "jstransformer": "^1.0.0",
     "mongodb": "^3.1.13",

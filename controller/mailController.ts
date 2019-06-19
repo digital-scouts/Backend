@@ -1,8 +1,13 @@
 import {ErrorREST, Errors} from "../errors";
 import * as nodemailer from 'nodemailer';
+
+const ical = require('ical-generator');
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import {Config} from "./../config";
+import * as moment from 'moment';
+
+const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
 export class MailController {
 
@@ -23,55 +28,62 @@ export class MailController {
     }
 
     public static send(request, response, next) {
-        const readHTMLFile = function (path, callback) {
-            fs.readFile(path, {encoding: 'utf-8'}, function (err, html) {
-                if (err) {
-                    throw err;
-                } else {
-                    callback(null, html);
-                }
-            });
-        };
 
-        readHTMLFile(__dirname + '/MailSrc/src/default.html', function(err, html) {
+        const receiver = request.body.receiver_mail;
+        const greeding = request.body.greeding;
+        const subject = request.body.subject;
+        const replyTo = request.body.replyTo;
+        const content = request.body.text
+            .replace(/(?:\r\n|\r|\n)/g, '<br>')
+            .replace('{{greeding}}', greeding);
+
+        const eventPath = __dirname + '/MailSrc/events/invitation.ics';
+        cal.createEvent({
+            start: moment(),
+            end: moment().add(1, 'hour'),
+            summary: 'Example Event',
+            description: 'It works ;)',
+            location: 'my room',
+            url: 'http://sebbo.net/'
+        });
+        cal.saveSync(eventPath);
+
+        MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
             const replacements = {
-                betreff: request.body.subject,
-                mail: request.body.to,
-                text: request.body.text
+                betreff: subject,
+                mail: receiver,
+                text: content
             };
-            const htmlToSend = handlebars.compile(html)(replacements);
+
+            const attachments = [{
+                filename: 'stammesabzeichen.png',
+                path: __dirname + '/MailSrc/img/stammesabzeichen.png',
+                cid: 'img_stammesabzeichen'
+            }, {
+                filename: 'web.png',
+                path: __dirname + '/MailSrc/img/web.png',
+                cid: 'web_img'
+            }, {
+                filename: 'instagram.png',
+                path: __dirname + '/MailSrc/img/instagram.png',
+                cid: 'ig_img'
+            }];
+
+            // @ts-ignore
+            attachments.push({
+                path: eventPath
+            });
 
             let mailOptions = {
                 from: MailController.senderAddress,
-                to: request.body.to,
-                cc: request.body.cc,
-                bcc: request.body.bcc,
-                html: htmlToSend,
-                subject: request.body.subject,
-                text: request.body.text,
-                replyTo: request.body.replyTo,
-                icalEvent: {
-                    filename: 'invitation.ics',
-                    method: 'request',
-                    href: 'https://calendar.google.com/event?action=TEMPLATE&tmeid=N3BybjJoNHRjazY1NTc5aG9vcnJ0NXNucTYgZHBzZy5zYW50YS5sdWNpYUBt&tmsrc=dpsg.santa.lucia%40gmail.com'
-                },
-                attachments: [{
-                    filename: 'stammesabzeichen.png',
-                    path: __dirname + '/MailSrc/img/stammesabzeichen.png',
-                    cid: 'img_stammesabzeichen'
-                },{
-                    filename: 'dpsg-stamm-logo.png',
-                    path: __dirname + '/MailSrc/img/dpsg-stamm-logo.png',
-                    cid: 'dpsg-stamm-logo'
-                },{
-                    filename: 'web.png',
-                    path: __dirname + '/MailSrc/img/web.png',
-                    cid: 'web_img'
-                },{
-                    filename: 'instagram.png',
-                    path: __dirname + '/MailSrc/img/instagram.png',
-                    cid: 'ig_img'
-                }]
+                bcc: receiver,
+                html: handlebars.compile(html)(replacements)
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>'),
+                subject: subject,
+                text: content,
+                replyTo: replyTo,
+                attachments: attachments
             };
 
             MailController.transporter.sendMail(mailOptions, function (error, info) {
@@ -85,4 +97,14 @@ export class MailController {
             });
         });
     }
+
+    private static readHTMLFile(path, callback) {
+        fs.readFile(path, {encoding: 'utf-8'}, function (err, html) {
+            if (err) {
+                throw err;
+            } else {
+                callback(null, html);
+            }
+        });
+    };
 }
