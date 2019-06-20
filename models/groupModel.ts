@@ -1,13 +1,8 @@
 import {Schema, Model, model} from "mongoose";
-import {Config} from "../config";
-
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
-
-//return string array with all roleNames set in config file
-
 
 const group: Schema = new Schema({
         name: {
@@ -26,10 +21,6 @@ const group: Schema = new Schema({
         },
         defaultForRole: {
             type: String
-        },
-        childGroup: {
-            type: Boolean,
-            default: true
         },
         creator:// creator info
             {

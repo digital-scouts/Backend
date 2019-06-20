@@ -10,11 +10,11 @@ const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
-    'mail':{
-        'pass':'9F6$5@x4Sub%JS',
-        'user':'dpsg.santa.lucia@gmail.com',
-        'user_name':'⚜️DPSG Santa Lucia',
-        'service':'gmail',
+    'mail': {
+        'pass': '9F6$5@x4Sub%JS',
+        'user': 'dpsg.santa.lucia@gmail.com',
+        'user_name': '⚜️DPSG Santa Lucia',
+        'service': 'gmail',
     },
     'salt': 'digital-scouts-santa-lucia', // hint change the salt to disable all tokens (force login)
     'DEBUG': true,// WARNING debugmode can overwrite permissions, be careful
@@ -24,41 +24,25 @@ const Config = {
         'public_event_daysFuture': 183,
     },
     'user': [// warning: Removing groups can cause errors in the system
-        {
-            'roleName': 'woe'
-        }, {
-            'roleName': 'jufi'
-        }, {
-            'roleName': 'pfadi'
-        }, {
-            'roleName': 'rover'
-        }, {
-            'roleName': 'leader'
-        }, {
-            'roleName': 'parent'
-        }, {// warning dont remove 'admin'
-            'roleName': 'admin'
-        }, {//hint weder Gruppenkind noch Leiter. Sonstige Mitarbeiter
-            'roleName': 'user'
-        }
+        'member', 'leader', 'parent', 'admin', 'user'
     ],
     'permission': {
         'users': {
             'GET': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                 'permissionForDisabled': true,
                 'permissionForNotActivated': false
             }, //getAllUsers
             'PUT': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_SELF,
                 'permissionForDisabled': true,
                 'permissionForNotActivated': true
             },
             '/:id': {
                 'GET': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                     'permissionForDisabled': true,
                     'permissionForNotActivated': true
@@ -66,7 +50,7 @@ const Config = {
             },
             'image': {
                 'PUT': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.ONLY_SELF,
                     'permissionForDisabled': true,
                     'permissionForNotActivated': false
@@ -74,7 +58,7 @@ const Config = {
             },
             'password': {
                 'PUT': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.ONLY_SELF,
                     'permissionForDisabled': true,
                     'permissionForNotActivated': true
@@ -82,7 +66,7 @@ const Config = {
             },
             'email': {
                 'PUT': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.ONLY_SELF,
                     'permissionForDisabled': true,
                     'permissionForNotActivated': true
@@ -116,7 +100,7 @@ const Config = {
         'chat': {
             '/:id': {
                 'GET': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                     'permissionForDisabled': false,
                     'permissionForNotActivated': false
@@ -125,31 +109,31 @@ const Config = {
             '/message': {
                 '/:id': {
                     'GET': {
-                        'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                        'users': ['member', 'leader', 'parent', 'admin'],
                         'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                         'permissionForDisabled': false,
                         'permissionForNotActivated': false
                     }
                 },
                 'POST': {
-                    'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                    'users': ['member', 'leader', 'parent', 'admin'],
                     'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                     'permissionForDisabled': false,
                     'permissionForNotActivated': false
                 }
             },
             'GET': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
             }, 'POST': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
             }, 'DELETE': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.OWN_GROUP_AND_LEADER,
                 'permissionForDisabled': false,
                 'permissionForNotActivated': false
@@ -163,19 +147,19 @@ const Config = {
                 'permissionForNotActivated': false
             },
             'GET': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
                 'permissionForDisabled': true,
                 'permissionForNotActivated': false
             },
             'POST': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
                 'permissionForDisabled': true,
                 'permissionForNotActivated': false
             },
             'PUT': {
-                'users': ['woe', 'jufi', 'pfadi', 'rover', 'leader', 'parent', 'admin'],
+                'users': ['member', 'leader', 'parent', 'admin'],
                 'permissionLevel': permissionLevel.ONLY_OWN_GROUP,
                 'permissionForDisabled': true,
                 'permissionForNotActivated': false
