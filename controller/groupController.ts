@@ -29,8 +29,6 @@ export class GroupController {
                 logo: request.body.logo,
                 creator: request.decoded.userID,
                 color: request.body.color,
-                defaultForRole: request.body.defaultForRole,
-                childGroup: request.body.childGroup
             });
 
             group.validate(async err => {

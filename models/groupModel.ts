@@ -19,9 +19,6 @@ const group: Schema = new Schema({
         color: {
             type: String
         },
-        defaultForRole: {
-            type: String
-        },
         creator:// creator info
             {
                 type: ObjectId,
