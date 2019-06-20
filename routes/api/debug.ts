@@ -1,4 +1,5 @@
 import {Router} from "express";
+import {DebugController} from "../../controller/debugController";
 
 
 class Debug {
@@ -10,7 +11,9 @@ class Debug {
     }
 
     init() {
-
+        this.router.route('/')
+            .post(DebugController.initData)
+            .delete(DebugController.deleteDB);
 
     }
 }
