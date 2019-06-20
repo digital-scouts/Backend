@@ -21,7 +21,7 @@ import calendar from "./routes/api/calendar";
 import group from "./routes/api/group";
 import address from "./routes/api/address";
 import mail from "./routes/api/mail";
-//import nami from "./routes/api/nami";
+import nami from "./routes/api/nami";
 import debugRouter from "./routes/api/debug";
 
 class ExpressApp {
@@ -59,7 +59,7 @@ class ExpressApp {
         this.app.use('/api/calendar', calendar);
         this.app.use('/api/group', group);
         this.app.use('/api/address', address);
-        //this.app.use('/api/nami', nami);
+        this.app.use('/api/nami', nami);
         this.app.use('/api/mail', mail);
         this.app.use('/api/debug', debugRouter);
 

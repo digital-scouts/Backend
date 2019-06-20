@@ -3,10 +3,9 @@ import {User} from "../models/userModel";
 import * as nodemailer from 'nodemailer';
 
 const ical = require('ical-generator');
-import * as fs from 'fs';
-import * as handlebars from 'handlebars';
+import * as fs from 'fs'; // read html file
+import * as handlebars from 'handlebars'; // compile html for email with replacements
 import {Config} from "./../config";
-import {getEnabledCategories} from "trace_events";
 
 const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
@@ -28,7 +27,7 @@ export class MailController {
     constructor() {
     }
 
-    private static sendMail(receiver, subject, replyTo, content, eventPath = null): boolean {
+    private static sendMail(receiver, subject, replyTo, content, eventPath = null) {
         MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
             const replacements = {
                 betreff: subject,
@@ -77,8 +76,6 @@ export class MailController {
                 }
             });
         });
-        console.log("Something went wrong, transporter not called");
-        return false;
     }
 
     public static send(request, response, next) {
@@ -139,4 +136,6 @@ export class MailController {
             }
         });
     };
+
+
 }
