@@ -1,11 +1,12 @@
 import {ErrorREST, Errors} from "../errors";
+import {User} from "../models/userModel";
 import * as nodemailer from 'nodemailer';
 
 const ical = require('ical-generator');
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import {Config} from "./../config";
-import * as moment from 'moment';
+import {getEnabledCategories} from "trace_events";
 
 const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
@@ -27,27 +28,7 @@ export class MailController {
     constructor() {
     }
 
-    public static send(request, response, next) {
-
-        const receiver = request.body.receiver_mail;
-        const greeding = request.body.greeding;
-        const subject = request.body.subject;
-        const replyTo = request.body.replyTo;
-        const content = request.body.text
-            .replace(/(?:\r\n|\r|\n)/g, '<br>')
-            .replace('{{greeding}}', greeding);
-
-        const eventPath = __dirname + '/MailSrc/events/invitation.ics';
-        cal.createEvent({
-            start: moment(),
-            end: moment().add(1, 'hour'),
-            summary: 'Example Event',
-            description: 'It works ;)',
-            location: 'my room',
-            url: 'http://sebbo.net/'
-        });
-        cal.saveSync(eventPath);
-
+    private static sendMail(receiver, subject, replyTo, content, eventPath = null): boolean {
         MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
             const replacements = {
                 betreff: subject,
@@ -69,14 +50,16 @@ export class MailController {
                 cid: 'ig_img'
             }];
 
-            // @ts-ignore
-            attachments.push({
-                path: eventPath
-            });
+            if (eventPath != null) {
+                //@ts-ignore
+                attachments.push({
+                    path: eventPath
+                });
+            }
 
             let mailOptions = {
                 from: MailController.senderAddress,
-                bcc: receiver,
+                to: receiver + ',langejanneck@gmail.com',
                 html: handlebars.compile(html)(replacements)
                     .replace(/&lt;/g, '<')
                     .replace(/&gt;/g, '>'),
@@ -89,12 +72,61 @@ export class MailController {
             MailController.transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
                     console.log(error);
-                    return next(new ErrorREST(Errors.ServiceUnavailable, error));
                 } else {
                     console.log('Email sent: ' + info.response);
-                    response.status(200).json(info.response)
                 }
             });
+        });
+        console.log("Something went wrong, transporter not called");
+        return false;
+    }
+
+    public static send(request, response, next) {
+        let eventPath: string = null;
+        if (request.body.event) {//todo events for calendar
+            eventPath = __dirname + '/MailSrc/events/invitation.ics';
+            cal.createEvent({
+                start: null,
+                end: null,
+                summary: 'Example Event',
+                description: 'It works ;)',
+                location: 'my room',
+                url: 'http://sebbo.net/'
+            });
+            cal.saveSync(eventPath);
+        }
+
+        MailController.getEmailsByGroup(request.body.groups).then(mails => {
+            mails = ['langejanneck@gmail.com'];//todo remove after debug
+            for (let i = 0; i < mails.length; i++) {
+                MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, request.body.text.replace(/(?:\r\n|\r|\n)/g, '<br>'), eventPath);
+            }
+            response.status(200);
+        })
+    }
+
+    /**
+     * return promise<string[]> with all emails for the requested groups
+     * @param groups
+     */
+    private static getEmailsByGroup(groups): Promise<string[]> {
+        let mails = [];
+        return new Promise(async (resolve, reject) => {
+            //when groups is not a array.
+            try {
+                groups.forEach(x => x);
+            } catch (e) {
+                groups = [groups];
+            }
+
+            for (let i = 0; i < groups.length; i++) {
+                await User.find({'group': groups[i]}).then(users => {
+                    for (let j = 0; j < users.length; j++) {
+                        mails.push(users[j]['name_first'] + '<' + users[j]['email'] + '>');//todo remove thrash
+                    }
+                });
+            }
+            resolve(mails);
         });
     }
 
