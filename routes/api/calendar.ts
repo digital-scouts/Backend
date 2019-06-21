@@ -13,6 +13,9 @@ class Calendar {
     }
 
     init() {
+        this.router.route('/debug')
+            .get(CalendarController.getAllEventsDebug);
+
         this.router.route('/')
             .get(token, permission, CalendarController.getAllEvents)
             .post(token, permission, CalendarController.createNewEvent)

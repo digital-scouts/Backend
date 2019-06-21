@@ -7,6 +7,23 @@ import * as moment from 'moment';
 
 export class CalendarController {
 
+    static getAllEventsDebug(request, response, next) {
+        Event.find()
+            .sort({'dateStart': 1})
+            .populate('groups')
+            .then(data => {
+                let rData = {};
+
+                data.forEach(event => {
+                    let date = new Date(event.dateStart).toISOString().split('T')[0];//ISO Date without time
+                    if (!rData.hasOwnProperty(date)) {
+                        rData[date] = [];
+                    }
+                    rData[date].push(event);
+                });
+                response.json(rData)
+            }).catch(next);
+    }
     /**
      * list all existing events depends on filter in request body
      * sort and group by dateStart
