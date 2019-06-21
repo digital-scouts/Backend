@@ -11,8 +11,12 @@ export class _helper {
     static isGroupValid(group: string) {
         let ret = null;
 
-        Group.findById(group).then(group => {
-            ret = !!group;
+        Group.findById(group, (err, group) => {
+            if (err) {
+                ret = false;
+            } else {
+                ret = !!group;
+            }
         });
 
         return new Promise(resolve => {
