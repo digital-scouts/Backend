@@ -57,6 +57,11 @@ const user: Schema = new Schema({
             enum: roleNames,//load roles from config
             required: [true, 'Role is required (role) (' + roleNames + ')']
         },
+        group: {
+            type: ObjectId,
+            ref: 'Group',
+            require: false
+        },
         accountStatus: {
             namiLink: {
                 type: String,
@@ -84,12 +89,12 @@ const user: Schema = new Schema({
             default: null,
             require: true
         },
-    notifications:
-        [{
-            type: ObjectId,
-            ref: 'Notification',
-            require: false
-    }]
+        notifications:
+            [{
+                type: ObjectId,
+                ref: 'Notification',
+                require: false
+            }]
     }, {
         timestamps: true
     },
