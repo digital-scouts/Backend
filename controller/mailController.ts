@@ -94,9 +94,16 @@ export class MailController {
         }
 
         MailController.getEmailsByGroup(request.body.groups).then(mails => {
+            const reg = /<img alt="calendar_img-([1-31]+)-([1-12]+)" src="">/g;
             mails = ['langejanneck@gmail.com'];//todo remove after debug
             for (let i = 0; i < mails.length; i++) {
-                MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, request.body.text.replace(/(?:\r\n|\r|\n)/g, '<br>'), eventPath);
+                let content = request.body.text
+                    .replace(/(?:\r\n|\r|\n)/g, '<br>')
+                    .replace(reg, (match)=>{
+                       console.log(match)
+                    });
+
+                MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath);
             }
             response.status(200);
         })
@@ -136,6 +143,34 @@ export class MailController {
             }
         });
     };
+
+    /**
+     * Create a Calender Img with Month and Date as base64
+     * @param day
+     * @param month
+     * @param width
+     * @param imgPath
+     * @return {Promise<string>}
+     */
+    private static async drawCalendar(day, month, width, imgPath) {
+        const {createCanvas, loadImage} = require('canvas');
+        const canvas = createCanvas(width, width);
+        const ctx = canvas.getContext('2d');
+        let image = await loadImage(imgPath);
+        ctx.drawImage(image, 0, 0, width, width);
+
+        //Day
+        ctx.font = 0.5 * width + 'px Impact';
+        let text_with = ctx.measureText(day);
+        ctx.fillText(day, (width / 2) - (text_with.width / 2), (width / 2) + (text_with.emHeightAscent / 2));
+
+        //Month
+        ctx.font = 0.15 * width + 'px Impact';
+        text_with = ctx.measureText(month);
+        ctx.fillText(month, (width / 2) - (text_with.width / 2), 0.2 * width);
+
+        return canvas.toDataURL();
+    }
 
 
 }
