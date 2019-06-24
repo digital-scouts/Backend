@@ -67,13 +67,20 @@ export class AdminAccount {
     }
 
     /**
-     * activate a specific users account
+     * activate a specific users account and set namiLink when possible
      * @param request
      * @param response
      * @param next
      */
     public static activateUser(request, response, next) {
-        User.findByIdAndUpdate(request.params.id, {$set: {'accountStatus.activated': true}}, {new: true}, (err, doc) => {
+        let updateQuery = {
+            'accountStatus.activated': true
+        };
+
+        if(request.query.namiLink){
+            updateQuery['accountStatus.namiLink'] = request.query.namiLink;
+        }
+        User.findByIdAndUpdate(request.query.id, {$set: updateQuery}, {new: true}, (err, doc) => {
             if (err)
                 response.status(Errors.BadRequest.status, "No user with this id found").json(err);
             response.json(doc);
@@ -98,11 +105,11 @@ export class AdminAccount {
      */
     public static async changeDisable(request, response, next) {
         let isDisabled = false;
-        await User.findById(request.params.id, (err, doc) => {
+        await User.findById(request.query.id, (err, doc) => {
             isDisabled = doc.accountStatus.disabled;
         });
 
-        User.findByIdAndUpdate(request.params.id, {$set: {'accountStatus.disabled': !isDisabled}}, {new: true}, (err, doc) => {
+        User.findByIdAndUpdate(request.query.id, {$set: {'accountStatus.disabled': !isDisabled}}, {new: true}, (err, doc) => {
             if (err)
                 response.status(Errors.BadRequest.status, "No user with this id found").json(err);
             response.json(doc);
