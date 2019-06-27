@@ -16,11 +16,10 @@ class AdminAccounts {
     init() {
         this.router.route('/user')
             .get(token, permission, AdminAccount.getAllUsers)
-            .delete(token, permission, AdminAccount.deleteAll);
+            .delete(token, permission, AdminAccount.deleteUser);
 
         this.router.route('/user/:id')
-            .get(token, permission, AdminAccount.getOneUser)
-            .delete(token, permission, AdminAccount.deleteUser);
+            .get(token, permission, AdminAccount.getOneUser);
 
         this.router.route('/notActivated')
             .get(token, permission, AdminAccount.getNotActivatedUsers)

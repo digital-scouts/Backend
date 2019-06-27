@@ -11,7 +11,10 @@ export class AdminAccount {
      * @param next
      */
     public static getAllUsers(request, response, next): void {
-        User.find().then(data => response.json(data)).catch(next);
+        User.find()
+            .populate('group')
+            .sort({'name_last': 1})
+            .then(data => response.json(data)).catch(next);
     }
 
     /**
@@ -35,24 +38,17 @@ export class AdminAccount {
     }
 
     /**
-     * Remove all users at once
-     * @param request
-     * @param response
-     * @param next
-     * @returns {*}
-     */
-    public static deleteAll(request, response, next) {
-        User.deleteMany().then(data => response.json(data)).catch(next);
-    }
-
-    /**
      * delete user by id in params
      * @param request
      * @param response
      * @param next
      */
     public static deleteUser(request, response, next) {
-        User.remove({_id: request.params.id}).then(user => response.json({removedElements: user})).catch(next);
+        if(request.query.id){
+            User.remove({_id: request.query.id}).then(user => response.json({removedElements: user})).catch(next);
+        }else{
+            User.deleteMany().then(data => response.json(data)).catch(next);
+        }
     }
 
 
