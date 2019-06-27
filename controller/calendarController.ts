@@ -145,6 +145,8 @@ export class CalendarController {
      * @param next
      */
     static createNewEvent(request, response, next) {
+        console.log('request.body.groups')
+        console.log(request.body.groups)
         let startDateTime: Date = new Date(request.body.startDate);
         let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
         if (endDateTime == null) {
@@ -161,7 +163,7 @@ export class CalendarController {
             dateEnd: endDateTime,
             description: request.body.discription,
             competent: /* todo validate complements */ request.body.competent,
-            groups: /* todo validate groups */ request.body.groups,
+            groups: /* todo validate groups */ JSON.parse(request.body.groups),
             address: request.body.address,
             attachments: {
                 document: request.body.documents,
@@ -201,7 +203,7 @@ export class CalendarController {
         let anyChanges: boolean = false;
         Event.findById(request.body.id, function (err, event) {
             if (event) {
-                if (request.body.public != undefined && JSON.parse(request.body.public) !== event.public) {
+                if (request.body.public != undefined && request.body.public !== event.public) {
                     event.public = request.body.public;
                     anyChanges = true;
                 }
@@ -243,7 +245,7 @@ export class CalendarController {
                 }
 
                 //todo change complement
-                //todo change member
+                //todo change group
                 //todo change attachments
                 //todo change origin?
 
