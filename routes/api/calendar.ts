@@ -20,9 +20,6 @@ class Calendar {
             .get(token, permission, CalendarController.getAllEvents)
             .post(token, permission, CalendarController.createNewEvent)
             .put(token, permission, CalendarController.updateEvent)
-            .delete(token, permission, CalendarController.deleteAllEvents);
-
-        this.router.route(':id')
             .delete(token, permission, CalendarController.deleteEvent);
 
         this.router.route('/public')

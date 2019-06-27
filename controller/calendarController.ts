@@ -119,23 +119,13 @@ export class CalendarController {
     }
 
     /**
-     * CAUTION: This will delete all Events
-     * @param request
-     * @param response
-     * @param next
-     */
-    static deleteAllEvents(request, response, next) {
-        Event.deleteMany().then(data => response.json(data)).catch(next);
-    }
-
-    /**
      * CAUTION: This will delete one Event
      * @param request
      * @param response
      * @param next
      */
     static deleteEvent(request, response, next) {
-        Event.remove({_id: request.params.id}).then(event => response.json({removedElements: event})).catch(next);
+        Event.remove({_id: request.query.id}).then(event => response.json({removedElements: event})).catch(next);
     }
 
     /**
