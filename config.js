@@ -22,6 +22,7 @@ const Config = {
     'calender': {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,
+        'holidayState':'HH'
     },
     'user': [// warning: Removing groups can cause errors in the system
         'member', 'leader', 'parent', 'admin', 'user'
