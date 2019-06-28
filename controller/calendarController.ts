@@ -4,6 +4,7 @@ import {Event} from "../models/eventModel";
 import {_helper as Helper} from "./_helper";
 import {GroupLesson} from "../models/groupLessonModel";
 import * as moment from 'moment';
+import {HolidayController} from './holidayController'
 
 export class CalendarController {
 
@@ -394,26 +395,28 @@ export class CalendarController {
      * @param groupLesson
      * @param maxGroupLessonsEvents
      */
-    public static createNewGroupLessonEvents(groupLesson, maxGroupLessonsEvents = 10) {
+    public static async createNewGroupLessonEvents(groupLesson, maxGroupLessonsEvents = 10) {
         let groupLessonStartMoment = moment(groupLesson.startDate);
         groupLessonStartMoment = (moment() > groupLessonStartMoment) ? moment().day(groupLessonStartMoment.day()).hour(groupLessonStartMoment.hour()).minute(groupLessonStartMoment.minute()) : groupLessonStartMoment;
         for (let i = 0, day = groupLessonStartMoment; i < maxGroupLessonsEvents; i++, day = groupLessonStartMoment.clone().add(groupLesson.frequency * i, 'd')) {
-            console.log(`check if this lesson is already in events for ${day.format('DD.MM HH:mm')}`)
+            console.log(`check if this lesson is already in events for ${day.format('DD.MM HH:mm')}`);
 
-            let filter = [];
-            filter.push({'dateStart': {"$gte": day}});
-            filter.push({'origin': groupLesson._id});
+            if(!await HolidayController.isDateHolidayOrVacation(moment(day).format('YYYY-MM-DD'))){
+                let filter = [];
+                filter.push({'dateStart': {"$gte": day}});
+                filter.push({'origin': groupLesson._id});
 
-            Event.find({$and: filter}, {})
-                .sort({'dateStart': 1})
-                .then(data => {
-                    if (data.length == 0) {
-                        console.log(`groupLessonEvent did not exist`)
-                        CalendarController.createNewGroupLessonEvent(groupLesson._id, day.toDate(), groupLesson.duration, groupLesson.group);
-                    } else {
-                        console.log(`groupLessonEvent already exist`)
-                    }
-                });
+                Event.find({$and: filter}, {})
+                    .sort({'dateStart': 1})
+                    .then(data => {
+                        if (data.length == 0) {
+                            console.log(`groupLessonEvent did not exist`);
+                            CalendarController.createNewGroupLessonEvent(groupLesson._id, day.toDate(), groupLesson.duration, groupLesson.group);
+                        } else {
+                            console.log(`groupLessonEvent already exist`);
+                        }
+                    });
+            }
         }
     }
 

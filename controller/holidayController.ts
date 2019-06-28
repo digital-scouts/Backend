@@ -18,17 +18,10 @@ export class HolidayController {
 
     /**
      * check if the date is a holiday or a vacation
-     * @param request
-     * @param response
-     * @param next
+     * @param date
      */
-    public static async isDateHolidayOrVacation(request, response, next) {
-        const date = request.query.date;
-        if(await HolidayController.isDateHoliday(date) || await HolidayController.isDateVacation(date)){
-            response.status(200).json(true);
-        }else{
-            response.status(200).json(false);
-        }
+    public static async isDateHolidayOrVacation(date: string) {
+        return await HolidayController.isDateHoliday(date) || await HolidayController.isDateVacation(date);
     }
 
     /**
@@ -47,7 +40,7 @@ export class HolidayController {
     private static async isDateVacation(date: string): Promise<boolean> {
         const vacations = await HolidayController.getVacationForYear(moment(date).year());
         for (let i = 0; i < vacations.length; i++) {
-            const range = moment().range(moment(vacations[i].start,"YYYY-MM-DD"), moment(vacations[i].end,"YYYY-MM-DD"));
+            const range = moment().range(moment(vacations[i].start, "YYYY-MM-DD"), moment(vacations[i].end, "YYYY-MM-DD"));
             if (range.contains(moment(date, "YYYY-MM-DD"))) {
                 return true;
             }

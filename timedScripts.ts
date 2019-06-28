@@ -21,7 +21,7 @@ class timedScripts {
             });
         }, () => {
             console.log('job is done')
-        }, true, 'America/Los_Angeles');
+        }, true, 'Europe/Berlin');
     }
 
 }

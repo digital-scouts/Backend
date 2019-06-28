@@ -61,8 +61,9 @@ class ExpressApp {
         this.app.use('/api/calendar', calendar);
         this.app.use('/api/group', group);
         this.app.use('/api/address', address);
-        this.app.use('/api/nami', nami);
         this.app.use('/api/mail', mail);
+
+        this.app.use('/api/nami', nami);
         this.app.use('/api/debug', debugRouter);
 
         this.app.get('/chat', function (req, res) {

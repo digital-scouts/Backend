@@ -21,7 +21,7 @@ var timedScripts = /** @class */ (function () {
             });
         }, function () {
             console.log('job is done');
-        }, true, 'America/Los_Angeles');
+        }, true, 'Europe/Berlin');
     };
     return timedScripts;
 }());
