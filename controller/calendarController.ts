@@ -1,6 +1,7 @@
 import {Errors, ErrorREST} from "../errors";
 import * as config from '../config';
 import {Event} from "../models/eventModel";
+import {User} from "../models/userModel";
 import {_helper as Helper} from "./_helper";
 import {GroupLesson} from "../models/groupLessonModel";
 import * as moment from 'moment';
@@ -25,6 +26,7 @@ export class CalendarController {
                 response.json(rData)
             }).catch(next);
     }
+
     /**
      * list all existing events depends on filter in request body
      * sort and group by dateStart
@@ -136,8 +138,8 @@ export class CalendarController {
      * @param next
      */
     static createNewEvent(request, response, next) {
-        console.log('request.body.groups')
-        console.log(request.body.groups)
+        console.log('request.body.groups');
+        console.log(request.body.groups);
         let startDateTime: Date = new Date(request.body.startDate);
         let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
         if (endDateTime == null) {
@@ -254,6 +256,30 @@ export class CalendarController {
     }
 
     /**
+     *
+     * @param request
+     * @param response
+     * @param next
+     */
+    static feedback(request, response, next) {
+        console.log(request.decoded.userID)
+        Event.findById(request.query.eventId, (err: any, event) => {
+            if(event){
+                if(event.feedback == null){
+                    event.feedback = [];
+                }
+                let index = event.feedback.findIndex(f => f.user == request.decoded.userID);
+                if (index > -1) {
+                    event.feedback.splice(index, 1);
+                }
+                event.feedback.push({user: request.decoded.userID, answer: request.query.answer});
+
+                event.save().then(event => response.status(200).json(event)).catch(next);
+            }
+        });
+    }
+
+    /**
      * todo check if the new event collide with an existing event
      * @param event
      */
@@ -311,9 +337,9 @@ export class CalendarController {
                                     return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
                                 }
 
-                    groupLesson.save().then(groupLesson => {
-                        CalendarController.createNewGroupLessonEvents(groupLesson);
-                        response.status(200).json(groupLesson)
+                        groupLesson.save().then(groupLesson => {
+                            CalendarController.createNewGroupLessonEvents(groupLesson);
+                            response.status(200).json(groupLesson)
                         });
                     }
                 );
@@ -401,7 +427,7 @@ export class CalendarController {
         for (let i = 0, day = groupLessonStartMoment; i < maxGroupLessonsEvents; i++, day = groupLessonStartMoment.clone().add(groupLesson.frequency * i, 'd')) {
             console.log(`check if this lesson is already in events for ${day.format('DD.MM HH:mm')}`);
 
-            if(!await HolidayController.isDateHolidayOrVacation(moment(day).format('YYYY-MM-DD'))){
+            if (!await HolidayController.isDateHolidayOrVacation(moment(day).format('YYYY-MM-DD'))) {
                 let filter = [];
                 filter.push({'dateStart': {"$gte": day}});
                 filter.push({'origin': groupLesson._id});

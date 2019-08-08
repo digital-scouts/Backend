@@ -70,6 +70,8 @@ const event: Schema = new Schema({
             answer: {
                 type: Number,
                 enum: answerTypes,
+                min:0,
+                max:2,
                 required: true
             }
         }],
