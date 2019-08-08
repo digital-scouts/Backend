@@ -5,15 +5,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
+let answerTypes = {
+    NO: 0,
+    YES: 1,
+    MAYBE: 2
+};
+
 
 const event: Schema = new Schema({
-        public: // is this event public? Will be shown on the Website
+        public: // Public will be shown on the Website | Private is only visible to members/groups
             {
                 type: Boolean,
                 require: true,
-                default: false,
+                default: true,
             },
-        origin: // Roadmap. Where does the element belong?
+        origin: // Where does the element belong to?
             {
                 type: String // todo not supported yet replace with object later
             },
@@ -46,11 +52,27 @@ const event: Schema = new Schema({
                 type: ObjectId,
                 ref: 'User'
             }],
-        groups:  // members (person or groups) Who is the appointment for?
+        groups:  // members as Group. Who is the appointment for?
             [{
                 type: ObjectId,
                 ref: 'Group'
             }],
+        members:  // members as User. Who is the appointment for?
+            [{
+                type: ObjectId,
+                ref: 'User'
+            }],
+        feedback: [{//List of all users who have answered or canceled
+            user: {
+                type: ObjectId,
+                ref: 'User'
+            },
+            answer: {
+                type: Number,
+                enum: answerTypes,
+                required: true
+            }
+        }],
         address:  // address of the event
             {
                 type: ObjectId,
