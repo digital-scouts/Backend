@@ -14,17 +14,6 @@ export enum Status {
     ERROR = 99
 }
 
-export enum Group {
-    //connection hasn't started
-    WOELFLING = 1,
-    //authentication has started
-    JUNGPFADFINDER = 2,
-    // client is connected
-    PFADFINDER = 3,
-    // an error occurred
-    ROVER = 4
-}
-
 
 /**
  * Promise based Class for communication with DPSG Namentliche Mitgliedermeldung
@@ -161,7 +150,9 @@ export class NamiAPI {
      */
     public static async getEmailsByFilter(request, response, next) {
         try {
-            response.status(200).json(await NamiAPI.getAllEmailsByFilter(request.query.filter));
+            let emailArray = await NamiAPI.getAllEmailsByFilter(request.query.filter);
+            // @ts-ignore
+            response.status(200).json(JSON.parse(JSON.stringify({list: emailArray.join(','), array: emailArray})));
         } catch (e) {
             response.status(400);
         }
@@ -171,8 +162,8 @@ export class NamiAPI {
      * return name and id for all members
      * @param filterString
      */
-    private static getAllMembers(filterString: string = ""): Promise<JSON> {
-        return new Promise<JSON>((resolve) => {
+    private static getAllMembers(filterString: string = "") {
+        return new Promise((resolve) => {
             NamiAPI.nami.startSession().then(() => {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {
                     throw new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search");
@@ -207,8 +198,8 @@ export class NamiAPI {
      * return all data from one member
      * @param memberId
      */
-    private static getOneMember(memberId: string): Promise<JSON> {
-        return new Promise<JSON>((resolve, reject) => {
+    private static getOneMember(memberId: string) {
+        return new Promise((resolve, reject) => {
             NamiAPI.nami.startSession().then(() => {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {
                     throw new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search");
@@ -257,10 +248,11 @@ export class NamiAPI {
         return new Promise((resolve) => {
             let emails = [];
             NamiAPI.getAllMembers(filter).then(async (data) => {
+
                 // @ts-ignore
                 for (let i = 0; i < data.length; i++) {
                     // @ts-ignore
-                    console.log(Math.round((i+1)/data.length*100) + '%')
+                    console.log('Email-Adressen werden geladen: '+Math.round((i+1)/data.length*100) + '%');
                     emails = emails.concat(await NamiAPI.getAllEmailsById(data[i]['id']));
                 }
                 resolve(emails);
