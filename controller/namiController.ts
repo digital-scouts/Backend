@@ -1,4 +1,5 @@
 import {ErrorREST, Errors} from "../errors";
+import {rejects} from "assert";
 
 let apiClient = require('request');
 
@@ -11,6 +12,17 @@ export enum Status {
     CONNECTED = 3,
     // an error occurred
     ERROR = 99
+}
+
+export enum Group {
+    //connection hasn't started
+    WOELFLING = 1,
+    //authentication has started
+    JUNGPFADFINDER = 2,
+    // client is connected
+    PFADFINDER = 3,
+    // an error occurred
+    ROVER = 4
 }
 
 
@@ -119,28 +131,12 @@ export class NamiAPI {
      * @param response
      * @param next
      */
-    public static getAllMemberForGroup(request, response, next) {
-        NamiAPI.nami.startSession().then(() => {
-            if (NamiAPI.nami.status !== Status.CONNECTED) {
-                return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
-            }
-            let params = {
-                page: 1,
-                start: 0,
-                limit: 999999
-            };
-
-            apiClient.get({
-                url: `${NamiAPI.nami.host}/ica/rest/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${NamiAPI.nami.groupId}`,
-                qs: params,
-                useQueryString: true,
-                jar: NamiAPI.nami.cookieJar
-            }, (error, namiResponse, body) => {
-                response.status(200).json(JSON.parse(body).data);
-            });
-        }, (error) => {
-            response.status(200).json("Nami Anmeldung fehlgeschlagen. Fehler: " + error)
-        });
+    public static async getAllMemberForGroup(request, response, next) {
+        try {
+            response.status(200).json(await NamiAPI.getAllMembers(request.query.filterString));
+        } catch (e) {
+            response.status(400);
+        }
     }
 
     /**
@@ -149,27 +145,129 @@ export class NamiAPI {
      * @param response
      * @param next
      */
-    public static getOneMemberFromGroupById(request, response, next) {
-        NamiAPI.nami.startSession().then(() => {
-            if (NamiAPI.nami.status !== Status.CONNECTED) {
-                return next(new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search"));
-            }
-            let params = {
-                page: 1,
-                start: 0,
-                limit: 999999
-            };
+    public static async getOneMemberFromGroupById(request, response, next) {
+        try {
+            response.status(200).json(await NamiAPI.getOneMember(request.params.id));
+        } catch (e) {
+            response.status(400);
+        }
+    }
 
-            apiClient.get({
-                url: `${NamiAPI.nami.host}/ica/rest/api/${NamiAPI.nami.apiMajor}/${NamiAPI.nami.apiMinor}/service/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${NamiAPI.nami.groupId}/${request.params.id}`,
-                qs: params,
-                useQueryString: true,
-                jar: NamiAPI.nami.cookieJar
-            }, (error, namiResponse, body) => {
-                response.status(200).json(JSON.parse(body).data);
+    /**
+     *
+     * @param request
+     * @param response
+     * @param next
+     */
+    public static async getEmailsByFilter(request, response, next) {
+        try {
+            response.status(200).json(await NamiAPI.getAllEmailsByFilter(request.query.filter));
+        } catch (e) {
+            response.status(400);
+        }
+    }
+
+    /**
+     * return name and id for all members
+     * @param filterString
+     */
+    private static getAllMembers(filterString: string = ""): Promise<JSON> {
+        return new Promise<JSON>((resolve) => {
+            NamiAPI.nami.startSession().then(() => {
+                if (NamiAPI.nami.status !== Status.CONNECTED) {
+                    throw new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search");
+                }
+                let params = {
+                    page: 1,
+                    start: 0,
+                    limit: 999999
+                };
+
+                let query = "";
+                if (filterString != null && filterString != "") {
+                    query = '?filterString=' + filterString;
+                }
+
+                apiClient.get({
+                    url: `${NamiAPI.nami.host}/ica/rest/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${NamiAPI.nami.groupId}${query}`,
+                    qs: params,
+                    useQueryString: true,
+                    jar: NamiAPI.nami.cookieJar
+                }, (error, namiResponse, body) => {
+                    resolve(JSON.parse(body).data);
+                });
+            }, (error) => {
+                throw new ErrorREST(Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
             });
-        }, (error) => {
-            response.status(200).json("Nami Anmeldung fehlgeschlagen. Fehler: " + error)
+        })
+
+    }
+
+    /**
+     * return all data from one member
+     * @param memberId
+     */
+    private static getOneMember(memberId: string): Promise<JSON> {
+        return new Promise<JSON>((resolve, reject) => {
+            NamiAPI.nami.startSession().then(() => {
+                if (NamiAPI.nami.status !== Status.CONNECTED) {
+                    throw new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search");
+                }
+                let params = {
+                    page: 1,
+                    start: 0,
+                    limit: 999999
+                };
+
+                apiClient.get({
+                    url: `${NamiAPI.nami.host}/ica/rest/api/${NamiAPI.nami.apiMajor}/${NamiAPI.nami.apiMinor}/service/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/${NamiAPI.nami.groupId}/${memberId}`,
+                    qs: params,
+                    useQueryString: true,
+                    jar: NamiAPI.nami.cookieJar
+                }, (error, namiResponse, body) => {
+                    resolve(JSON.parse(body).data);
+                });
+            }, (error) => {
+                throw new ErrorREST(Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
+            });
+        });
+
+    }
+
+    /**
+     * return a array of with emails from the member
+     * @param memberId
+     */
+    private static async getAllEmailsById(memberId: string) {
+        let emails = [];
+        let member = await NamiAPI.getOneMember(memberId);
+        if (member['email'])
+            emails.push(`${member['vorname']} ${member['nachname']}<${member['email']}>`);
+        if (member['emailVertretungsberechtigter'])
+            emails.push(`Fam. ${member['nachname']}<${member['emailVertretungsberechtigter']}>`);
+
+        return emails;
+    }
+
+    /**
+     * get all emails from all members (by filter) and return a array
+     * @param filter
+     */
+    private static getAllEmailsByFilter(filter: string) {
+        return new Promise((resolve) => {
+            let emails = [];
+            NamiAPI.getAllMembers(filter).then(async (data) => {
+                // @ts-ignore
+                for (let i = 0; i < data.length; i++) {
+                    // @ts-ignore
+                    console.log(Math.round((i+1)/data.length*100) + '%')
+                    emails = emails.concat(await NamiAPI.getAllEmailsById(data[i]['id']));
+                }
+                resolve(emails);
+            });
+
         });
     }
+
+
 }
