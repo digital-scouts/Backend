@@ -1,5 +1,5 @@
 import {ErrorREST, Errors} from "../errors";
-import {rejects} from "assert";
+import {Config} from "./../config";
 
 let apiClient = require('request');
 
@@ -29,7 +29,7 @@ export class NamiAPI {
     apiMinor: any;
     groupId: number;
 
-    private static nami = new NamiAPI('XXX', 'XXX', 350716); //todo save login data
+    private static nami = new NamiAPI(Config.nami.user, Config.nami.pass, Config.nami.gruppierung);
 
 //contains the untergliederungId for the search request
     constructor(loginName, password, groupId) {
