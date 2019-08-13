@@ -11,6 +11,15 @@ import {Group} from "../models/groupModel";
 
 const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
+
+export enum EmailSource {
+    OwnDB,
+    NamiMember,
+    NamiVertretungsberechtigter,
+    NamiSonstige
+}
+
+
 export class MailController {
 
     private static readonly senderAddress = {
@@ -29,13 +38,27 @@ export class MailController {
     constructor() {
     }
 
-    private static sendMail(receiver, subject, replyTo, content, eventPath = null) {
+    private static sendMail(receiver:{childName:string,familyName:string,emailSource:EmailSource,email:string}, subject, replyTo, content, eventPath = null) {
         return new Promise((resolve, reject)=>{
+            let greding;
+            if(receiver.emailSource == EmailSource.NamiVertretungsberechtigter){
+                greding = `Sehr geehrter Herr ${receiver.familyName}, sehr geehrte Frau ${receiver.familyName},`;
+            }else if(receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))){
+                let name = receiver.email.split('<')[0];
+                greding = `Sehr geehrter Vater ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
+            }else if(receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')){
+                let name = receiver.email.split('<')[0];
+                greding = `Sehr geehrte Frau ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
+            }else if(receiver.emailSource == EmailSource.NamiMember ||receiver.emailSource == EmailSource.OwnDB ){
+                greding = `Hallo ${receiver.childName},`;
+            }
+            
             MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
                 const replacements = {
                     betreff: subject,
                     mail: receiver,
-                    text: content
+                    text: content,
+                    greding: greding
                 };
 
                 const attachments = [{
@@ -63,6 +86,7 @@ export class MailController {
                     from: MailController.senderAddress,
                     to: receiver,
                     html: handlebars.compile(html)(replacements)
+                        //fix <br>
                         .replace(/&lt;/g, '<')
                         .replace(/&gt;/g, '>'),
                     subject: subject,
@@ -108,7 +132,7 @@ export class MailController {
 
         MailController.getEmailsByGroup(request.body.groups).then(async mails => {
             const reg = /<img alt="calendar_img-([1-31]+)-([1-12]+)" src="">/g;
-            mails = ['langejanneck@gmail.com'];//todo remove after debug
+            mails = [{ childName:'Janneck', familyName:'Lange', emailSource: EmailSource.OwnDB, email:'langejanneck@gmail.com'}];//todo remove after debug
             let sendThis = [];
             let emailSendStatus = [];
             for (let i = 0; i < mails.length; i++) {
@@ -117,7 +141,7 @@ export class MailController {
                     .replace(reg, (match) => {
                         console.log(match)
                     });
-                sendThis.push(emailSendStatus.push({email: mails[i], status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath) }));
+                sendThis.push(emailSendStatus.push({email: mails[i].email, status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath) }));
             }
             await Promise.all(sendThis);
             response.status(200).json(emailSendStatus);
@@ -128,7 +152,7 @@ export class MailController {
      * return promise<string[]> with all emails for the requested groups (saved in own DB)
      * @param groups
      */
-    private static getEmailsByGroup(groups): Promise<string[]> {
+    private static getEmailsByGroup(groups): Promise<{childName:string,familyName:string,emailSource:EmailSource,email:string}[]> {
         let mails = [];
         return new Promise(async (resolve, reject) => {
             //when groups is not a array.
@@ -163,7 +187,12 @@ export class MailController {
                     NamiAPI.getAllEmailsByFilter(namiEmailsFilter),
                     User.find({'group': groups[i]}).then(users => {
                         for (let j = 0; j < users.length; j++) {
-                            mails.push(`${users[j]['name_first']} ${users[j]['name_last']} <${users[j]['email']}>`);
+                            mails.push({
+                                childName:users[j]['name_first'],
+                                familyName:users[j]['name_last'],
+                                emailSource: EmailSource.OwnDB,
+                                email:`${users[j]['name_first']} ${users[j]['name_last']} <${users[j]['email']}>`
+                            });
                         }
                     })
                 ]);

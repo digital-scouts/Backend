@@ -1,5 +1,7 @@
 import {ErrorREST, Errors} from "../errors";
 import {Config} from "./../config";
+import {EmailSource} from "./mailController";
+import {_helper} from "./_helper";
 
 let apiClient = require('request');
 
@@ -152,7 +154,7 @@ export class NamiAPI {
         try {
             let emailArray = await NamiAPI.getAllEmailsByFilter(request.query.filter);
             // @ts-ignore
-            response.status(200).json(JSON.parse(JSON.stringify({list: emailArray.join(','), array: emailArray})));
+            response.status(200).json({list: emailArray.map(email => email.email).join(','), objects: emailArray});
         } catch (e) {
             response.status(400);
         }
@@ -229,13 +231,55 @@ export class NamiAPI {
      * return a array of with emails from the member
      * @param memberId
      */
-    private static async getAllEmailsById(memberId: string) {
+    private static async getAllEmailsById(memberId: string): Promise<{ childName: string, familyName: string, emailSource: EmailSource, email: string }[]> {
         let emails = [];
         let member = await NamiAPI.getOneMember(memberId);
-        if (member['email'])
-            emails.push(`${member['vorname']} ${member['nachname']} <${member['email']}>`);
-        if (member['emailVertretungsberechtigter'])
-            emails.push(`Fam. ${member['nachname']} <${member['emailVertretungsberechtigter']}>`);
+        if (member['email']) {
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiMember,
+                email: `${member['vorname']} ${member['nachname']} <${member['email']}>`
+            });
+        }
+        if (member['emailVertretungsberechtigter']) {
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiVertretungsberechtigter,
+                email: `Fam. ${member['nachname']} <${member['emailVertretungsberechtigter']}>`
+            });
+        }
+        //hint it is possible to save text/email in telefax or telefon
+        if(_helper.matchEmailRegex(member['telefax']).length){
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiSonstige,
+                email: member['telefax']
+            });
+        }if( _helper.matchEmailRegex(member['telefon3']).length){
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiSonstige,
+                email: member['telefon3']
+            });
+        }if( _helper.matchEmailRegex(member['telefon2']).length){
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiSonstige,
+                email: member['telefon2']
+            });
+        }if( _helper.matchEmailRegex(member['telefon1']).length){
+            emails.push({
+                childName: member['vorname'],
+                familyName: member['nachname'],
+                emailSource: EmailSource.NamiSonstige,
+                email: member['telefon1']
+            });
+        }
 
         return emails;
     }
@@ -244,7 +288,7 @@ export class NamiAPI {
      * get all emails from all members (by filter) and return a array
      * @param filter
      */
-    public static getAllEmailsByFilter(filter: string = null) {
+    public static getAllEmailsByFilter(filter: string = null): Promise<{ childName: string, familyName: string, emailSource: EmailSource, email: string }[]> {
         return new Promise((resolve) => {
             let emails = [];
             NamiAPI.getAllMembers(filter).then(async (data) => {
@@ -252,7 +296,7 @@ export class NamiAPI {
                 // @ts-ignore
                 for (let i = 0; i < data.length; i++) {
                     // @ts-ignore
-                    console.log('Email-Adressen werden geladen: '+Math.round((i+1)/data.length*100) + '%');
+                    console.log('Email-Adressen werden geladen: ' + Math.round((i + 1) / data.length * 100) + '%');
                     emails = emails.concat(await NamiAPI.getAllEmailsById(data[i]['id']));
                 }
                 resolve(emails);
