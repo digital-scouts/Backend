@@ -162,7 +162,7 @@ export class NamiAPI {
      * return name and id for all members
      * @param filterString
      */
-    private static getAllMembers(filterString: string = "") {
+    private static getAllMembers(filterString: string = null) {
         return new Promise((resolve) => {
             NamiAPI.nami.startSession().then(() => {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {
@@ -175,7 +175,7 @@ export class NamiAPI {
                 };
 
                 let query = "";
-                if (filterString != null && filterString != "") {
+                if (filterString) {
                     query = '?filterString=' + filterString;
                 }
 
@@ -233,9 +233,9 @@ export class NamiAPI {
         let emails = [];
         let member = await NamiAPI.getOneMember(memberId);
         if (member['email'])
-            emails.push(`${member['vorname']} ${member['nachname']}<${member['email']}>`);
+            emails.push(`${member['vorname']} ${member['nachname']} <${member['email']}>`);
         if (member['emailVertretungsberechtigter'])
-            emails.push(`Fam. ${member['nachname']}<${member['emailVertretungsberechtigter']}>`);
+            emails.push(`Fam. ${member['nachname']} <${member['emailVertretungsberechtigter']}>`);
 
         return emails;
     }
@@ -244,7 +244,7 @@ export class NamiAPI {
      * get all emails from all members (by filter) and return a array
      * @param filter
      */
-    private static getAllEmailsByFilter(filter: string) {
+    public static getAllEmailsByFilter(filter: string = null) {
         return new Promise((resolve) => {
             let emails = [];
             NamiAPI.getAllMembers(filter).then(async (data) => {
