@@ -44,6 +44,10 @@ export class AuthController {
                         {
                             status: 200,
                             message: "Request successful.",
+                            role: user.role,
+                            userID: user._id,
+                            userNameFirst: user.name_first,
+                            userNameLast: user.name_last,
                             token: jwt.sign(payload, config.Config.salt, {expiresIn: 86400})//one week
                         }
                     );

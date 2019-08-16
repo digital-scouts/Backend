@@ -1,6 +1,9 @@
 import {Router} from "express";
 import {NamiAPI} from "../../controller/namiController";
 
+/**
+ * todo remove this route
+ */
 class Nami {
     router: Router;
 
@@ -14,7 +17,10 @@ class Nami {
             .get(NamiAPI.getAllMemberForGroup);
 
         this.router.route('/member/:id')
-            .get(NamiAPI.getOneMemberFromGroupById)
+            .get(NamiAPI.getOneMemberFromGroupById);
+
+        this.router.route('/email')
+            .get(NamiAPI.getEmailsByFilter);
     }
 }
 

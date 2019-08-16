@@ -6,8 +6,19 @@ const ical = require('ical-generator');
 import * as fs from 'fs'; // read html file
 import * as handlebars from 'handlebars'; // compile html for email with replacements
 import {Config} from "./../config";
+import {NamiAPI} from "./namiController";
+import {Group} from "../models/groupModel";
 
 const cal = ical({domain: 'github.com', name: 'my first iCal'});
+
+
+export enum EmailSource {
+    OwnDB,
+    NamiMember,
+    NamiVertretungsberechtigter,
+    NamiSonstige
+}
+
 
 export class MailController {
 
@@ -27,57 +38,83 @@ export class MailController {
     constructor() {
     }
 
-    private static sendMail(receiver, subject, replyTo, content, eventPath = null) {
-        MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
-            const replacements = {
-                betreff: subject,
-                mail: receiver,
-                text: content
-            };
-
-            const attachments = [{
-                filename: 'stammesabzeichen.png',
-                path: __dirname + '/MailSrc/img/stammesabzeichen.png',
-                cid: 'img_stammesabzeichen'
-            }, {
-                filename: 'web.png',
-                path: __dirname + '/MailSrc/img/web.png',
-                cid: 'web_img'
-            }, {
-                filename: 'instagram.png',
-                path: __dirname + '/MailSrc/img/instagram.png',
-                cid: 'ig_img'
-            }];
-
-            if (eventPath != null) {
-                //@ts-ignore
-                attachments.push({
-                    path: eventPath
-                });
+    private static sendMail(receiver:{childName:string,familyName:string,emailSource:EmailSource,email:string}, subject, replyTo, content, eventPath = null) {
+        return new Promise((resolve, reject)=>{
+            let greding;
+            if(receiver.emailSource == EmailSource.NamiVertretungsberechtigter){
+                greding = `Sehr geehrter Herr ${receiver.familyName}, sehr geehrte Frau ${receiver.familyName},`;
+            }else if(receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))){
+                let name = receiver.email.split('<')[0];
+                greding = `Sehr geehrter Vater ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
+            }else if(receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')){
+                let name = receiver.email.split('<')[0];
+                greding = `Sehr geehrte Frau ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
+            }else if(receiver.emailSource == EmailSource.NamiMember ||receiver.emailSource == EmailSource.OwnDB ){
+                greding = `Hallo ${receiver.childName},`;
             }
+            
+            MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
+                const replacements = {
+                    betreff: subject,
+                    mail: receiver,
+                    text: content,
+                    greding: greding
+                };
 
-            let mailOptions = {
-                from: MailController.senderAddress,
-                to: receiver + ',langejanneck@gmail.com',
-                html: handlebars.compile(html)(replacements)
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>'),
-                subject: subject,
-                text: content,
-                replyTo: replyTo,
-                attachments: attachments
-            };
+                const attachments = [{
+                    filename: 'stammesabzeichen.png',
+                    path: __dirname + '/MailSrc/img/stammesabzeichen.png',
+                    cid: 'img_stammesabzeichen'
+                }, {
+                    filename: 'web.png',
+                    path: __dirname + '/MailSrc/img/web.png',
+                    cid: 'web_img'
+                }, {
+                    filename: 'instagram.png',
+                    path: __dirname + '/MailSrc/img/instagram.png',
+                    cid: 'ig_img'
+                }];
 
-            MailController.transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
+                if (eventPath != null) {
+                    //@ts-ignore
+                    attachments.push({
+                        path: eventPath
+                    });
                 }
+
+                let mailOptions = {
+                    from: MailController.senderAddress,
+                    to: receiver,
+                    html: handlebars.compile(html)(replacements)
+                        //fix <br>
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>'),
+                    subject: subject,
+                    text: content,
+                    replyTo: replyTo,
+                    attachments: attachments
+                };
+
+                MailController.transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                        reject(error);
+                    } else {
+                        console.log('Email sent to '+receiver+': ' + info.response);
+                        resolve(info.response)
+                    }
+                });
             });
         });
     }
 
+    /**
+     * send mail to all emails found in own DB and Nami for all groups
+     * return [{email, status}]
+     * @param request
+     * @param response
+     * @param next
+     */
     public static send(request, response, next) {
         let eventPath: string = null;
         if (request.body.event) {//todo events for calendar
@@ -93,27 +130,29 @@ export class MailController {
             cal.saveSync(eventPath);
         }
 
-        MailController.getEmailsByGroup(request.body.groups).then(mails => {
+        MailController.getEmailsByGroup(request.body.groups).then(async mails => {
             const reg = /<img alt="calendar_img-([1-31]+)-([1-12]+)" src="">/g;
-            mails = ['langejanneck@gmail.com'];//todo remove after debug
+            mails = [{ childName:'Janneck', familyName:'Lange', emailSource: EmailSource.OwnDB, email:'langejanneck@gmail.com'}];//todo remove after debug
+            let sendThis = [];
+            let emailSendStatus = [];
             for (let i = 0; i < mails.length; i++) {
                 let content = request.body.text
                     .replace(/(?:\r\n|\r|\n)/g, '<br>')
-                    .replace(reg, (match)=>{
-                       console.log(match)
+                    .replace(reg, (match) => {
+                        console.log(match)
                     });
-
-                MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath);
+                sendThis.push(emailSendStatus.push({email: mails[i].email, status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath) }));
             }
-            response.status(200);
+            await Promise.all(sendThis);
+            response.status(200).json(emailSendStatus);
         })
     }
 
     /**
-     * return promise<string[]> with all emails for the requested groups
+     * return promise<string[]> with all emails for the requested groups (saved in own DB)
      * @param groups
      */
-    private static getEmailsByGroup(groups): Promise<string[]> {
+    private static getEmailsByGroup(groups): Promise<{childName:string,familyName:string,emailSource:EmailSource,email:string}[]> {
         let mails = [];
         return new Promise(async (resolve, reject) => {
             //when groups is not a array.
@@ -124,11 +163,41 @@ export class MailController {
             }
 
             for (let i = 0; i < groups.length; i++) {
-                await User.find({'group': groups[i]}).then(users => {
-                    for (let j = 0; j < users.length; j++) {
-                        mails.push(users[j]['name_first'] + '<' + users[j]['email'] + '>');//todo remove thrash
-                    }
-                });
+                let namiEmailsFilter = null;
+
+                //get name from group for nami filter
+                let group = await Group.findById(groups[i]);
+                switch (group.name) {
+                    case 'Wölflinge':
+                        namiEmailsFilter = 'woelfling';
+                        break;
+                    case 'Jungpfadfinder':
+                        namiEmailsFilter = 'jungpfadfinder';
+                        break;
+                    case 'Pfadfinder':
+                        namiEmailsFilter = 'pfadfinder';
+                        break;
+                    case 'Rover':
+                        namiEmailsFilter = 'rover';
+                        break;
+                }
+
+                //load mails from nami and DB
+                let [namiEmails] = await Promise.all([
+                    NamiAPI.getAllEmailsByFilter(namiEmailsFilter),
+                    User.find({'group': groups[i]}).then(users => {
+                        for (let j = 0; j < users.length; j++) {
+                            mails.push({
+                                childName:users[j]['name_first'],
+                                familyName:users[j]['name_last'],
+                                emailSource: EmailSource.OwnDB,
+                                email:`${users[j]['name_first']} ${users[j]['name_last']} <${users[j]['email']}>`
+                            });
+                        }
+                    })
+                ]);
+
+                mails = mails.concat(namiEmails);
             }
             resolve(mails);
         });

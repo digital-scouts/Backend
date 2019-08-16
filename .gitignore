@@ -10,4 +10,5 @@ models/*.js
 expressApp.js
 errors.js
 events.js
+timedScripts.js
 

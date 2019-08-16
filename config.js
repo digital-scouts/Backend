@@ -10,9 +10,14 @@ const Config = {
     'database': 'mongodb://192.168.99.100:27017/social-scout',
     'test_database': 'mongodb://127.0.0.1:27017/test-social-scout',
     'local_database': 'mongodb://127.0.0.1:27017/social-scout',
+    'nami': {
+        'user': 'XXX',
+        'pass': 'XXX',
+        'gruppierung': 350716
+    },
     'mail': {
-        'pass': '9F6$5@x4Sub%JS',
-        'user': 'dpsg.santa.lucia@gmail.com',
+        'pass': 'XXX',
+        'user': 'XXX',
         'user_name': '⚜️DPSG Santa Lucia',
         'service': 'gmail',
     },
@@ -22,7 +27,7 @@ const Config = {
     'calender': {
         'public_event_daysPast': 10,
         'public_event_daysFuture': 183,
-        'holidayState':'HH'
+        'holidayState': 'HH'
     },
     'user': [// warning: Removing groups can cause errors in the system
         'member', 'leader', 'parent', 'admin', 'user'
