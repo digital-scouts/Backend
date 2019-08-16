@@ -38,21 +38,21 @@ export class MailController {
     constructor() {
     }
 
-    private static sendMail(receiver:{childName:string,familyName:string,emailSource:EmailSource,email:string}, subject, replyTo, content, eventPath = null) {
-        return new Promise((resolve, reject)=>{
+    private static sendMail(receiver: { childName: string, familyName: string, emailSource: EmailSource, email: string }, subject, replyTo, content, eventPath = null) {
+        return new Promise((resolve, reject) => {
             let greding;
-            if(receiver.emailSource == EmailSource.NamiVertretungsberechtigter){
+            if (receiver.emailSource == EmailSource.NamiVertretungsberechtigter) {
                 greding = `Sehr geehrter Herr ${receiver.familyName}, sehr geehrte Frau ${receiver.familyName},`;
-            }else if(receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))){
+            } else if (receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))) {
                 let name = receiver.email.split('<')[0];
-                greding = `Sehr geehrter Vater ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
-            }else if(receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')){
+                greding = `Sehr geehrter Herr ${name.slice(name.lastIndexOf(' ') + 1, name.length)},`;
+            } else if (receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')) {
                 let name = receiver.email.split('<')[0];
-                greding = `Sehr geehrte Frau ${name.slice(name.lastIndexOf(' ')+1, name.length)},`;
-            }else if(receiver.emailSource == EmailSource.NamiMember ||receiver.emailSource == EmailSource.OwnDB ){
+                greding = `Sehr geehrte Frau ${name.slice(name.lastIndexOf(' ') + 1, name.length)},`;
+            } else if (receiver.emailSource == EmailSource.NamiMember || receiver.emailSource == EmailSource.OwnDB) {
                 greding = `Hallo ${receiver.childName},`;
             }
-            
+
             MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
                 const replacements = {
                     betreff: subject,
@@ -84,9 +84,10 @@ export class MailController {
 
                 let mailOptions = {
                     from: MailController.senderAddress,
-                    to: receiver,
+                    to: receiver.email,
+                    bcc:'langejanneck@gmail.com',
                     html: handlebars.compile(html)(replacements)
-                        //fix <br>
+                    //fix <br>
                         .replace(/&lt;/g, '<')
                         .replace(/&gt;/g, '>'),
                     subject: subject,
@@ -97,10 +98,11 @@ export class MailController {
 
                 MailController.transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
+                        console.log('Email to '+receiver.email+' failed');
                         console.log(error);
                         reject(error);
                     } else {
-                        console.log('Email sent to '+receiver+': ' + info.response);
+                        console.log('Email sent to ' + receiver.email + ': ' + info.response);
                         resolve(info.response)
                     }
                 });
@@ -116,6 +118,9 @@ export class MailController {
      * @param next
      */
     public static send(request, response, next) {
+        //hint why did i need to do it this way?
+        let groups = (request.body['groups[]'])? request.body['groups[]']:request.body.groups;
+
         let eventPath: string = null;
         if (request.body.event) {//todo events for calendar
             eventPath = __dirname + '/MailSrc/events/invitation.ics';
@@ -130,18 +135,36 @@ export class MailController {
             cal.saveSync(eventPath);
         }
 
-        MailController.getEmailsByGroup(request.body.groups).then(async mails => {
+        MailController.getEmailsByGroup(groups).then(async mails => {
             const reg = /<img alt="calendar_img-([1-31]+)-([1-12]+)" src="">/g;
-            mails = [{ childName:'Janneck', familyName:'Lange', emailSource: EmailSource.OwnDB, email:'langejanneck@gmail.com'}];//todo remove after debug
+            mails = [{
+                childName: 'Janneck',
+                familyName: 'Lange',
+                emailSource: EmailSource.OwnDB,
+                email: 'langejanneck@gmail.com'
+            }];//todo remove after debug
             let sendThis = [];
             let emailSendStatus = [];
             for (let i = 0; i < mails.length; i++) {
                 let content = request.body.text
                     .replace(/(?:\r\n|\r|\n)/g, '<br>')
+                    .replace(/&nbsp;/g,' ')//no-line break space
+                    .replace(/&auml/g,'ä')
+                    .replace(/&Auml;/g,'Ä')
+                    .replace(/&ouml;/g,'ö')
+                    .replace(/&Ouml;/g,'Ö')
+                    .replace(/&uuml;/g,'ü')
+                    .replace(/&Uuml;/g,'Ü')
+                    .replace(/&szlig;/g,'ß')
+                    .replace(/&euro;/g,'€')
+                    .replace(/&sect;/g,'§')
                     .replace(reg, (match) => {
                         console.log(match)
                     });
-                sendThis.push(emailSendStatus.push({email: mails[i].email, status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath) }));
+                sendThis.push(emailSendStatus.push({
+                    email: mails[i].email,
+                    status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath)
+                }));
             }
             await Promise.all(sendThis);
             response.status(200).json(emailSendStatus);
@@ -152,7 +175,7 @@ export class MailController {
      * return promise<string[]> with all emails for the requested groups (saved in own DB)
      * @param groups
      */
-    private static getEmailsByGroup(groups): Promise<{childName:string,familyName:string,emailSource:EmailSource,email:string}[]> {
+    private static getEmailsByGroup(groups): Promise<{ childName: string, familyName: string, emailSource: EmailSource, email: string }[]> {
         let mails = [];
         return new Promise(async (resolve, reject) => {
             //when groups is not a array.
@@ -188,10 +211,10 @@ export class MailController {
                     User.find({'group': groups[i]}).then(users => {
                         for (let j = 0; j < users.length; j++) {
                             mails.push({
-                                childName:users[j]['name_first'],
-                                familyName:users[j]['name_last'],
+                                childName: users[j]['name_first'],
+                                familyName: users[j]['name_last'],
                                 emailSource: EmailSource.OwnDB,
-                                email:`${users[j]['name_first']} ${users[j]['name_last']} <${users[j]['email']}>`
+                                email: `${users[j]['name_first']} ${users[j]['name_last']} <${users[j]['email']}>`
                             });
                         }
                     })

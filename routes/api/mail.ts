@@ -11,7 +11,7 @@ class Mail {
 
     init() {
         this.router.route('/')
-            .get(MailController.send);
+            .post(MailController.send);
     }
 }
 
