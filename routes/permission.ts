@@ -63,6 +63,7 @@ function checkPermissionLevel() {
  * @returns {*}
  */
 export function checkPermission(request, response, next) {
+    console.log('Skip Permission check:' + !Config.PERMISSION)
     if (!Config.PERMISSION) {
         next();
         return;

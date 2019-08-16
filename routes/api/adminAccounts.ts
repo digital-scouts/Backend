@@ -3,6 +3,7 @@ import {Router} from "express";
 import {AdminAccount} from "../../controller/adminAccountController";
 import {verifyToken as token} from "../token";
 import {checkPermission as permission} from "../permission";
+import {UserController} from "../../controller/userController";
 
 
 class AdminAccounts {
@@ -31,6 +32,9 @@ class AdminAccounts {
 
         this.router.route('/inactive')
             .get(token, permission, AdminAccount.getInactiveUsers);
+
+        this.router.route('/debUser')
+            .get(UserController.getAll);
 
     }
 }

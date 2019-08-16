@@ -13,7 +13,11 @@ export class UserController {
      * @returns {*}
      */
     static getAll(request, response, next) {
-        User.find({'role': request.decoded.role}).then(data => response.json(data)).catch(next);
+        if (request.decoded) {
+            User.find({'role': request.decoded.role}).then(data => response.json(data)).catch(next);
+        } else {
+            User.find().then(data => response.json(data)).catch(next);
+        }
     }
 
     /**
