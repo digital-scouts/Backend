@@ -2,14 +2,14 @@ import {ErrorREST, Errors} from "../errors";
 import {User} from "../models/userModel";
 import * as nodemailer from 'nodemailer';
 
-const ical = require('ical-generator');
+// const ical = require('ical-generator');
 import * as fs from 'fs'; // read html file
 import * as handlebars from 'handlebars'; // compile html for email with replacements
 import {Config} from "./../config";
 import {NamiAPI} from "./namiController";
 import {Group} from "../models/groupModel";
 
-const cal = ical({domain: 'github.com', name: 'my first iCal'});
+// const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
 
 export enum EmailSource {

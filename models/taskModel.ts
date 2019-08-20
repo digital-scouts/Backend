@@ -4,18 +4,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
-// save often used addresses and addresses for events.
-// did not save addresses from members
 const task: Schema = new Schema({
-        title: { // name of the Address like 'Gruppenraum' or 'St. Gabriel'
+        title: { // short text for this task
             type: String,
             required: true
         },
-        description: {
+        description: { // longer explanation for this task
             type: String,
+        },
+        report: { // status report  
+            type: String
         },
         dueDate: {
             type: Date,
+        },
+        done: {
+            type: Boolean,
+            default: false
         },
         competent: // organizer / competent for this task
             [{
