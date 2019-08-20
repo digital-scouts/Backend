@@ -75,17 +75,17 @@ export class MailController {
                     cid: 'ig_img'
                 }];
 
-                if (eventPath != null) {
-                    //@ts-ignore
-                    attachments.push({
-                        path: eventPath
-                    });
-                }
+                // if (eventPath != null) {
+                //     //@ts-ignore
+                //     attachments.push({
+                //         path: eventPath
+                //     });
+                // }
 
                 let mailOptions = {
                     from: MailController.senderAddress,
                     to: receiver.email,
-                    bcc:'langejanneck@gmail.com',
+                    bcc: 'langejanneck@gmail.com',
                     html: handlebars.compile(html)(replacements)
                     //fix <br>
                         .replace(/&lt;/g, '<')
@@ -121,19 +121,19 @@ export class MailController {
         //hint why did i need to do it this way?
         let groups = (request.body['groups[]'])? request.body['groups[]']:request.body.groups;
 
-        let eventPath: string = null;
-        if (request.body.event) {//todo events for calendar
-            eventPath = __dirname + '/MailSrc/events/invitation.ics';
-            cal.createEvent({
-                start: null,
-                end: null,
-                summary: 'Example Event',
-                description: 'It works ;)',
-                location: 'my room',
-                url: 'http://sebbo.net/'
-            });
-            cal.saveSync(eventPath);
-        }
+        // let eventPath: string = null;
+        // if (request.body.event) {//todo events for calendar
+        //     eventPath = __dirname + '/MailSrc/events/invitation.ics';
+        //     cal.createEvent({
+        //         start: null,
+        //         end: null,
+        //         summary: 'Example Event',
+        //         description: 'It works ;)',
+        //         location: 'my room',
+        //         url: 'http://sebbo.net/'
+        //     });
+        //     cal.saveSync(eventPath);
+        // }
 
         MailController.getEmailsByGroup(groups).then(async mails => {
             const reg = /<img alt="calendar_img-([1-31]+)-([1-12]+)" src="">/g;
@@ -163,7 +163,7 @@ export class MailController {
                     });
                 sendThis.push(emailSendStatus.push({
                     email: mails[i].email,
-                    status: await MailController.sendMail(mails[i], request.body.subject, request.body.replyTo, content, eventPath)
+                    status: await MailController.sendMail(mails[i], request.body.subject, request.decoded.email, content)
                 }));
             }
             await Promise.all(sendThis);
