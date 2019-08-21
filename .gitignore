@@ -3,13 +3,13 @@ node_modules
 .nyc_output
 
 # Ignores compiled TypeScript files
-controller/*.js
-routes/api/*.js
-routes/*.js
-models/*.js
-expressApp.js
-errors.js
-events.js
-timedScripts.js
+#controller/*.js
+#routes/api/*.js
+#routes/*.js
+#models/*.js
+#expressApp.js
+#errors.js
+#events.js
+#timedScripts.js
 
 *.js.map
