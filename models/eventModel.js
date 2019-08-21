@@ -1,48 +1,60 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema, ObjectId = mongoose_1.Schema.ObjectId;
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 var answerTypes = {
     NO: 0,
     YES: 1,
     MAYBE: 2
 };
-var event = new mongoose_1.Schema({
-    public: {
+var event = new Schema({
+    public: // Public will be shown on the Website | Private is only visible to members/groups
+    {
         type: Boolean,
         require: true,
         default: true,
     },
-    origin: {
+    origin: // Where does the element belong to?
+    {
         type: String // todo not supported yet replace with object later
     },
-    type: {
+    type: // type of the calenderElement [event, groupLesson, planningObject, task]
+    {
         type: String,
         default: "event"
     },
-    eventName: {
+    eventName: // title of the event
+    {
         type: String,
         require: true
     },
-    dateStart: {
+    dateStart: // start date and time
+    {
         type: Date,
         require: true,
     },
-    dateEnd: {
+    dateEnd: // end date and time
+    {
         type: Date,
         require: true,
     },
-    description: {
+    description: // description of the event. Can be a Summary or a explanation.
+    {
         type: String,
     },
-    competent: [{
+    competent: // organizer / competent for this event (person or group(AK))
+    [{
             type: ObjectId,
             ref: 'User'
         }],
-    groups: [{
+    groups: // members as Group. Who is the appointment for?
+    [{
             type: ObjectId,
             ref: 'Group'
         }],
-    members: [{
+    members: // members as User. Who is the appointment for?
+    [{
             type: ObjectId,
             ref: 'User'
         }],
@@ -59,25 +71,30 @@ var event = new mongoose_1.Schema({
                 required: true
             }
         }],
-    address: {
+    address: // address of the event
+    {
         type: ObjectId,
         ref: 'Address'
     },
     attachments: {
-        document: [{
+        document: // link, deepLink (in App), document,
+        [{
                 type: ObjectId,
                 ref: 'Document'
             }],
-        picture: {
+        picture: // list of pictures (only one is recommended) from last event for some impressions
+        {
             type: String // todo not supported yet replace with object later
         },
     },
-    creator: {
+    creator: // event creator info
+    {
         type: ObjectId,
         ref: 'User',
         require: [true, "A Creator must be given for security reasons"]
     },
-    lastEdit: {
+    lastEdit: //update this field, when someone change this event
+    {
         type: ObjectId,
         ref: 'User',
         default: null

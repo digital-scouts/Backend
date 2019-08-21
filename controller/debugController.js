@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var userModel_1 = require("../models/userModel");
 var groupModel_1 = require("../models/groupModel");
 var groupLessonModel_1 = require("../models/groupLessonModel");
@@ -7,7 +9,7 @@ var eventModel_1 = require("../models/eventModel");
 var documentModel_1 = require("../models/documentModel");
 var messageModel_1 = require("../models/messageModel");
 var notificationModel_1 = require("../models/notificationModel");
-var DebugController = (function () {
+var DebugController = /** @class */ (function () {
     function DebugController() {
     }
     DebugController.initData = function (request, response, next) {
@@ -206,6 +208,6 @@ var DebugController = (function () {
         response.status(200).json(res);
     };
     return DebugController;
-})();
+}());
 exports.DebugController = DebugController;
 //# sourceMappingURL=debugController.js.map

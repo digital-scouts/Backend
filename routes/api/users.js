@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var userController_1 = require("../../controller/userController");
 var token_1 = require("../token");
 var permission_1 = require("../permission");
-var Users = (function () {
+var Users = /** @class */ (function () {
     function Users() {
         this.router = express_1.Router();
         this.init();
@@ -22,7 +24,7 @@ var Users = (function () {
             .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.updateEmail);
     };
     return Users;
-})();
+}());
 var usersRouter = new Users();
 usersRouter.init();
 exports.default = usersRouter.router;

@@ -1,4 +1,6 @@
-var TaskController = (function () {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var TaskController = /** @class */ (function () {
     function TaskController() {
     }
     /**
@@ -72,6 +74,6 @@ var TaskController = (function () {
     TaskController.addReport = function (id, report) {
     };
     return TaskController;
-})();
+}());
 exports.TaskController = TaskController;
 //# sourceMappingURL=taskController.js.map

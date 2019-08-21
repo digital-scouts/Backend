@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 var config_1 = require("../config");
 var ObjectId = mongoose_1.Schema.ObjectId;

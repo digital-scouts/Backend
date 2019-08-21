@@ -1,27 +1,29 @@
-var express = require('express');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express = require("express");
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
 var morgan = require("morgan");
-var path = require('path');
-var http = require('http');
-var debug_1 = require('debug');
-var timedScripts = require('./timedScripts.js');
+var path = require("path");
+var http = require("http");
+var debug_1 = require("debug");
+var timedScripts = require("./timedScripts.js");
 debug_1.default('digital-scouts-backend:server');
 var config_1 = require("./config");
 var errors_1 = require("./errors");
-var socketRouter_1 = require('./routes/socketRouter');
+var socketRouter_1 = require("./routes/socketRouter");
 var index_1 = require("./routes/index");
 var users_1 = require("./routes/api/users");
 var auth_1 = require("./routes/api/auth");
 var adminAccounts_1 = require("./routes/api/adminAccounts");
-var chat_1 = require('./routes/api/chat');
+var chat_1 = require("./routes/api/chat");
 var calendar_1 = require("./routes/api/calendar");
 var group_1 = require("./routes/api/group");
 var address_1 = require("./routes/api/address");
 var mail_1 = require("./routes/api/mail");
 var nami_1 = require("./routes/api/nami");
 var debug_2 = require("./routes/api/debug");
-var ExpressApp = (function () {
+var ExpressApp = /** @class */ (function () {
     //Run configuration methods on the Express instance.
     function ExpressApp() {
         this.app = express();
@@ -170,7 +172,7 @@ var ExpressApp = (function () {
         });
     };
     return ExpressApp;
-})();
+}());
 var app = new ExpressApp();
 var serverE = app.server;
 exports.serverE = serverE;

@@ -1,9 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var namiController_1 = require("../../controller/namiController");
 /**
  * todo remove this route
  */
-var Nami = (function () {
+var Nami = /** @class */ (function () {
     function Nami() {
         this.router = express_1.Router();
         this.init();
@@ -17,7 +19,7 @@ var Nami = (function () {
             .get(namiController_1.NamiAPI.getEmailsByFilter);
     };
     return Nami;
-})();
+}());
 var namiRouter = new Nami();
 namiRouter.init();
 exports.default = namiRouter.router;

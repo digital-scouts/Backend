@@ -1,7 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema, ObjectId = mongoose_1.Schema.ObjectId;
-var group = new mongoose_1.Schema({
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+var group = new Schema({
     name: {
         type: String,
         require: [true, "Name is missing, each group needs a name to identify them."]
@@ -16,12 +18,14 @@ var group = new mongoose_1.Schema({
     color: {
         type: String
     },
-    creator: {
+    creator: // creator info
+    {
         type: ObjectId,
         ref: 'User',
         require: [true, "A Creator must be given for security reasons"]
     },
-    lastEdit: {
+    lastEdit: //update this field, when someone change this schema
+    {
         type: ObjectId,
         ref: 'User',
         default: null

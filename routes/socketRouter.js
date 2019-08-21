@@ -1,12 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //https://socket.io/docs/server-api/
 var jwt = require("jsonwebtoken");
 var userModel_1 = require("../models/userModel");
 var app = require("../expressApp");
 var express = app.appE;
-var events_1 = require('../events');
-var SocketRouter = (function () {
+var events_1 = require("../events");
+var SocketRouter = /** @class */ (function () {
     function SocketRouter(ioServer) {
-        this.readonly = io;
         this.io = ioServer;
         this.initIncomingCalls();
         this.initOutgoingCalls();
@@ -93,6 +94,6 @@ var SocketRouter = (function () {
         });
     };
     return SocketRouter;
-})();
+}());
 exports.default = SocketRouter;
 //# sourceMappingURL=socketRouter.js.map

@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var chatController_1 = require("../../controller/chatController");
 var token_1 = require("../token");
 var permission_1 = require("../permission");
-var Chat = (function () {
+var Chat = /** @class */ (function () {
     function Chat() {
         this.router = express_1.Router();
         this.init();
@@ -20,7 +22,7 @@ var Chat = (function () {
             .post(token_1.verifyToken, permission_1.checkPermission, chatController_1.ChatController.newTextMessage);
     };
     return Chat;
-})();
+}());
 var chatRouter = new Chat();
 chatRouter.init();
 exports.default = chatRouter.router;

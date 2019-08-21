@@ -1,9 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var adminAccountController_1 = require("../../controller/adminAccountController");
 var token_1 = require("../token");
 var permission_1 = require("../permission");
 var userController_1 = require("../../controller/userController");
-var AdminAccounts = (function () {
+var AdminAccounts = /** @class */ (function () {
     function AdminAccounts() {
         this.router = express_1.Router();
         this.init();
@@ -26,7 +28,7 @@ var AdminAccounts = (function () {
             .get(userController_1.UserController.getAll);
     };
     return AdminAccounts;
-})();
+}());
 var adminAccountsRouter = new AdminAccounts();
 adminAccountsRouter.init();
 exports.default = adminAccountsRouter.router;

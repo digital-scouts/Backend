@@ -1,7 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema, ObjectId = mongoose_1.Schema.ObjectId;
-var task = new mongoose_1.Schema({
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+var task = new Schema({
     title: {
         type: String,
         required: true
@@ -19,7 +21,8 @@ var task = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
-    competent: [{
+    competent: // organizer / competent for this task
+    [{
             type: ObjectId,
             ref: 'User'
         }],

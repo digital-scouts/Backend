@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var token_1 = require("../token");
 var permission_1 = require("../permission");
 var groupController_1 = require("../../controller/groupController");
-var Group = (function () {
+var Group = /** @class */ (function () {
     function Group() {
         this.router = express_1.Router();
         this.init();
@@ -17,7 +19,7 @@ var Group = (function () {
             .delete(token_1.verifyToken, permission_1.checkPermission, groupController_1.GroupController.deleteGroup);
     };
     return Group;
-})();
+}());
 var groupRouter = new Group();
 groupRouter.init();
 exports.default = groupRouter.router;

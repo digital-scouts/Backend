@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var userModel_1 = require("../models/userModel");
-var constGlobal_1 = require('../constGlobal');
+var constGlobal_1 = require("../constGlobal");
 var events_1 = require("../events");
 var appSections = constGlobal_1.ConstGlobal.app.sections;
-var NotificationController = (function () {
+var NotificationController = /** @class */ (function () {
     function NotificationController() {
     }
     /**
@@ -34,6 +36,7 @@ var NotificationController = (function () {
         userModel_1.User.findById(userId, 'socketID', function (err, user) {
             if (user) {
                 events_1.default.emit('', user.socketID);
+                //todo event definieren
             }
             else {
                 console.log("Error user not found for id: " + userId + " error: " + err);
@@ -56,6 +59,6 @@ var NotificationController = (function () {
         //todo
     };
     return NotificationController;
-})();
+}());
 exports.NotificationController = NotificationController;
 //# sourceMappingURL=notificationController.js.map

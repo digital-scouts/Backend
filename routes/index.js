@@ -1,6 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var token_1 = require("./token");
-var Index = (function () {
+var Index = /** @class */ (function () {
     function Index() {
         this.router = express_1.Router();
         this.init();
@@ -26,7 +28,7 @@ var Index = (function () {
         });
     };
     return Index;
-})();
+}());
 var indexRouter = new Index();
 indexRouter.init();
 exports.default = indexRouter.router;

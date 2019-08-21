@@ -1,6 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require("jsonwebtoken");
 var errors_1 = require("../errors");
-var config = require('../config');
+var config = require("../config");
 /**
  * This is just called by the router and checks the status of a given token.
  * @param request

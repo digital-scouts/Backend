@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var token_1 = require("../token");
 var permission_1 = require("../permission");
 var addressController_1 = require("../../controller/addressController");
-var Address = (function () {
+var Address = /** @class */ (function () {
     function Address() {
         this.router = express_1.Router();
         this.init();
@@ -15,7 +17,7 @@ var Address = (function () {
             .delete(token_1.verifyToken, permission_1.checkPermission, addressController_1.AddressController.deleteAddress);
     };
     return Address;
-})();
+}());
 var addressRouter = new Address();
 addressRouter.init();
 exports.default = addressRouter.router;

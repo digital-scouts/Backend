@@ -1,6 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var debugController_1 = require("../../controller/debugController");
-var Debug = (function () {
+var Debug = /** @class */ (function () {
     function Debug() {
         this.router = express_1.Router();
         this.init();
@@ -11,7 +13,7 @@ var Debug = (function () {
             .delete(debugController_1.DebugController.deleteDB);
     };
     return Debug;
-})();
+}());
 var debugRouter = new Debug();
 debugRouter.init();
 exports.default = debugRouter.router;

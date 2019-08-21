@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose_1 = require("mongoose");
 // save often used addresses and addresses for events.
 // did not save addresses from members

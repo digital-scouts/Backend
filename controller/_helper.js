@@ -1,6 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var userModel_1 = require("../models/userModel");
 var groupModel_1 = require("../models/groupModel");
-var _helper = (function () {
+var _helper = /** @class */ (function () {
     function _helper() {
     }
     /**
@@ -86,6 +88,6 @@ var _helper = (function () {
         return emails;
     };
     return _helper;
-})();
+}());
 exports._helper = _helper;
 //# sourceMappingURL=_helper.js.map
