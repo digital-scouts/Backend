@@ -11,8 +11,8 @@ services:
       - mongo
 
   mongo:
-    container_name: mongo #for ARM: nonoroazoro/rpi-mongo
-    image: mongo:4
+    container_name: mongo
+    image: mongo:4 #for ARM: nonoroazoro/rpi-mongo
     ports:
       - '27017:27017'
     volumes:

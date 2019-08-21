@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var cron_1 = require("cron");
+var cron_1 = require('cron');
 var calendarController_1 = require("./controller/calendarController");
 var groupLessonModel_1 = require("./models/groupLessonModel");
-var timedScripts = /** @class */ (function () {
+var timedScripts = (function () {
     function timedScripts() {
     }
     timedScripts.startScripts = function () {
@@ -19,7 +17,7 @@ var timedScripts = /** @class */ (function () {
         //todo need to be tested
         new cron_1.CronJob('0 0 1 * *', function () {
             console.log("monthly Job: add regular timed groupLessonEvents");
-            groupLessonModel_1.GroupLesson.find( /* todo find all not finished */).then(function (groupLessons) {
+            groupLessonModel_1.GroupLesson.find().then(function (groupLessons) {
                 groupLessons.forEach(function (groupLesson) {
                     calendarController_1.CalendarController.createNewGroupLessonEvents(groupLesson);
                 });
@@ -41,5 +39,6 @@ var timedScripts = /** @class */ (function () {
         }, true, 'Europe/Berlin');
     };
     return timedScripts;
-}());
+})();
 exports.timedScripts = timedScripts;
+//# sourceMappingURL=timedScripts.js.map
