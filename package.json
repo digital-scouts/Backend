@@ -5,7 +5,7 @@
   "author": "Janneck Lange",
   "private": true,
   "scripts": {
-    "start": "node  expressApp.js",
+    "start": "node expressApp.js",
     "test": "set NODE_ENV=test&& nyc mocha --require babel-register tests/*.js --exit"
   },
   "dependencies": {
@@ -28,7 +28,8 @@
     "save": "^2.3.3",
     "simple-node-logger": "^18.12.22",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "tsc": "^1.20150623.0"
   },
   "devDependencies": {
     "@types/node": "^11.9.5",

@@ -12,3 +12,4 @@ errors.js
 events.js
 timedScripts.js
 
+*.js.map

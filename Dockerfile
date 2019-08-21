@@ -1,4 +1,5 @@
 FROM node:11
+# for ARM: FROM arm32v7/node
 
 WORKDIR /usr/src/app
 
@@ -7,6 +8,9 @@ COPY package.json .
 
 # Install the dependencies
 RUN npm install
+
+# compile typescript files
+RUN tsc -w
 
 # Copy server.js, etc...
 COPY . .
