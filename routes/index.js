@@ -12,6 +12,7 @@ var Index = /** @class */ (function () {
             .get(function (req, res, next) {
             res.status(200).json({
                 status: 200,
+                key: 147261234,
                 message: "RESTful API works.",
             });
         })
