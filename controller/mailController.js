@@ -58,19 +58,30 @@ var MailController = /** @class */ (function () {
         if (eventPath === void 0) { eventPath = null; }
         return new Promise(function (resolve, reject) {
             var greding;
+            var name = receiver.email.split('<')[0];
+            var lastName;
+            if (receiver.emailSource == EmailSource.NamiSonstige) {
+                if ((name.lastIndexOf(' ') + 1) != name.length) {
+                    lastName = name.slice(name.lastIndexOf(' ') + 1, name.length);
+                }
+                else {
+                    lastName = name.slice(name.slice(0, name.lastIndexOf(' ')).lastIndexOf(' ') + 1, name.length);
+                }
+            }
             if (receiver.emailSource == EmailSource.NamiVertretungsberechtigter) {
                 greding = "Sehr geehrter Herr " + receiver.familyName + ", sehr geehrte Frau " + receiver.familyName + ",";
             }
             else if (receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))) {
-                var name_1 = receiver.email.split('<')[0];
-                greding = "Sehr geehrter Herr " + name_1.slice(name_1.lastIndexOf(' ') + 1, name_1.length) + ",";
+                greding = "Sehr geehrter Herr " + lastName + ",";
             }
             else if (receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')) {
-                var name_2 = receiver.email.split('<')[0];
-                greding = "Sehr geehrte Frau " + name_2.slice(name_2.lastIndexOf(' ') + 1, name_2.length) + ",";
+                greding = "Sehr geehrte Frau " + lastName + ",";
             }
             else if (receiver.emailSource == EmailSource.NamiMember || receiver.emailSource == EmailSource.OwnDB) {
                 greding = "Hallo " + receiver.childName + ",";
+            }
+            else {
+                greding = "Hallo,";
             }
             MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
                 var replacements = {
@@ -170,6 +181,8 @@ var MailController = /** @class */ (function () {
                         content = request.body.text
                             .replace(/(?:\r\n|\r|\n)/g, '<br>')
                             .replace(/&nbsp;/g, ' ') //no-line break space
+                            .replace(/<div>/g, '') //div creates a bigger line break (removed)
+                            .replace(/<\/div>/g, '') //div creates a bigger line break (removed)
                             .replace(/&auml/g, 'ä')
                             .replace(/&Auml;/g, 'Ä')
                             .replace(/&ouml;/g, 'ö')
@@ -187,7 +200,7 @@ var MailController = /** @class */ (function () {
                         _e = {
                             email: mails[i].email
                         };
-                        return [4 /*yield*/, MailController.sendMail(mails[i], request.body.subject, request.decoded.email, content)];
+                        return [4 /*yield*/, MailController.sendMail(mails[i], request.body.subject, 'langejanneck@gmail.com', content)];
                     case 2:
                         _b.apply(_a, [_d.apply(_c, [(_e.status = _f.sent(),
                                     _e)])]);

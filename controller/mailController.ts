@@ -41,16 +41,25 @@ export class MailController {
     private static sendMail(receiver: { childName: string, familyName: string, emailSource: EmailSource, email: string }, subject, replyTo, content, eventPath = null) {
         return new Promise((resolve, reject) => {
             let greding;
+            let name = receiver.email.split('<')[0];
+            let lastName;
+            if (receiver.emailSource == EmailSource.NamiSonstige) {
+                if ((name.lastIndexOf(' ') + 1) != name.length) {
+                    lastName = name.slice(name.lastIndexOf(' ') + 1, name.length);
+                } else {
+                    lastName = name.slice(name.slice(0, name.lastIndexOf(' ')).lastIndexOf(' ') + 1, name.length);
+                }
+            }
             if (receiver.emailSource == EmailSource.NamiVertretungsberechtigter) {
                 greding = `Sehr geehrter Herr ${receiver.familyName}, sehr geehrte Frau ${receiver.familyName},`;
             } else if (receiver.emailSource == EmailSource.NamiSonstige && (receiver.email.startsWith('Herr') || receiver.email.startsWith('Vater'))) {
-                let name = receiver.email.split('<')[0];
-                greding = `Sehr geehrter Herr ${name.slice(name.lastIndexOf(' ') + 1, name.length)},`;
+                greding = `Sehr geehrter Herr ${lastName},`;
             } else if (receiver.emailSource == EmailSource.NamiSonstige && receiver.email.startsWith('Frau') || receiver.email.startsWith('Mutter')) {
-                let name = receiver.email.split('<')[0];
-                greding = `Sehr geehrte Frau ${name.slice(name.lastIndexOf(' ') + 1, name.length)},`;
+                greding = `Sehr geehrte Frau ${lastName},`;
             } else if (receiver.emailSource == EmailSource.NamiMember || receiver.emailSource == EmailSource.OwnDB) {
                 greding = `Hallo ${receiver.childName},`;
+            } else {
+                greding = `Hallo,`;
             }
 
             MailController.readHTMLFile(__dirname + '/MailSrc/src/default.html', function (err, html) {
@@ -98,7 +107,7 @@ export class MailController {
 
                 MailController.transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
-                        console.log('Email to '+receiver.email+' failed');
+                        console.log('Email to ' + receiver.email + ' failed');
                         console.log(error);
                         reject(error);
                     } else {
@@ -119,7 +128,7 @@ export class MailController {
      */
     public static send(request, response, next) {
         //hint why did i need to do it this way?
-        let groups = (request.body['groups[]'])? request.body['groups[]']:request.body.groups;
+        let groups = (request.body['groups[]']) ? request.body['groups[]'] : request.body.groups;
 
         // let eventPath: string = null;
         // if (request.body.event) {//todo events for calendar
@@ -148,22 +157,24 @@ export class MailController {
             for (let i = 0; i < mails.length; i++) {
                 let content = request.body.text
                     .replace(/(?:\r\n|\r|\n)/g, '<br>')
-                    .replace(/&nbsp;/g,' ')//no-line break space
-                    .replace(/&auml/g,'ä')
-                    .replace(/&Auml;/g,'Ä')
-                    .replace(/&ouml;/g,'ö')
-                    .replace(/&Ouml;/g,'Ö')
-                    .replace(/&uuml;/g,'ü')
-                    .replace(/&Uuml;/g,'Ü')
-                    .replace(/&szlig;/g,'ß')
-                    .replace(/&euro;/g,'€')
-                    .replace(/&sect;/g,'§')
+                    .replace(/&nbsp;/g, ' ')//no-line break space
+                    .replace(/<div>/g, '')//div creates a bigger line break (removed)
+                    .replace(/<\/div>/g, '')//div creates a bigger line break (removed)
+                    .replace(/&auml/g, 'ä')
+                    .replace(/&Auml;/g, 'Ä')
+                    .replace(/&ouml;/g, 'ö')
+                    .replace(/&Ouml;/g, 'Ö')
+                    .replace(/&uuml;/g, 'ü')
+                    .replace(/&Uuml;/g, 'Ü')
+                    .replace(/&szlig;/g, 'ß')
+                    .replace(/&euro;/g, '€')
+                    .replace(/&sect;/g, '§')
                     .replace(reg, (match) => {
                         console.log(match)
                     });
                 sendThis.push(emailSendStatus.push({
                     email: mails[i].email,
-                    status: await MailController.sendMail(mails[i], request.body.subject, request.decoded.email, content)
+                    status: await MailController.sendMail(mails[i], request.body.subject, 'langejanneck@gmail.com', content)
                 }));
             }
             await Promise.all(sendThis);
