@@ -11,9 +11,9 @@ var task = new Schema({
     description: {
         type: String,
     },
-    report: {
-        type: String
-    },
+    report: [{
+            type: String
+        }],
     dueDate: {
         type: Date,
     },

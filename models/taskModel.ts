@@ -12,9 +12,9 @@ const task: Schema = new Schema({
         description: { // longer explanation for this task
             type: String,
         },
-        report: { // status report  
+        report: [{ // status report
             type: String
-        },
+        }],
         dueDate: {
             type: Date,
         },

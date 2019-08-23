@@ -23,6 +23,7 @@ var address_1 = require("./routes/api/address");
 var mail_1 = require("./routes/api/mail");
 var nami_1 = require("./routes/api/nami");
 var debug_2 = require("./routes/api/debug");
+var task_1 = require("./routes/api/task");
 var ExpressApp = /** @class */ (function () {
     //Run configuration methods on the Express instance.
     function ExpressApp() {
@@ -54,6 +55,7 @@ var ExpressApp = /** @class */ (function () {
         this.app.use('/api/group', group_1.default);
         this.app.use('/api/address', address_1.default);
         this.app.use('/api/mail', mail_1.default);
+        this.app.use('/api/task', task_1.default);
         this.app.use('/api/nami', nami_1.default);
         this.app.use('/api/debug', debug_2.default);
         this.app.get('/chat', function (req, res) {
