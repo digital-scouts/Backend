@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var errors_1 = require("../errors");
 var taskModel_1 = require("../models/taskModel");
+//todo error handling in allen Methoden
 var TaskController = /** @class */ (function () {
     function TaskController() {
     }

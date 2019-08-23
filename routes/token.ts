@@ -18,6 +18,7 @@ export function verifyToken(request, response, next) {
                 }
                 // Save to request for use in other routes
                 request.decoded = decoded;
+                console.log('verifyToken: ' + request.decoded.email);
                 next();
             });
     } else {

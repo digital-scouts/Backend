@@ -5,6 +5,7 @@
   "author": "Janneck Lange",
   "private": true,
   "scripts": {
+    "docker": "docker-compose up --build",
     "start": "node expressApp.js",
     "test": "set NODE_ENV=test&& nyc mocha --require babel-register tests/*.js --exit"
   },

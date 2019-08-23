@@ -1,7 +1,8 @@
 import {ErrorREST, Errors} from "../errors";
 import {_helper, _helper as Helper} from "./_helper";
 import {Task} from "../models/taskModel";
-import {Event} from "../models/eventModel";
+
+//todo error handling in allen Methoden
 
 export class TaskController {
 
