@@ -28,12 +28,10 @@
     "save": "^2.3.3",
     "simple-node-logger": "^18.12.22",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0",
-    "tsc": "^1.20150623.0"
+    "socket.io-client": "^2.2.0"
   },
   "devDependencies": {
     "@types/node": "^11.9.5",
-    "express": "^4.16.4",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "body-parser": "^1.18.3",
@@ -41,7 +39,8 @@
     "chai-http": "^4.2.1",
     "chai-things": "^0.2.0",
     "cors": "^2.8.5",
-    "mocha": "^6.0.2",
+    "express": "^4.16.4",
+    "mocha": "^6.2.0",
     "mongoose": "^5.4.17",
     "morgan": "^1.9.1",
     "nyc": "^13.3.0"
