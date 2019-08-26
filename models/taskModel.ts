@@ -1,4 +1,4 @@
-import {Schema, Model, model} from "mongoose";
+import {Schema, Model, model} from 'mongoose';
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema,
@@ -27,6 +27,9 @@ const task: Schema = new Schema({
                 type: ObjectId,
                 ref: 'User'
             }],
+        origin: { //todo set later
+            type: String
+        }
     }, {
         timestamps: true
     },
@@ -40,4 +43,4 @@ const task: Schema = new Schema({
 );
 
 
-export const Task: Model = model("task", task);
+export const Task: Model = model('task', task);
