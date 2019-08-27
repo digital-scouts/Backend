@@ -54,7 +54,7 @@ var TaskController = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = response).json;
-                        return [4 /*yield*/, TaskController.getTasks()];
+                        return [4 /*yield*/, TaskController.getTasks(request.decoded.userID)];
                     case 1:
                         _b.apply(_a, [_c.sent()]);
                         return [2 /*return*/];
@@ -117,7 +117,7 @@ var TaskController = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = response).json;
-                        return [4 /*yield*/, TaskController.checkTask(request.query.id)];
+                        return [4 /*yield*/, TaskController.checkTask(request.query.id, request.body.check)];
                     case 1:
                         _b.apply(_a, [_c.sent()]);
                         return [2 /*return*/];
@@ -168,16 +168,26 @@ var TaskController = /** @class */ (function () {
         });
     };
     /**
-     * hint debug
+     * hint debug get all task
      * return all tasks
      */
-    TaskController.getTasks = function () {
+    TaskController.getTasks = function (user) {
         return new Promise(function (resolve, reject) {
-            taskModel_1.Task.find()
-                .sort({ 'dueDate': 1 })
+            taskModel_1.Task.find({ dueDate: null, competent: user, done: false }) //Tasks without dueDate (sort by priority)
+                .sort({ priority: 1 })
                 .populate('competent')
-                .then(function (data) {
-                resolve(data);
+                .then(function (nullDateTasks) {
+                taskModel_1.Task.find({ dueDate: { $ne: null }, competent: user, done: false }) //Tasks with dueDate (sort by date and priority)
+                    .sort({ dueDate: 1, priority: 1 })
+                    .populate('competent')
+                    .then(function (dateTasks) {
+                    taskModel_1.Task.find({ competent: user, done: true }) //Finished Tasks (sort by Date)
+                        .sort({ dueDate: -1 })
+                        .populate('competent')
+                        .then(function (alreadyDoneTasks) {
+                        resolve({ unscheduled: nullDateTasks, scheduled: dateTasks, done: alreadyDoneTasks });
+                    });
+                });
             });
         });
     };
@@ -222,12 +232,14 @@ var TaskController = /** @class */ (function () {
     /**
      * mark task as finish
      * @param id
+     * @param check
      */
-    TaskController.checkTask = function (id) {
+    TaskController.checkTask = function (id, check) {
+        if (check === void 0) { check = true; }
         return new Promise(function (resolve, reject) {
             taskModel_1.Task.findById(id, function (err, task) {
                 if (task) {
-                    task.done = true;
+                    task.done = check;
                     task.save().then(function (task) { return resolve(task); });
                 }
                 else {

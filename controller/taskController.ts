@@ -13,7 +13,7 @@ export class TaskController {
      * @param next
      */
     public static async getTaskRoute(request, response, next) {
-        response.json(await TaskController.getTasks());
+        response.json(await TaskController.getTasks(request.decoded.userID));
     }
 
     /**
@@ -43,7 +43,7 @@ export class TaskController {
      * @param next
      */
     public static async checkTaskRoute(request, response, next) {
-        response.json(await TaskController.checkTask(request.query.id));
+        response.json(await TaskController.checkTask(request.query.id, request.body.check));
 
     }
 
@@ -70,16 +70,27 @@ export class TaskController {
     }
 
     /**
-     * hint debug
+     * hint debug get all task
      * return all tasks
      */
-    private static getTasks(): Promise<object> {
+    private static getTasks(user: string): Promise<object> {
         return new Promise((resolve, reject) => {
-            Task.find()
-                .sort({'dueDate': 1})
+
+            Task.find({dueDate: null, competent: user, done: false}) //Tasks without dueDate (sort by priority)
+                .sort({priority: 1})
                 .populate('competent')
-                .then(data => {
-                    resolve(data);
+                .then(nullDateTasks => {
+                    Task.find({dueDate: {$ne: null}, competent: user, done: false})//Tasks with dueDate (sort by date and priority)
+                        .sort({dueDate: 1, priority: 1})
+                        .populate('competent')
+                        .then(dateTasks => {
+                            Task.find({competent: user, done: true}) //Finished Tasks (sort by Date)
+                                .sort({dueDate: -1})
+                                .populate('competent')
+                                .then(alreadyDoneTasks => {
+                                    resolve({unscheduled: nullDateTasks, scheduled: dateTasks, done: alreadyDoneTasks});
+                                });
+                        });
                 });
         });
     }
@@ -120,12 +131,13 @@ export class TaskController {
     /**
      * mark task as finish
      * @param id
+     * @param check
      */
-    private static checkTask(id: string): Promise<object> {
+    private static checkTask(id: string, check: boolean = true): Promise<object> {
         return new Promise((resolve, reject) => {
             Task.findById(id, function (err, task) {
                 if (task) {
-                    task.done = true;
+                    task.done = check;
                     task.save().then(task => resolve(task));
                 } else {
                     reject(err);
