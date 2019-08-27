@@ -12,10 +12,22 @@ var task = new Schema({
         type: String,
     },
     report: [{
-            type: String
+            text: {
+                type: String
+            },
+            date: {
+                type: Date
+            }
         }],
     dueDate: {
         type: Date,
+        required: false
+    },
+    priority: {
+        type: Number,
+        min: [1, 'Priority can not be higher than \'1\''],
+        max: [5, 'Priority can not be lower than \'5\''],
+        default: 3
     },
     done: {
         type: Boolean,
@@ -26,6 +38,9 @@ var task = new Schema({
             type: ObjectId,
             ref: 'User'
         }],
+    origin: {
+        type: String
+    }
 }, {
     timestamps: true
 }, {
@@ -35,5 +50,5 @@ var task = new Schema({
         wtimeout: 1000
     }
 });
-exports.Task = mongoose_1.model("task", task);
+exports.Task = mongoose_1.model('task', task);
 //# sourceMappingURL=taskModel.js.map

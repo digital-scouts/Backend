@@ -13,10 +13,22 @@ const task: Schema = new Schema({
             type: String,
         },
         report: [{ // status report
-            type: String
+            text: {
+                type: String
+            },
+            date: {
+                type: Date
+            }
         }],
         dueDate: {
             type: Date,
+            required: false
+        },
+        priority: {
+            type: Number,
+            min: [1, 'Priority can not be higher than \'1\''],
+            max: [5, 'Priority can not be lower than \'5\''],
+            default: 3
         },
         done: {
             type: Boolean,
