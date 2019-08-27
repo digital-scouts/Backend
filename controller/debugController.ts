@@ -1,13 +1,14 @@
-import {ErrorREST, Errors} from "../errors";
-import {User} from "../models/userModel";
-import {Group} from "../models/groupModel";
-import {GroupLesson} from "../models/groupLessonModel";
-import {Address} from "../models/addressModel";
-import {Chat} from "../models/chatModel";
-import {Event} from "../models/eventModel";
-import {Document} from "../models/documentModel";
-import {TextMessage} from "../models/messageModel";
-import {Notification} from "../models/notificationModel";
+import {ErrorREST, Errors} from '../errors';
+import {User} from '../models/userModel';
+import {Group} from '../models/groupModel';
+import {GroupLesson} from '../models/groupLessonModel';
+import {Address} from '../models/addressModel';
+import {Chat} from '../models/chatModel';
+import {Event} from '../models/eventModel';
+import {Document} from '../models/documentModel';
+import {TextMessage} from '../models/messageModel';
+import {Notification} from '../models/notificationModel';
+import {Task} from '../models/taskModel';
 
 export class DebugController {
 
@@ -204,19 +205,21 @@ export class DebugController {
         response.status(200).json(res);
     }
 
-    public static deleteDB(request, response, next) {
+    public static async deleteDB(request, response, next) {
         let res = [];
-
-        User.deleteMany().then(data => res.push(data));
-        Group.deleteMany().then(data => res.push(data));
-        GroupLesson.deleteMany().then(data => res.push(data));
-        Address.deleteMany().then(data => res.push(data));
-        Chat.deleteMany().then(data => res.push(data));
-        Event.deleteMany().then(data => res.push(data));
-        Document.deleteMany().then(data => res.push(data));
-        TextMessage.deleteMany().then(data => res.push(data));
-        Notification.deleteMany().then(data => res.push(data));
-
-        response.status(200).json(res);
+        Promise.all([
+            await User.deleteMany().then(data => res.push(data)),
+            await Group.deleteMany().then(data => res.push(data)),
+            await GroupLesson.deleteMany().then(data => res.push(data)),
+            await Address.deleteMany().then(data => res.push(data)),
+            await Chat.deleteMany().then(data => res.push(data)),
+            await Event.deleteMany().then(data => res.push(data)),
+            await Document.deleteMany().then(data => res.push(data)),
+            await TextMessage.deleteMany().then(data => res.push(data)),
+            await Notification.deleteMany().then(data => res.push(data)),
+            await Task.deleteMany().then(data => res.push(data)),
+        ]).then(() => {
+            response.status(200).json(res);
+        });
     }
 }

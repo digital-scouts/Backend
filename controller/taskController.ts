@@ -1,6 +1,6 @@
-import {ErrorREST, Errors} from "../errors";
-import {_helper, _helper as Helper} from "./_helper";
-import {Task} from "../models/taskModel";
+import {ErrorREST, Errors} from '../errors';
+import {_helper, _helper as Helper} from './_helper';
+import {Task} from '../models/taskModel';
 
 //todo error handling in allen Methoden
 
@@ -22,7 +22,7 @@ export class TaskController {
      * @param response
      * @param next
      */
-    public static async deleteTaskRoute(request, response, next){
+    public static async deleteTaskRoute(request, response, next) {
         response.json(await TaskController.deleteTask(request.query.id));
     }
 
@@ -33,7 +33,7 @@ export class TaskController {
      * @param next
      */
     public static async newTaskRoute(request, response, next) {
-        response.json(await TaskController.newTask(request.body.title, request.body.description, new Date(request.body.dueDate), request.body.competent));
+        response.json(await TaskController.newTask(request.body.title, request.body.description, request.body.dueDate ? new Date(request.body.dueDate) : null, request.body.priority ? request.body.priority : null, request.body.competent ? request.body.competent : [request.decoded.userID]));
     }
 
     /**
@@ -89,24 +89,28 @@ export class TaskController {
      * @param title
      * @param description
      * @param dueDate
+     * @param priority
      * @param competent
      */
-    public static newTask(title: string, description: string, dueDate: Date, competent: string[]): Promise<object> {
+    public static newTask(title: string, description: string, dueDate: Date = null, priority: number = null, competent: string[] = null): Promise<object> {
         return new Promise((resolve, reject) => {
             let task = new Task({
                 title: title,
                 description: description,
                 dueDate: dueDate,
-                competent: competent
+                competent: competent,
+                priority: priority ? priority : 3
             });
 
             task.validate(async err => {
-                if (err)
-                    for (let errName in err.errors)
+                if (err) {
+                    for (let errName in err.errors) {
                         if (err.errors[errName].name === 'ValidatorError') {
-                            console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                            console.log(Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                             reject(err.errors[errName].message);
                         }
+                    }
+                }
 
                 task.save().then(event => resolve(event));
             });
@@ -145,18 +149,24 @@ export class TaskController {
         return new Promise((resolve, reject) => {
             Task.findById(id, function (err, task) {
                 if (task) {
-                    if (title && task.title != title)
+                    if (title && task.title != title) {
                         task.title = title;
-                    if (description && task.description != description)
+                    }
+                    if (description && task.description != description) {
                         task.description = description;
-                    if (dueDate && dueDate instanceof Date && task.dueDate != dueDate)
+                    }
+                    if (dueDate && dueDate instanceof Date && task.dueDate != dueDate) {
                         task.dueDate = dueDate;
-                    if (report && task.report != report)
+                    }
+                    if (report && task.report != report) {
                         task.report = report;
-                    if (competent && task.competent != competent)
+                    }
+                    if (competent && task.competent != competent) {
                         task.competent = competent;
-                    if (done && task.done != done)
+                    }
+                    if (done && task.done != done) {
                         task.done = done;
+                    }
 
                     task.save().then(task => resolve(task));
                 } else {
@@ -175,7 +185,7 @@ export class TaskController {
         return new Promise((resolve, reject) => {
             Task.findById(id, function (err, task) {
                 if (task) {
-                    task.report.push(report);
+                    task.report.push({text: report, date: new Date()});
                     task.save().then(task => resolve(task));
                 } else {
                     reject(err);
@@ -188,8 +198,8 @@ export class TaskController {
      * delete one task
      * @param id
      */
-    private static async deleteTask(id:string) {
-        return new Promise((resolve, reject)=>{
+    private static async deleteTask(id: string) {
+        return new Promise((resolve, reject) => {
             Task.deleteOne({_id: id}).then(event => resolve({removedElements: event}));
         });
     }

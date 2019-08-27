@@ -96,7 +96,7 @@ var TaskController = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _b = (_a = response).json;
-                        return [4 /*yield*/, TaskController.newTask(request.body.title, request.body.description, new Date(request.body.dueDate), request.body.competent)];
+                        return [4 /*yield*/, TaskController.newTask(request.body.title, request.body.description, request.body.dueDate ? new Date(request.body.dueDate) : null, request.body.priority ? request.body.priority : null, request.body.competent ? request.body.competent : [request.decoded.userID])];
                     case 1:
                         _b.apply(_a, [_c.sent()]);
                         return [2 /*return*/];
@@ -186,26 +186,33 @@ var TaskController = /** @class */ (function () {
      * @param title
      * @param description
      * @param dueDate
+     * @param priority
      * @param competent
      */
-    TaskController.newTask = function (title, description, dueDate, competent) {
+    TaskController.newTask = function (title, description, dueDate, priority, competent) {
         var _this = this;
+        if (dueDate === void 0) { dueDate = null; }
+        if (priority === void 0) { priority = null; }
+        if (competent === void 0) { competent = null; }
         return new Promise(function (resolve, reject) {
             var task = new taskModel_1.Task({
                 title: title,
                 description: description,
                 dueDate: dueDate,
-                competent: competent
+                competent: competent,
+                priority: priority ? priority : 3
             });
             task.validate(function (err) { return __awaiter(_this, void 0, void 0, function () {
                 var errName;
                 return __generator(this, function (_a) {
-                    if (err)
-                        for (errName in err.errors)
+                    if (err) {
+                        for (errName in err.errors) {
                             if (err.errors[errName].name === 'ValidatorError') {
-                                console.log(errors_1.Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                                console.log(errors_1.Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                                 reject(err.errors[errName].message);
                             }
+                        }
+                    }
                     task.save().then(function (event) { return resolve(event); });
                     return [2 /*return*/];
                 });
@@ -249,18 +256,24 @@ var TaskController = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             taskModel_1.Task.findById(id, function (err, task) {
                 if (task) {
-                    if (title && task.title != title)
+                    if (title && task.title != title) {
                         task.title = title;
-                    if (description && task.description != description)
+                    }
+                    if (description && task.description != description) {
                         task.description = description;
-                    if (dueDate && dueDate instanceof Date && task.dueDate != dueDate)
+                    }
+                    if (dueDate && dueDate instanceof Date && task.dueDate != dueDate) {
                         task.dueDate = dueDate;
-                    if (report && task.report != report)
+                    }
+                    if (report && task.report != report) {
                         task.report = report;
-                    if (competent && task.competent != competent)
+                    }
+                    if (competent && task.competent != competent) {
                         task.competent = competent;
-                    if (done && task.done != done)
+                    }
+                    if (done && task.done != done) {
                         task.done = done;
+                    }
                     task.save().then(function (task) { return resolve(task); });
                 }
                 else {
@@ -278,7 +291,7 @@ var TaskController = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             taskModel_1.Task.findById(id, function (err, task) {
                 if (task) {
-                    task.report.push(report);
+                    task.report.push({ text: report, date: new Date() });
                     task.save().then(function (task) { return resolve(task); });
                 }
                 else {
