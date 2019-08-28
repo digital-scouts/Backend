@@ -26,7 +26,7 @@ var task = new Schema({
     priority: {
         type: Number,
         min: [1, 'Priority can not be higher than \'1\''],
-        max: [5, 'Priority can not be lower than \'5\''],
+        max: [3, 'Priority can not be lower than \'3\''],
         default: 3
     },
     done: {
