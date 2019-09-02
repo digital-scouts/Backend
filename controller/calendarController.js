@@ -78,16 +78,16 @@ var CalendarController = /** @class */ (function () {
         var today = new Date();
         var filter = [];
         if (filterDateStart != undefined && filterDateStart != 'null') {
-            filter.push({ 'dateStart': { "$gte": filterDateStart } });
+            filter.push({ 'dateStart': { '$gte': filterDateStart } });
         }
         else {
-            filter.push({ 'dateStart': { "$gte": today.setDate(today.getDate() - config.Config.calender.public_event_daysPast) } });
+            filter.push({ 'dateStart': { '$gte': today.setDate(today.getDate() - config.Config.calender.public_event_daysPast) } });
         }
         if (filterDateEnd != undefined && filterDateEnd != 'null') {
-            filter.push({ 'dateEnd': { "$lt": filterDateEnd } });
+            filter.push({ 'dateEnd': { '$lt': filterDateEnd } });
         }
         else {
-            filter.push({ 'dateEnd': { "$lt": today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture) } });
+            filter.push({ 'dateEnd': { '$lt': today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture) } });
         }
         if (filterComplement != null && filterComplement != 'null') {
             filter.push({ 'competent': { $in: filterComplement } });
@@ -109,9 +109,11 @@ var CalendarController = /** @class */ (function () {
             }
         }
         else {
-            if (request.decoded.role != 'admin')
-                //if admin then show all events -> dont filter
+            if (request.decoded.role != 'admin') 
+            //if admin then show all events -> dont filter
+            {
                 filter.push({ 'member': request.decoded.role });
+            }
         }
         eventModel_1.Event.find({ $and: filter }, {
             competent: 0, creator: 0, lastEdit: 0, public: 0, updatedAt: 0, createdAt: 0, attachments: 0, description: 0
@@ -140,7 +142,7 @@ var CalendarController = /** @class */ (function () {
         var today = new Date();
         var filterStart = today.setDate(today.getDate() - config.Config.calender.public_event_daysPast);
         var filterEnd = today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture);
-        eventModel_1.Event.find({ 'public': true, 'dateEnd': { "$gte": filterStart, "$lt": filterEnd } }, {
+        eventModel_1.Event.find({ 'public': true, 'dateEnd': { '$gte': filterStart, '$lt': filterEnd } }, {
             competent: 0,
             creator: 0,
             lastEdit: 0,
@@ -164,12 +166,13 @@ var CalendarController = /** @class */ (function () {
      */
     CalendarController.createNewEvent = function (request, response, next) {
         var _this = this;
-        console.log('request.body.groups');
-        console.log(request.body.groups);
         var startDateTime = new Date(request.body.startDate);
         var endDateTime = _helper_1._helper.checkEndDate(startDateTime, request.body.endDate);
         if (endDateTime == null) {
-            return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+            return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
+        }
+        if (!request.body.groups) {
+            request.body.groups = '[]';
         }
         var userId = request.decoded.userID;
         var event = new eventModel_1.Event({
@@ -194,12 +197,14 @@ var CalendarController = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (err)
-                            for (errName in err.errors)
+                        if (err) {
+                            for (errName in err.errors) {
                                 if (err.errors[errName].name === 'ValidatorError') {
-                                    console.log(errors_1.Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                                    console.log(errors_1.Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                                     return [2 /*return*/, next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, err.errors[errName].message))];
                                 }
+                            }
+                        }
                         eventCollision = CalendarController.willEventCollide(event);
                         if (eventCollision.status) {
                             //todo do some magic and make a confirmation from client possible
@@ -237,7 +242,7 @@ var CalendarController = /** @class */ (function () {
                     var startDateTime = new Date(request.body.startDate);
                     var endDateTime = _helper_1._helper.checkEndDate(startDateTime, request.body.endDate);
                     if (endDateTime == null) {
-                        return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                        return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
                     }
                     else {
                         event.startDate = startDateTime;
@@ -248,7 +253,7 @@ var CalendarController = /** @class */ (function () {
                 else if (request.body.dateEnd != undefined && request.body.dateEnd != event.dateEnd) {
                     var endDateTime = _helper_1._helper.checkEndDate(event.startDate, request.body.endDate);
                     if (endDateTime == null) {
-                        return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                        return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
                     }
                     else {
                         event.endDate = endDateTime;
@@ -265,7 +270,7 @@ var CalendarController = /** @class */ (function () {
                 }
                 //todo remove later
                 if (request.body.complement != undefined || request.body.groups != undefined || request.body.origin != undefined || request.body.documents != undefined || request.body.picture != undefined) {
-                    return next(new errors_1.ErrorREST(errors_1.Errors.NoContent), "A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.");
+                    return next(new errors_1.ErrorREST(errors_1.Errors.NoContent), 'A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.');
                 }
                 //todo change complement
                 //todo change group
@@ -276,11 +281,11 @@ var CalendarController = /** @class */ (function () {
                     event.save().then(function (event) { return response.status(200).json(event); }).catch(next);
                 }
                 else {
-                    response.status(200).json("No Changes");
+                    response.status(200).json('No Changes');
                 }
             }
             else {
-                return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The event could not be found"));
+                return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The event could not be found'));
             }
         });
     };
@@ -312,12 +317,12 @@ var CalendarController = /** @class */ (function () {
      */
     CalendarController.willEventCollide = function (event) {
         var status = false;
-        var message = "Not Checked";
-        var message_groupLesson = "The Event collide with a group lesson.";
-        var message_holiday = "Your selected event is during the holidays.";
-        var message_groupEvent = "The Event collide with an other event for this group.";
-        var message_event = "The Event collide with an other event";
-        var message_competent = "The competent for this event is not available";
+        var message = 'Not Checked';
+        var message_groupLesson = 'The Event collide with a group lesson.';
+        var message_holiday = 'Your selected event is during the holidays.';
+        var message_groupEvent = 'The Event collide with an other event for this group.';
+        var message_event = 'The Event collide with an other event';
+        var message_competent = 'The competent for this event is not available';
         return { status: status, message: message };
     };
     /*
@@ -350,12 +355,14 @@ var CalendarController = /** @class */ (function () {
                     creator: request.decoded.userID
                 });
                 groupLesson_1.validate(function (err) {
-                    if (err)
-                        for (var errName in err.errors)
+                    if (err) {
+                        for (var errName in err.errors) {
                             if (err.errors[errName].name === 'ValidatorError') {
-                                console.log(errors_1.Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                                console.log(errors_1.Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                                 return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, err.errors[errName].message));
                             }
+                        }
+                    }
                     groupLesson_1.save().then(function (groupLesson) {
                         CalendarController.createNewGroupLessonEvents(groupLesson);
                         response.status(200).json(groupLesson);
@@ -363,7 +370,7 @@ var CalendarController = /** @class */ (function () {
                 });
             }
             else {
-                return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The group is not valid."));
+                return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The group is not valid.'));
             }
         });
     };
@@ -385,10 +392,10 @@ var CalendarController = /** @class */ (function () {
             }
             else {
                 if (lesson) {
-                    response.status(200).json("No Changes");
+                    response.status(200).json('No Changes');
                 }
                 else {
-                    return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, "The groupLesson could not be found"));
+                    return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, 'The groupLesson could not be found'));
                 }
             }
         });
@@ -413,7 +420,7 @@ var CalendarController = /** @class */ (function () {
             groupLessonModel_1.GroupLesson.remove({ _id: request.params.id }).then(function (data) { return response.json(data); }).catch(next);
         }
         else {
-            return next(new errors_1.ErrorREST(errors_1.Errors.BadRequest, "This is only for debug, Debug is disabled"));
+            return next(new errors_1.ErrorREST(errors_1.Errors.BadRequest, 'This is only for debug, Debug is disabled'));
         }
     };
     /**
@@ -429,7 +436,7 @@ var CalendarController = /** @class */ (function () {
             groupLessonModel_1.GroupLesson.remove().then(function (data) { return response.json(data); }).catch(next);
         }
         else {
-            return next(new errors_1.ErrorREST(errors_1.Errors.BadRequest, "This is only for debug, Debug is disabled"));
+            return next(new errors_1.ErrorREST(errors_1.Errors.BadRequest, 'This is only for debug, Debug is disabled'));
         }
     };
     /**
@@ -456,7 +463,7 @@ var CalendarController = /** @class */ (function () {
                                     case 1:
                                         if (!(_a.sent())) {
                                             filter = [];
-                                            filter.push({ 'dateStart': { "$gte": day } });
+                                            filter.push({ 'dateStart': { '$gte': day } });
                                             filter.push({ 'origin': groupLesson._id });
                                             eventModel_1.Event.find({ $and: filter }, {})
                                                 .sort({ 'dateStart': 1 })
@@ -516,10 +523,13 @@ var CalendarController = /** @class */ (function () {
         event.validate(function (err) { return __awaiter(_this, void 0, void 0, function () {
             var errName;
             return __generator(this, function (_a) {
-                if (err)
-                    for (errName in err.errors)
-                        if (err.errors[errName].name === 'ValidatorError')
+                if (err) {
+                    for (errName in err.errors) {
+                        if (err.errors[errName].name === 'ValidatorError') {
                             console.log(errors_1.Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                        }
+                    }
+                }
                 event.save();
                 return [2 /*return*/];
             });
