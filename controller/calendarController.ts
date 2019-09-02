@@ -1,11 +1,11 @@
-import {Errors, ErrorREST} from "../errors";
+import {Errors, ErrorREST} from '../errors';
 import * as config from '../config';
-import {Event} from "../models/eventModel";
-import {User} from "../models/userModel";
-import {_helper as Helper} from "./_helper";
-import {GroupLesson} from "../models/groupLessonModel";
+import {Event} from '../models/eventModel';
+import {User} from '../models/userModel';
+import {_helper as Helper} from './_helper';
+import {GroupLesson} from '../models/groupLessonModel';
 import * as moment from 'moment';
-import {HolidayController} from './holidayController'
+import {HolidayController} from './holidayController';
 
 export class CalendarController {
 
@@ -23,7 +23,7 @@ export class CalendarController {
                     }
                     rData[date].push(event);
                 });
-                response.json(rData)
+                response.json(rData);
             }).catch(next);
     }
 
@@ -46,15 +46,15 @@ export class CalendarController {
 
         let filter = [];
         if (filterDateStart != undefined && filterDateStart != 'null') {
-            filter.push({'dateStart': {"$gte": filterDateStart}});
+            filter.push({'dateStart': {'$gte': filterDateStart}});
         } else {
-            filter.push({'dateStart': {"$gte": today.setDate(today.getDate() - config.Config.calender.public_event_daysPast)}});
+            filter.push({'dateStart': {'$gte': today.setDate(today.getDate() - config.Config.calender.public_event_daysPast)}});
         }
 
         if (filterDateEnd != undefined && filterDateEnd != 'null') {
-            filter.push({'dateEnd': {"$lt": filterDateEnd}});
+            filter.push({'dateEnd': {'$lt': filterDateEnd}});
         } else {
-            filter.push({'dateEnd': {"$lt": today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture)}});
+            filter.push({'dateEnd': {'$lt': today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture)}});
         }
 
         if (filterComplement != null && filterComplement != 'null') {
@@ -81,7 +81,9 @@ export class CalendarController {
         } else {
             if (request.decoded.role != 'admin')
             //if admin then show all events -> dont filter
+            {
                 filter.push({'member': request.decoded.role});
+            }
         }
 
         Event.find({$and: filter}, {
@@ -99,7 +101,7 @@ export class CalendarController {
                     }
                     rData[date].push(event);
                 });
-                response.json(rData)
+                response.json(rData);
             }).catch(next);
     }
 
@@ -113,7 +115,7 @@ export class CalendarController {
         let today = new Date();
         let filterStart = today.setDate(today.getDate() - config.Config.calender.public_event_daysPast);
         let filterEnd = today.setDate(today.getDate() + config.Config.calender.public_event_daysFuture);
-        Event.find({'public': true, 'dateEnd': {"$gte": filterStart, "$lt": filterEnd}}, {
+        Event.find({'public': true, 'dateEnd': {'$gte': filterStart, '$lt': filterEnd}}, {
             competent: 0,
             creator: 0,
             lastEdit: 0,
@@ -138,12 +140,13 @@ export class CalendarController {
      * @param next
      */
     static createNewEvent(request, response, next) {
-        console.log('request.body.groups');
-        console.log(request.body.groups);
         let startDateTime: Date = new Date(request.body.startDate);
         let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
         if (endDateTime == null) {
-            return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+            return next(new ErrorREST(Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
+        }
+        if (!request.body.groups) {
+            request.body.groups = '[]';
         }
         let userId = request.decoded.userID;
 
@@ -166,12 +169,14 @@ export class CalendarController {
         });
 
         event.validate(async err => {
-            if (err)
-                for (let errName in err.errors)
+            if (err) {
+                for (let errName in err.errors) {
                     if (err.errors[errName].name === 'ValidatorError') {
-                        console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                        console.log(Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                         return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
                     }
+                }
+            }
 
             let eventCollision = CalendarController.willEventCollide(event);
 
@@ -208,7 +213,7 @@ export class CalendarController {
                     let startDateTime: Date = new Date(request.body.startDate);
                     let endDateTime: Date = Helper.checkEndDate(startDateTime, request.body.endDate);
                     if (endDateTime == null) {
-                        return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                        return next(new ErrorREST(Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
                     } else {
                         event.startDate = startDateTime;
                         event.endDate = endDateTime;
@@ -217,7 +222,7 @@ export class CalendarController {
                 } else if (request.body.dateEnd != undefined && request.body.dateEnd != event.dateEnd) {
                     let endDateTime: Date = Helper.checkEndDate(event.startDate, request.body.endDate);
                     if (endDateTime == null) {
-                        return next(new ErrorREST(Errors.UnprocessableEntity, "The date for the end of the event must be after the start of the event"));
+                        return next(new ErrorREST(Errors.UnprocessableEntity, 'The date for the end of the event must be after the start of the event'));
                     } else {
                         event.endDate = endDateTime;
                         anyChanges = true;
@@ -234,7 +239,7 @@ export class CalendarController {
 
                 //todo remove later
                 if (request.body.complement != undefined || request.body.groups != undefined || request.body.origin != undefined || request.body.documents != undefined || request.body.picture != undefined) {
-                    return next(new ErrorREST(Errors.NoContent), "A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.");
+                    return next(new ErrorREST(Errors.NoContent), 'A part of the request cannot be resolved, the functionality is not implemented yet. Event did not changed.');
                 }
 
                 //todo change complement
@@ -246,11 +251,11 @@ export class CalendarController {
                     event.lastEdit = request.decoded.userID;
                     event.save().then(event => response.status(200).json(event)).catch(next);
                 } else {
-                    response.status(200).json("No Changes")
+                    response.status(200).json('No Changes');
                 }
 
             } else {
-                return next(new ErrorREST(Errors.UnprocessableEntity, "The event could not be found"));
+                return next(new ErrorREST(Errors.UnprocessableEntity, 'The event could not be found'));
             }
         });
     }
@@ -262,10 +267,10 @@ export class CalendarController {
      * @param next
      */
     static feedback(request, response, next) {
-        console.log(request.decoded.userID)
+        console.log(request.decoded.userID);
         Event.findById(request.query.eventId, (err: any, event) => {
-            if(event){
-                if(event.feedback == null){
+            if (event) {
+                if (event.feedback == null) {
                     event.feedback = [];
                 }
                 let index = event.feedback.findIndex(f => f.user == request.decoded.userID);
@@ -285,13 +290,13 @@ export class CalendarController {
      */
     private static willEventCollide(event: Event) {
         let status = false;
-        let message = "Not Checked";
+        let message = 'Not Checked';
 
-        let message_groupLesson = "The Event collide with a group lesson.";
-        let message_holiday = "Your selected event is during the holidays.";
-        let message_groupEvent = "The Event collide with an other event for this group.";
-        let message_event = "The Event collide with an other event";
-        let message_competent = "The competent for this event is not available";
+        let message_groupLesson = 'The Event collide with a group lesson.';
+        let message_holiday = 'Your selected event is during the holidays.';
+        let message_groupEvent = 'The Event collide with an other event for this group.';
+        let message_event = 'The Event collide with an other event';
+        let message_competent = 'The competent for this event is not available';
 
         return {status: status, message: message};
     }
@@ -330,21 +335,23 @@ export class CalendarController {
                 });
 
                 groupLesson.validate(err => {
-                        if (err)
-                            for (let errName in err.errors)
+                        if (err) {
+                            for (let errName in err.errors) {
                                 if (err.errors[errName].name === 'ValidatorError') {
-                                    console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                                    console.log(Errors.UnprocessableEntity + ' ' + err.errors[errName].message);
                                     return next(new ErrorREST(Errors.UnprocessableEntity, err.errors[errName].message));
                                 }
+                            }
+                        }
 
                         groupLesson.save().then(groupLesson => {
                             CalendarController.createNewGroupLessonEvents(groupLesson);
-                            response.status(200).json(groupLesson)
+                            response.status(200).json(groupLesson);
                         });
                     }
                 );
             } else {
-                return next(new ErrorREST(Errors.UnprocessableEntity, "The group is not valid."));
+                return next(new ErrorREST(Errors.UnprocessableEntity, 'The group is not valid.'));
             }
         });
     }
@@ -367,9 +374,9 @@ export class CalendarController {
                 });
             } else {
                 if (lesson) {
-                    response.status(200).json("No Changes")
+                    response.status(200).json('No Changes');
                 } else {
-                    return next(new ErrorREST(Errors.UnprocessableEntity, "The groupLesson could not be found"));
+                    return next(new ErrorREST(Errors.UnprocessableEntity, 'The groupLesson could not be found'));
                 }
             }
         });
@@ -396,7 +403,7 @@ export class CalendarController {
         if (config.Config.DEBUG) {
             GroupLesson.remove({_id: request.params.id}).then(data => response.json(data)).catch(next);
         } else {
-            return next(new ErrorREST(Errors.BadRequest, "This is only for debug, Debug is disabled"));
+            return next(new ErrorREST(Errors.BadRequest, 'This is only for debug, Debug is disabled'));
         }
     }
 
@@ -408,11 +415,11 @@ export class CalendarController {
      * @return {any}
      */
     static deleteAllGroupLessons(request, response, next) {
-        console.log('delete all')
+        console.log('delete all');
         if (config.Config.DEBUG) {
             GroupLesson.remove().then(data => response.json(data)).catch(next);
         } else {
-            return next(new ErrorREST(Errors.BadRequest, "This is only for debug, Debug is disabled"));
+            return next(new ErrorREST(Errors.BadRequest, 'This is only for debug, Debug is disabled'));
         }
     }
 
@@ -429,7 +436,7 @@ export class CalendarController {
 
             if (!await HolidayController.isDateHolidayOrVacation(moment(day).format('YYYY-MM-DD'))) {
                 let filter = [];
-                filter.push({'dateStart': {"$gte": day}});
+                filter.push({'dateStart': {'$gte': day}});
                 filter.push({'origin': groupLesson._id});
 
                 Event.find({$and: filter}, {})
@@ -455,7 +462,7 @@ export class CalendarController {
      */
     private static createNewGroupLessonEvent(origin: string, date: Date, duration: number, group: string) {
         let endDateTime: Date = moment(date).clone().add(duration, 'h').toDate();
-        console.log(`create new event from ${date} to ${endDateTime}`)
+        console.log(`create new event from ${date} to ${endDateTime}`);
         let event = new Event({
             public: true,
             origin: origin,
@@ -470,10 +477,13 @@ export class CalendarController {
         });
 
         event.validate(async err => {
-            if (err)
-                for (let errName in err.errors)
-                    if (err.errors[errName].name === 'ValidatorError')
+            if (err) {
+                for (let errName in err.errors) {
+                    if (err.errors[errName].name === 'ValidatorError') {
                         console.log(Errors.UnprocessableEntity + " " + err.errors[errName].message);
+                    }
+                }
+            }
 
             event.save();
         });
