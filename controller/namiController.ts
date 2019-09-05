@@ -2,6 +2,7 @@ import {ErrorREST, Errors} from "../errors";
 import {Config} from "./../config";
 import {EmailSource} from "./mailController";
 import {_helper} from "./_helper";
+import {rejects} from 'assert';
 
 let apiClient = require('request');
 
@@ -164,8 +165,8 @@ export class NamiAPI {
      * return name and id for all members
      * @param filterString
      */
-    private static getAllMembers(filterString: string = null) {
-        return new Promise((resolve) => {
+    public static getAllMembers(filterString: string = null) {
+        return new Promise((resolve, reject) => {
             NamiAPI.nami.startSession().then(() => {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {
                     throw new ErrorREST(Errors.Forbidden, "Nami: Authenticate before trying to search");
@@ -190,7 +191,8 @@ export class NamiAPI {
                     resolve(JSON.parse(body).data);
                 });
             }, (error) => {
-                throw new ErrorREST(Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
+                reject("Nami Anmeldung fehlgeschlagen. Fehler: " + error);
+                // throw new ErrorREST(Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
             });
         })
 
@@ -200,7 +202,7 @@ export class NamiAPI {
      * return all data from one member
      * @param memberId
      */
-    private static getOneMember(memberId: string) {
+    public static getOneMember(memberId: string) {
         return new Promise((resolve, reject) => {
             NamiAPI.nami.startSession().then(() => {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {

@@ -147,6 +147,7 @@ var MailController = /** @class */ (function () {
         var _this = this;
         //hint why did i need to do it this way?
         var groups = (request.body['groups[]']) ? request.body['groups[]'] : request.body.groups;
+        console.log(groups);
         // let eventPath: string = null;
         // if (request.body.event) {//todo events for calendar
         //     eventPath = __dirname + '/MailSrc/events/invitation.ics';

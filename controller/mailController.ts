@@ -1,13 +1,13 @@
-import {ErrorREST, Errors} from "../errors";
-import {User} from "../models/userModel";
+import {ErrorREST, Errors} from '../errors';
+import {User} from '../models/userModel';
 import * as nodemailer from 'nodemailer';
 
 // const ical = require('ical-generator');
 import * as fs from 'fs'; // read html file
 import * as handlebars from 'handlebars'; // compile html for email with replacements
-import {Config} from "./../config";
-import {NamiAPI} from "./namiController";
-import {Group} from "../models/groupModel";
+import {Config} from './../config';
+import {NamiAPI} from './namiController';
+import {Group} from '../models/groupModel';
 
 // const cal = ical({domain: 'github.com', name: 'my first iCal'});
 
@@ -112,7 +112,7 @@ export class MailController {
                         reject(error);
                     } else {
                         console.log('Email sent to ' + receiver.email + ': ' + info.response);
-                        resolve(info.response)
+                        resolve(info.response);
                     }
                 });
             });
@@ -170,7 +170,7 @@ export class MailController {
                     .replace(/&euro;/g, '€')
                     .replace(/&sect;/g, '§')
                     .replace(reg, (match) => {
-                        console.log(match)
+                        console.log(match);
                     });
                 sendThis.push(emailSendStatus.push({
                     email: mails[i].email,
@@ -179,7 +179,7 @@ export class MailController {
             }
             await Promise.all(sendThis);
             response.status(200).json(emailSendStatus);
-        })
+        });
     }
 
     /**

@@ -11,7 +11,7 @@ var Users = /** @class */ (function () {
     }
     Users.prototype.init = function () {
         this.router.route('/')
-            .get(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.getAll)
+            .get(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.getAllUserByGroupWithNamiInfo)
             .post(userController_1.UserController.addUser) //no token needed to create a account
             .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.updateUser);
         this.router.route('/:id')
@@ -20,6 +20,8 @@ var Users = /** @class */ (function () {
             .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.setProfilePicture);
         this.router.route('/password')
             .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.updatePassword);
+        this.router.route('/nami')
+            .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.updateNamiLink);
         this.router.route('/email')
             .put(token_1.verifyToken, permission_1.checkPermission, userController_1.UserController.updateEmail);
     };

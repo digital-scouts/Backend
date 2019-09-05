@@ -225,7 +225,7 @@ var NamiAPI = /** @class */ (function () {
      */
     NamiAPI.getAllMembers = function (filterString) {
         if (filterString === void 0) { filterString = null; }
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             NamiAPI.nami.startSession().then(function () {
                 if (NamiAPI.nami.status !== Status.CONNECTED) {
                     throw new errors_1.ErrorREST(errors_1.Errors.Forbidden, "Nami: Authenticate before trying to search");
@@ -248,7 +248,8 @@ var NamiAPI = /** @class */ (function () {
                     resolve(JSON.parse(body).data);
                 });
             }, function (error) {
-                throw new errors_1.ErrorREST(errors_1.Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
+                reject("Nami Anmeldung fehlgeschlagen. Fehler: " + error);
+                // throw new ErrorREST(Errors.Unauthorized, "Nami Anmeldung fehlgeschlagen. Fehler: " + error);
             });
         });
     };

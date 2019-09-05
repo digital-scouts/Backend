@@ -36,7 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var userModel_1 = require("../models/userModel");
+var groupModel_1 = require("../models/groupModel");
 var errors_1 = require("../errors");
+var namiController_1 = require("./namiController");
 var UserController = /** @class */ (function () {
     function UserController() {
     }
@@ -71,14 +73,18 @@ var UserController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, userModel_1.User.findOne({ email: request.body.email }).lean().exec()];
                     case 1:
-                        if (_a.sent())
-                            return [2 /*return*/, next(new errors_1.ErrorREST(errors_1.Errors.Forbidden, "A user with the provided email already exists"))];
+                        if (_a.sent()) {
+                            return [2 /*return*/, next(new errors_1.ErrorREST(errors_1.Errors.Forbidden, 'A user with the provided email already exists'))];
+                        }
                         user = new userModel_1.User(request.body);
                         user.validate(function (err) {
-                            if (err)
-                                for (var errName in err.errors)
-                                    if (err.errors[errName].name === 'ValidatorError')
+                            if (err) {
+                                for (var errName in err.errors) {
+                                    if (err.errors[errName].name === 'ValidatorError') {
                                         return next(new errors_1.ErrorREST(errors_1.Errors.UnprocessableEntity, err.errors[errName].message));
+                                    }
+                                }
+                            }
                         });
                         return [4 /*yield*/, user.save().then(function (user) { return result.status(200).json(user); }).catch(next)];
                     case 2:
@@ -117,7 +123,7 @@ var UserController = /** @class */ (function () {
                 response.status(200).json(user);
             }
             else {
-                return next(new errors_1.ErrorREST(errors_1.Errors.NotFound, "User does not exist."));
+                return next(new errors_1.ErrorREST(errors_1.Errors.NotFound, 'User does not exist.'));
             }
         }).catch(next);
     };
@@ -141,6 +147,20 @@ var UserController = /** @class */ (function () {
         response.status(errors_1.Errors.NoContent.status).json({});
     };
     /**
+     *
+     * @param request
+     * @param response
+     * @param next
+     */
+    UserController.updateNamiLink = function (request, response, next) {
+        userModel_1.User.findByIdAndUpdate(request.query.id, { $set: { 'accountStatus.namiLink': request.body.nami } }, { new: true }, function (err, doc) {
+            if (err) {
+                response.status(errors_1.Errors.BadRequest.status, 'No user with this id found').json(err);
+            }
+            response.json(doc);
+        });
+    };
+    /**
      * update everything in the user model except email and password
      * todo check witch data is given
      * todo update new data
@@ -150,6 +170,110 @@ var UserController = /** @class */ (function () {
      */
     UserController.updateUser = function (request, response, next) {
         response.status(errors_1.Errors.NoContent.status).json({});
+    };
+    /**
+     *
+     * @param request
+     * @param response
+     * @param next
+     */
+    UserController.getAllUserByGroupWithNamiInfo = function (request, response, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var namiFilter, dbUser, groupId, group, namiUserList, promiseExecution, i, namiUser, allUsers, _loop_1, i, i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        namiFilter = '';
+                        if (!request.query.group) return [3 /*break*/, 3];
+                        groupId = request.query.group;
+                        return [4 /*yield*/, groupModel_1.Group.findById(groupId)];
+                    case 1:
+                        group = _a.sent();
+                        namiFilter = group.name.toLowerCase();
+                        return [4 /*yield*/, userModel_1.User.find({ 'group': groupId })];
+                    case 2:
+                        dbUser = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, userModel_1.User.find()];
+                    case 4:
+                        dbUser = _a.sent();
+                        _a.label = 5;
+                    case 5: return [4 /*yield*/, namiController_1.NamiAPI.getAllMembers(namiFilter)];
+                    case 6:
+                        namiUserList = _a.sent();
+                        promiseExecution = [];
+                        for (i = 0; i < namiUserList['length']; i++) {
+                            promiseExecution.push(namiController_1.NamiAPI.getOneMember(namiUserList[i]['id']));
+                        }
+                        return [4 /*yield*/, Promise.all(promiseExecution)];
+                    case 7:
+                        namiUser = _a.sent();
+                        allUsers = [];
+                        _loop_1 = function (i) {
+                            var user = dbUser.find(function (user) {
+                                return '' + user['accountStatus']['namiLink'] === '' + namiUser[i]['mitgliedsNummer'];
+                            });
+                            if (user) {
+                                var index = dbUser.indexOf(user);
+                                if (index > -1) {
+                                    dbUser.splice(index, 1);
+                                }
+                            }
+                            allUsers.push({
+                                dbData: user ? {
+                                    image_profile: user['image_profile'],
+                                    id: user['_id'],
+                                    name_first: user['name_first'],
+                                    name_last: user['name_last'],
+                                    email: user['email'],
+                                    role: user['role'],
+                                    group: user['group'],
+                                    accountStatus: user['accountStatus']
+                                } : null,
+                                namiData: {
+                                    mitgliedsNummer: namiUser[i]['mitgliedsNummer'],
+                                    vorname: namiUser[i]['vorname'],
+                                    nachname: namiUser[i]['nachname'],
+                                    eintrittsdatum: namiUser[i]['eintrittsdatum'],
+                                    status: namiUser[i]['status'],
+                                    telefon1: namiUser[i]['telefon1'],
+                                    telefon2: namiUser[i]['telefon2'],
+                                    telefon3: namiUser[i]['telefon3'],
+                                    telefax: namiUser[i]['telefax'],
+                                    emailVertretungsberechtigter: namiUser[i]['emailVertretungsberechtigter'],
+                                    email: namiUser[i]['email'],
+                                    strasse: namiUser[i]['strasse'],
+                                    plz: namiUser[i]['plz'],
+                                    ort: namiUser[i]['ort'],
+                                    geburtsDatum: namiUser[i]['geburtsDatum'],
+                                }
+                            });
+                        };
+                        //push all nami user to array with db data if exist
+                        for (i = 0; i < namiUser['length']; i++) {
+                            _loop_1(i);
+                        }
+                        //push remaining db users
+                        for (i = 0; i < dbUser['length']; i++) {
+                            allUsers.push({
+                                dbData: {
+                                    image_profile: dbUser[i]['image_profile'],
+                                    id: dbUser[i]['_id'],
+                                    name_first: dbUser[i]['name_first'],
+                                    name_last: dbUser[i]['name_last'],
+                                    email: dbUser[i]['email'],
+                                    role: dbUser[i]['role'],
+                                    group: dbUser[i]['group'],
+                                    accountStatus: dbUser[i]['accountStatus']
+                                },
+                                namiData: null
+                            });
+                        }
+                        response.json(allUsers);
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return UserController;
 }());

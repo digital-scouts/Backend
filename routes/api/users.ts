@@ -14,7 +14,7 @@ class Users {
 
     init() {
         this.router.route('/')
-            .get(token, permission,UserController.getAll)
+            .get(token, permission,UserController.getAllUserByGroupWithNamiInfo)
             .post(UserController.addUser) //no token needed to create a account
             .put(token, permission, UserController.updateUser);
 
@@ -26,6 +26,9 @@ class Users {
 
         this.router.route('/password')
             .put(token, permission, UserController.updatePassword);
+
+        this.router.route('/nami')
+            .put(token, permission, UserController.updateNamiLink);
 
         this.router.route('/email')
             .put(token, permission, UserController.updateEmail);
