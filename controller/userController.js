@@ -246,6 +246,7 @@ var UserController = /** @class */ (function () {
                                     plz: namiUser[i]['plz'],
                                     ort: namiUser[i]['ort'],
                                     geburtsDatum: namiUser[i]['geburtsDatum'],
+                                    stufe: namiUser[i]['stufe'],
                                 }
                             });
                         };

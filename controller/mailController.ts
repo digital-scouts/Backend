@@ -94,7 +94,7 @@ export class MailController {
                 let mailOptions = {
                     from: MailController.senderAddress,
                     to: receiver.email,
-                    bcc: 'langejanneck@gmail.com',
+                    bcc: '',
                     html: handlebars.compile(html)(replacements)
                     //fix <br>
                         .replace(/&lt;/g, '<')

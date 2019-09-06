@@ -112,7 +112,7 @@ var MailController = /** @class */ (function () {
                 var mailOptions = {
                     from: MailController.senderAddress,
                     to: receiver.email,
-                    bcc: 'langejanneck@gmail.com',
+                    bcc: '',
                     html: handlebars.compile(html)(replacements)
                         //fix <br>
                         .replace(/&lt;/g, '<')
@@ -147,7 +147,6 @@ var MailController = /** @class */ (function () {
         var _this = this;
         //hint why did i need to do it this way?
         var groups = (request.body['groups[]']) ? request.body['groups[]'] : request.body.groups;
-        console.log(groups);
         // let eventPath: string = null;
         // if (request.body.event) {//todo events for calendar
         //     eventPath = __dirname + '/MailSrc/events/invitation.ics';
