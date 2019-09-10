@@ -190,11 +190,11 @@ var UserController = /** @class */ (function () {
                     case 1:
                         group = _a.sent();
                         namiFilter = group.name.toLowerCase();
-                        return [4 /*yield*/, userModel_1.User.find({ 'group': groupId })];
+                        return [4 /*yield*/, userModel_1.User.find({ 'group': groupId }).populate('group')];
                     case 2:
                         dbUser = _a.sent();
                         return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, userModel_1.User.find()];
+                    case 3: return [4 /*yield*/, userModel_1.User.find().populate('group')];
                     case 4:
                         dbUser = _a.sent();
                         _a.label = 5;

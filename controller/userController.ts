@@ -149,9 +149,9 @@ export class UserController {
             let groupId = request.query.group;
             let group = await Group.findById(groupId);
             namiFilter = group.name.toLowerCase();
-            dbUser = await User.find({'group': groupId});
+            dbUser = await User.find({'group': groupId}).populate('group');
         } else {
-            dbUser = await User.find();
+            dbUser = await User.find().populate('group');
         }
 
         //load nami User
